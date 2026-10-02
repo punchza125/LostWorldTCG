@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LostWorld TCG — Card Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Serif+Thai:wght@400;600;800&display=swap">
+<style>
+  :root { --accent: #6fcf97; --card-w: 630px; --card-h: 880px; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 50% 30%, #1d1828, #0b0a0f 70%);
+    color: #f1ead8; font-family: 'Noto Serif Thai', serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 16px;
+    overflow-x: hidden; user-select: none; -webkit-user-select: none;
+  }
+  /* Stage scales the fixed 630x880 card to fit any screen */
+  #stage { width: calc(var(--card-w) * var(--s, 1)); height: calc(var(--card-h) * var(--s, 1)); perspective: 1200px; touch-action: none; }
+  #card {
+    width: var(--card-w); height: var(--card-h); transform-origin: top left;
+    transform: scale(var(--s, 1)); position: relative;
+  }
+  #tilt {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform .25s ease-out; border-radius: 28px;
+    box-shadow: 0 30px 60px #000a, 0 0 40px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  #tilt.active { transition: none; }
+  .frame { position: absolute; inset: 0; padding: 18px; background: #16131c; border-radius: 28px; overflow: hidden; }
+  .inner {
+    width: 100%; height: 100%; border: 3px solid var(--accent); border-radius: 16px; padding: 14px;
+    background: #1d1925; display: flex; flex-direction: column; gap: 12px; position: relative; overflow: hidden;
+  }
+  .row { display: flex; align-items: center; gap: 12px; }
+  .cost { width: 64px; height: 64px; flex-shrink: 0; transform: rotate(45deg); background: #0f0d14;
+    border: 3px solid var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .cost span { transform: rotate(-45deg); font: 800 30px 'Cinzel', serif; color: #f5dc96; }
+  .names { flex: 1; padding-left: 10px; }
+  .name-th { font-size: 30px; font-weight: 800; line-height: 1.15; color: #f5ecd2; }
+  .name-en { font: 600 14px 'Cinzel', serif; letter-spacing: 3px; color: #b8ab8c; }
+  .element { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px;
+    border: 2px solid var(--accent); border-radius: 10px; background: #0f0d14; font-size: 12px; font-weight: 600; color: #e9dfc3; }
+  .art { flex: 1; min-height: 0; border-radius: 10px; border: 2px solid #4a4256; background: #0f0d14; position: relative; overflow: hidden; }
+  .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .rarity { position: absolute; left: 12px; top: 12px; padding: 4px 12px; border-radius: 999px; background: #0b0a0fcc;
+    border: 1px solid var(--accent); font: 600 12px 'Cinzel', serif; letter-spacing: 2px; color: #f5dc96; }
+  .typebar { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-radius: 8px;
+    background: #2a2433; border: 1px solid #4a4256; font-size: 15px; font-weight: 600; color: #e9dfc3; }
+  .code { font: 400 13px 'Cinzel', serif; color: #b8ab8c; letter-spacing: 2px; }
+  .ability { height: 196px; padding: 14px 16px; border-radius: 10px; background: #efe6cf; color: #2a2230;
+    display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.55; }
+  .flavor { margin-top: auto; font-size: 14px; font-style: italic; color: #5e5266; }
+  .stats { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; }
+  .stat { display: flex; align-items: center; gap: 10px; }
+  .stat small { display: block; font-size: 12px; color: #b8ab8c; }
+  .stat b { display: block; font: 600 13px 'Cinzel', serif; letter-spacing: 2px; color: #e9dfc3; }
+  .stat.r { text-align: right; }
+  .orb { width: 58px; height: 58px; border: 3px solid #e8c56a; display: flex; align-items: center; justify-content: center;
+    font: 800 28px 'Cinzel', serif; color: #fff4dc; }
+  .power { border-radius: 50%; background: #7a2416; }
+  .health { border-radius: 12px; background: #1e4a3a; }
+
+  /* Full art: image fills whole card, UI floats on top */
+  .fullart-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 28px; }
+  #card.fullart .fullart-img { display: block; }
+  #card.fullart .frame { background: transparent; }
+  #card.fullart .inner { background: transparent; }
+  #card.fullart .art { visibility: hidden; border-color: transparent; }
+  #card.fullart .rarity { visibility: visible; }
+  #card.fullart .row, #card.fullart .typebar, #card.fullart .stats .orb { backdrop-filter: blur(2px); }
+  #card.fullart .row, #card.fullart .typebar { background: #0b0a0fb3; border-radius: 12px; padding: 8px 12px; }
+  /* Full art: effect text sits straight on the art, no box — a white outline keeps it readable */
+  #card.fullart .ability { background: none; color: #14101a; font-weight: 700; padding: 14px 8px;
+    -webkit-text-stroke: 6px #fff; paint-order: stroke fill; stroke-linejoin: round; text-shadow: 0 0 6px #fffc; }
+  /* ability name (e.g. เมื่อลงสนาม) is the only part that keeps a background, like a label pill */
+  #card.fullart .ability b { display: inline-block; padding: 0 10px; margin-right: 6px; border-radius: 6px; line-height: 1.5;
+    background: color-mix(in srgb, var(--accent) 70%, #000); color: #fff; -webkit-text-stroke: 0; text-shadow: none; }
+  #card.fullart .flavor { color: #2a2132; font-weight: 600; }
+
+  /* Holographic glare follows pointer */
+  [hidden] { display: none !important; }
+  .glare { position: absolute; inset: 0; border-radius: 28px; pointer-events: none; mix-blend-mode: color-dodge; opacity: 0;
+    transition: opacity .25s;
+    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), #ffffffaa, transparent 45%),
+                linear-gradient(115deg, transparent 20%, #6fcf9740 35%, #8ab4ff40 50%, #ff8ad440 65%, transparent 80%); }
+  #card.fullart .glare { opacity: .55; }
+  #tilt.active .glare { opacity: .9; }
+
+  .controls { display: flex; gap: 10px; }
+  button { font: 600 15px 'Noto Serif Thai', serif; padding: 10px 20px; border-radius: 999px; cursor: pointer;
+    background: #1d1925; color: #f1ead8; border: 2px solid #4a4256; }
+  button.on { border-color: #e8c56a; color: #f5dc96; }
+  select { font: 600 15px 'Noto Serif Thai', serif; padding: 10px 14px; border-radius: 999px; background: #1d1925; color: #f1ead8; border: 2px solid #4a4256; max-width: 55vw; }
+  body.embed { min-height: 0; padding: 8px; gap: 10px; background: transparent; justify-content: flex-start; }
+  body.embed #list, body.embed .hint { display: none; }
+  /* card list: sidebar on wide screens, horizontal strip on narrow ones */
+  #list { order: 5; width: 100%; max-width: 100vw; }
+  #list h2 { margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 1px; color: #b8ab8c; }
+  #list h2 span { color: #8d8299; }
+  #tiles { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .tile { flex: none; width: 190px; display: flex; align-items: center; gap: 10px; padding: 6px; border-radius: 12px; text-align: left;
+    background: #14111a; border: 2px solid #3a3346; color: #f1ead8; cursor: pointer; font: inherit; }
+  .tile:hover { border-color: #6b6178; }
+  .tile.on { border-color: var(--tc, #e8c56a); background: #1d1925; }
+  .tile img { width: 44px; height: 60px; object-fit: cover; border-radius: 6px; flex: none; background: #0f0d14; }
+  .tile b { display: block; font-size: 14px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tile small { display: block; font-size: 11px; color: #8d8299; letter-spacing: 1px; }
+  .tile .meta { min-width: 0; }
+  .tile i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; background: var(--tc); }
+  @media (min-width: 900px) {
+    body:not(.embed) { padding-left: 262px; }
+    #list { order: 0; position: fixed; left: 0; top: 0; bottom: 0; width: 246px; padding: 16px 12px; background: #100e15; border-right: 1px solid #2a2433; overflow-y: auto; }
+    #tiles { flex-direction: column; overflow: visible; }
+    .tile { width: 100%; }
+  }
+  .hint { font-size: 13px; color: #8d8299; }
+</style>
+</head>
+<body>
+  <nav id="list" aria-label="รายการการ์ด"><h2>การ์ดทั้งหมด <span id="count"></span></h2><div id="tiles"></div></nav>
+  <div id="stage">
+    <div id="card">
+      <div id="tilt">
+        <img class="fullart-img" id="fullartImg" alt="">
+        <div class="frame"><div class="inner">
+          <div class="row">
+            <div class="cost"><span id="cost"></span></div>
+            <div class="names"><div class="name-th" id="nameTh"></div><div class="name-en" id="nameEn"></div></div>
+            <div class="element">
+              <span id="elementIcon"></span>
+              <span id="elementName"></span>
+            </div>
+          </div>
+          <div class="art"><img id="artImg" alt=""><div class="rarity" id="rarity"></div></div>
+          <div class="typebar"><span id="type"></span><span class="code" id="code"></span></div>
+          <div class="ability" id="ability"></div>
+          <div class="stats">
+            <div class="stat"><div class="orb power" id="power"></div><div><small>พลังโจมตี</small><b>POWER</b></div></div>
+            <div class="stat r"><div><small>พลังชีวิต</small><b>HEALTH</b></div><div class="orb health" id="health"></div></div>
+          </div>
+        </div></div>
+        <div class="glare"></div>
+      </div>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="btnNormal" class="on">Normal</button>
+    <button id="btnFull">Full art</button>
+    <a class="btn" href="gallery.html" style="font:600 15px 'Noto Serif Thai',serif;padding:10px 20px;border-radius:999px;border:2px solid #4a4256;color:#f1ead8;text-decoration:none;background:#1d1925">แกลเลอรี</a>
+  </div>
+  <div class="hint">ลาก/เอียงเมาส์บนการ์ดเพื่อดูเอฟเฟกต์ · เพิ่มการ์ดได้ที่ data/cards.json</div>
+
+<script src="elements.js"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const card = $('card');
+  let CARDS = [];
+  const EMBED = new URLSearchParams(location.search).has('embed');
+  if (EMBED) document.body.classList.add('embed');
+
+  function render(c) {
+    const el = ELEMENTS[c.element] || ELEMENTS.fire;
+    document.documentElement.style.setProperty('--accent', el.color);
+    $('elementIcon').innerHTML = `<img src="${el.icon}" width="36" height="36" alt="">`;
+    $('elementName').textContent = el.th;
+    $('cost').textContent = c.cost;
+    $('nameTh').textContent = c.nameTh;
+    $('nameEn').textContent = c.nameEn;
+    $('rarity').textContent = c.rarity;
+    $('type').textContent = c.type;
+    $('code').textContent = `${c.set} · ${c.id.split('-')[1]}`;
+    $('power').textContent = c.power;
+    $('health').textContent = c.health;
+    $('ability').hidden = !c.ability.some(t => t.trim());   // no effect -> no effect box (art grows to fill)
+    $('ability').innerHTML = c.ability.map(t => `<div>${t}</div>`).join('') + (c.flavor ? `<div class="flavor">${c.flavor}</div>` : '');
+    // art paths in cards.json are relative to the repo root; this page lives in web/
+    $('artImg').src = '../' + c.art.normal;
+    const hasFull = !!c.art.fullart;
+    $('fullartImg').src = hasFull ? '../' + c.art.fullart : '';
+    $('btnFull').disabled = !hasFull;
+    if (!hasFull) setMode(false);
+    document.querySelectorAll('.tile').forEach(t => t.classList.toggle('on', t.dataset.id === c.id));
+    if (!EMBED) history.replaceState(null, '', '?id=' + c.id);
+  }
+
+  if (!EMBED) fetch('../data/cards.json').then(r => r.json()).then(list => {
+    CARDS = list;
+    $('count').textContent = `(${list.length})`;
+    $('tiles').innerHTML = list.map(c => { const el = ELEMENTS[c.element] || ELEMENTS.fire;
+      return `<button class="tile" data-id="${c.id}" style="--tc:${el.color}"><img src="../${c.art.normal}" alt="">
+        <span class="meta"><b>${c.nameTh}</b><small><i></i>${c.id} · ${c.rarity}</small></span></button>`; }).join('');
+    const want = new URLSearchParams(location.search).get('id');
+    const first = list.find(c => c.id === want) || list[0];
+    render(first);
+  }).catch(() => { $('nameTh').textContent = 'โหลด data/cards.json ไม่ได้'; });
+  addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.nameTh !== undefined) render(e.data); });
+  $('tiles').addEventListener('click', e => { const t = e.target.closest('.tile'); if (t) render(CARDS.find(c => c.id === t.dataset.id)); });
+
+  // Fit 630x880 card to the viewport
+  function fit() {
+    const s = Math.min(1, (document.documentElement.clientWidth - (!EMBED && innerWidth >= 900 ? 294 : 32)) / 630, (innerHeight - (EMBED ? 70 : 130)) / 880);
+    document.documentElement.style.setProperty('--s', Math.max(s, 0.2));
+  }
+  addEventListener('resize', fit); addEventListener('load', fit); fit();
+
+  // Normal / full art toggle
+  function setMode(full) {
+    card.classList.toggle('fullart', full);
+    $('btnFull').classList.toggle('on', full);
+    $('btnNormal').classList.toggle('on', !full);
+  }
+  $('btnNormal').onclick = () => setMode(false);
+  $('btnFull').onclick = () => setMode(true);
+
+  // Pointer tilt (mouse + touch)
+  const stage = $('stage'), tilt = $('tilt');
+  function move(e) {
+    const r = stage.getBoundingClientRect();
+    const x = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+    const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
+    tilt.style.transform = `rotateY(${(x - .5) * 28}deg) rotateX(${(.5 - y) * 28}deg)`;
+    tilt.style.setProperty('--gx', x * 100 + '%');
+    tilt.style.setProperty('--gy', y * 100 + '%');
+  }
+  stage.addEventListener('pointerdown', e => { tilt.classList.add('active'); move(e); stage.setPointerCapture(e.pointerId); });
+  stage.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || tilt.classList.contains('active')) { tilt.classList.add('active'); move(e); } });
+  const reset = () => { tilt.classList.remove('active'); tilt.style.transform = ''; };
+  stage.addEventListener('pointerup', reset);
+  stage.addEventListener('pointerleave', reset);
+  stage.addEventListener('pointercancel', reset);
+</script>
+</body>
+</html>

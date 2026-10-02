@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LostWorld TCG — Art Fitter</title>
+<style>
+  :root { --gold: #e8c56a; --line: #4a4256; --bg2: #1d1925; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #0b0a0f; color: #f1ead8; font: 15px/1.5 system-ui, 'Noto Sans Thai', sans-serif; }
+  .app { display: flex; gap: 20px; padding: 16px; max-width: 1100px; margin: 0 auto; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+  #wrap { flex: 0 0 auto; touch-action: none; border-radius: 12px; overflow: hidden; border: 2px solid var(--line); cursor: grab; background: #000; }
+  #wrap.drag { cursor: grabbing; }
+  canvas { display: block; }
+  .panel { flex: 1 1 300px; max-width: 420px; display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-size: 18px; margin: 0; color: var(--gold); }
+  fieldset { border: 1px solid var(--line); border-radius: 10px; margin: 0; padding: 12px; display: flex; flex-direction: column; gap: 10px; background: var(--bg2); }
+  legend { color: #b8ab8c; font-size: 13px; padding: 0 6px; }
+  .seg { display: flex; gap: 8px; }
+  button, .btn { font: inherit; padding: 8px 14px; border-radius: 999px; cursor: pointer; background: #14111a; color: inherit; border: 2px solid var(--line); text-align: center; }
+  .seg button { flex: 1; }
+  button.on { border-color: var(--gold); color: var(--gold); }
+  button.primary { background: var(--gold); color: #1d1925; border-color: var(--gold); font-weight: 700; }
+  button:disabled { opacity: .4; cursor: default; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #b8ab8c; }
+  label.inline { flex-direction: row; align-items: center; gap: 8px; }
+  input[type=text], input[type=number] { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: #0f0d14; color: #f1ead8; width: 100%; }
+  input[type=range] { width: 100%; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  #fname { font: 13px ui-monospace, monospace; color: var(--gold); word-break: break-all; }
+  #info, .hint { font-size: 13px; color: #8d8299; }
+  #drop { border: 2px dashed var(--line); border-radius: 10px; padding: 18px; text-align: center; color: #b8ab8c; cursor: pointer; }
+  #drop.over { border-color: var(--gold); color: var(--gold); }
+  .warn { color: #ff9b7a; }
+  [hidden] { display: none !important; }
+  .top { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: #100e15; position: sticky; top: 0; z-index: 5; flex-wrap: wrap; }
+  .top b { color: var(--gold); letter-spacing: 1px; }
+  .top nav { display: flex; gap: 6px; flex: 1; }
+  .top nav button { padding: 6px 16px; }
+  .top a { color: #b8ab8c; font-size: 13px; text-decoration: none; }
+  .top a:hover { color: var(--gold); }
+
+  /* ----- card editor ----- */
+  .ed { display: grid; grid-template-columns: 220px minmax(0, 1fr) 340px; gap: 16px; padding: 16px; max-width: 1280px; margin: 0 auto; align-items: start; }
+  .ed-list { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 64px; max-height: calc(100vh - 80px); }
+  .ed-list .items { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+  .item { text-align: left; border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-width: 1px; }
+  .item.on { border-color: var(--gold); background: #231e2c; }
+  .item .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .item small { display: block; color: #8d8299; font-size: 12px; }
+  .item .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item .bad { margin-left: auto; color: #ff9b7a; }
+  .ed-form { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .ed-form fieldset { gap: 12px; }
+  .f { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .f.w2 { grid-template-columns: 1fr 1fr; }
+  .f .wide { grid-column: 1 / -1; }
+  textarea { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: #0f0d14; color: #f1ead8; width: 100%; resize: vertical; min-height: 56px; }
+  .err { font-size: 12px; color: #ff9b7a; margin-top: 2px; }
+  input.bad, textarea.bad { border-color: #ff9b7a; }
+  .num { display: flex; align-items: center; gap: 6px; }
+  .num button { width: 36px; height: 36px; padding: 0; border-radius: 10px; flex: none; }
+  .num input { text-align: center; font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: flex; align-items: center; gap: 6px; padding: 6px 14px; }
+  .chip img { display: block; }
+  .chip.on { background: #231e2c; }
+  .ab { display: grid; grid-template-columns: 150px 1fr auto; gap: 8px; align-items: start; }
+  .ab button { padding: 6px 10px; border-radius: 10px; }
+  .art-row { display: grid; grid-template-columns: 1fr 64px; gap: 10px; align-items: end; }
+  .thumb { width: 64px; height: 64px; border-radius: 8px; border: 1px solid var(--line); background: #0f0d14 center/cover; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #8d8299; text-align: center; }
+  .thumb.ok { border-color: #6fcf97; }
+  .thumb.miss { border-color: #ff9b7a; color: #ff9b7a; }
+  .ed-prev { position: sticky; top: 64px; display: flex; flex-direction: column; gap: 8px; }
+  .ed-prev iframe { width: 100%; height: calc(100vh - 110px); max-height: 640px; border: 0; border-radius: 12px; background: #0b0a0f; }
+  .savebar { position: sticky; bottom: 0; display: flex; gap: 10px; align-items: center; padding: 12px 16px; background: #100e15ee; border-top: 1px solid var(--line); backdrop-filter: blur(6px); flex-wrap: wrap; z-index: 5; }
+  .savebar .msg { flex: 1; font-size: 13px; color: #b8ab8c; min-width: 120px; }
+  .savebar .msg.ok { color: #6fcf97; } .savebar .msg.bad { color: #ff9b7a; }
+  .danger { border-color: #7a3a32; color: #ff9b7a; }
+  @media (max-width: 980px) {
+    .ed { grid-template-columns: 1fr; }
+    .ed-list { position: static; max-height: none; }
+    .ed-list .items { flex-direction: row; overflow-x: auto; }
+    .item { flex: none; }
+    .ed-prev { position: static; order: -1; }
+    .ed-prev iframe { height: 520px; }
+    .ab { grid-template-columns: 1fr auto; } .ab .abn { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+<header class="top"><b>LOSTWORLD TCG</b>
+  <nav><button data-tab="art" class="on">ปรับรูป</button><button data-tab="cards">แก้ไขการ์ด</button></nav>
+  <a href="gallery.html" target="_blank">แกลเลอรี ↗</a> <a href="index.html" target="_blank">Preview ↗</a></header>
+<div class="app" id="tab-art">
+  <div id="wrap"><canvas id="cv"></canvas></div>
+
+  <div class="panel">
+    <h1>ปรับรูปให้พอดีการ์ด</h1>
+
+    <div id="drop">คลิกหรือลากรูปมาวางที่นี่<input id="file" type="file" accept="image/*" hidden></div>
+
+    <fieldset>
+      <legend>ประเภทงานภาพ</legend>
+      <div class="seg">
+        <button id="mNormal" class="on">Normal (ช่องกลางการ์ด)</button>
+        <button id="mFull">Full art</button>
+      </div>
+      <div class="hint" id="modeHint"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>ตำแหน่งและขนาด</legend>
+      <label>ซูม <input id="zoom" type="range" min="1" max="4" step="0.01" value="1"></label>
+      <div class="seg"><button id="bCenter">จัดกลาง</button><button id="bReset">รีเซ็ต</button></div>
+      <label class="inline"><input id="guides" type="checkbox" checked> แสดงกรอบ layout การ์ด</label>
+      <div class="hint">ลากเพื่อเลื่อนรูป · ล้อเมาส์หรือหนีบสองนิ้วเพื่อซูม</div>
+    </fieldset>
+
+    <fieldset>
+      <legend>ไฟล์ที่จะบันทึก</legend>
+      <div class="grid3">
+        <label>โค้ดเรื่อง <input id="series" type="text" value="nr"></label>
+        <label>เลขการ์ด <input id="num" type="number" min="1" max="999" value="1"></label>
+        <label>ความละเอียด
+          <select id="res" style="font:inherit;padding:8px;border-radius:8px;background:#0f0d14;color:inherit;border:1px solid var(--line)">
+            <option value="1">1x</option><option value="2" selected>2x (คมกว่า)</option>
+          </select></label>
+      </div>
+      <label>ชื่อตัวละคร (อังกฤษ) <input id="cname" type="text" value="naruto"></label>
+      <div class="seg"><button id="fWebp" class="on">.webp</button><button id="fPng">.png (โปร่งใส)</button></div>
+      <div id="fname"></div>
+      <div id="info"></div>
+      <button id="save" class="primary" disabled>ดาวน์โหลดรูป</button>
+    </fieldset>
+  </div>
+</div>
+
+<section id="tab-cards" hidden>
+  <div class="ed">
+    <aside class="ed-list">
+      <button id="eAdd" class="primary">+ เพิ่มการ์ดใหม่</button>
+      <div class="items" id="eItems"></div>
+    </aside>
+
+    <div class="ed-form" id="eForm">
+      <fieldset>
+        <legend>ข้อมูลหลัก</legend>
+        <div class="f">
+          <label>รหัสการ์ด (id) <input id="k-id" type="text" placeholder="nr-002"><span class="err" id="e-id"></span></label>
+          <label>ชุด (set) <input id="k-set" type="text" placeholder="SET-01"></label>
+        </div>
+        <div class="f w2">
+          <label>ชื่อไทย <input id="k-nameTh" type="text"><span class="err" id="e-nameTh"></span></label>
+          <label>ชื่ออังกฤษ <input id="k-nameEn" type="text"><span class="err" id="e-nameEn"></span></label>
+        </div>
+        <label>ประเภท <input id="k-type" type="text" placeholder="มอนสเตอร์ · นินจา / จักระ"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>ค่าพลัง</legend>
+        <div class="f">
+          <label>ค่าร่าย<div class="num"><button data-step="cost:-1">−</button><input id="k-cost" type="number" min="0"><button data-step="cost:1">+</button></div></label>
+          <label>พลังโจมตี<div class="num"><button data-step="power:-1">−</button><input id="k-power" type="number" min="0"><button data-step="power:1">+</button></div></label>
+          <label>พลังชีวิต<div class="num"><button data-step="health:-1">−</button><input id="k-health" type="number" min="0"><button data-step="health:1">+</button></div></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>ธาตุและความหายาก</legend>
+        <div class="chips" id="eElements"></div>
+        <div class="seg" id="eRarity"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>ความสามารถ</legend>
+        <div id="eAbilities" style="display:flex;flex-direction:column;gap:10px"></div>
+        <button id="eAddAb">+ เพิ่มความสามารถ</button>
+        <label>คำคม (flavor text) <input id="k-flavor" type="text" placeholder="“...”"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>ภาพ</legend>
+        <div class="f w2">
+          <label>โฟลเดอร์เรื่อง <input id="eFolder" type="text" placeholder="naruto"></label>
+          <div style="display:flex;align-items:end"><button id="eAuto" style="width:100%">เติม path ภาพให้อัตโนมัติ</button></div>
+        </div>
+        <div class="art-row"><label>Normal <input id="k-art-normal" type="text" placeholder="assets/characters/..."></label><div class="thumb" id="tNormal"></div></div>
+        <div class="art-row"><label>Full art (ไม่บังคับ) <input id="k-art-fullart" type="text" placeholder="assets/characters/..."></label><div class="thumb" id="tFull"></div></div>
+        <div class="hint">ไฟล์ภาพต้องอยู่ในโฟลเดอร์โปรเจกต์ — ปรับขนาดที่แท็บ “ปรับรูป” แล้วย้ายไฟล์ไปไว้ใน assets/characters/&lt;เรื่อง&gt;/</div>
+      </fieldset>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button id="eDup">ทำสำเนาการ์ดนี้</button>
+        <button id="eDel" class="danger">ลบการ์ดนี้</button>
+      </div>
+    </div>
+
+    <aside class="ed-prev">
+      <iframe id="ePrev" title="ตัวอย่างการ์ด" src="index.html?embed=1"></iframe>
+      <div class="hint">ตัวอย่างอัปเดตสดตามที่พิมพ์ (ยังไม่บันทึกลงไฟล์)</div>
+    </aside>
+  </div>
+
+  <div class="savebar">
+    <span class="msg" id="eMsg"></span>
+    <button id="eDl">ดาวน์โหลด JSON</button>
+    <button id="eSave" class="primary">บันทึก data/cards.json</button>
+  </div>
+</section>
+
+<script>
+  // Layout measured from web/index.html (card 630x880)
+  const CARD = { w: 630, h: 880 };
+  const REGIONS = [   // UI boxes on the card, for the overlay guide
+    { name: 'ชื่อ/ค่าร่าย', x: 35, y: 35, w: 560, h: 88 },
+    { name: 'ประเภท', x: 35, y: 525, w: 560, h: 42 },
+    { name: 'ความสามารถ', x: 35, y: 579, w: 560, h: 196 },
+    { name: 'พลัง/ชีวิต', x: 35, y: 787, w: 560, h: 58 },
+  ];
+  const NORMAL_RECT = { x: 35, y: 135, w: 560, h: 379 };
+  const FULL_RECT = { x: 0, y: 0, w: CARD.w, h: CARD.h };
+
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  let img = null, mode = 'normal', fmt = 'webp';
+  let zoom = 1, tx = 0, ty = 0;    // image top-left in card coords; zoom multiplies the "cover" scale
+  let view = 1;                    // CSS px per card px
+
+  const rect = () => mode === 'normal' ? NORMAL_RECT : FULL_RECT;
+  const coverScale = () => { const r = rect(); return Math.max(r.w / img.naturalWidth, r.h / img.naturalHeight); };
+  const scale = () => coverScale() * zoom;
+
+  function clamp() {
+    const r = rect(), s = scale(), w = img.naturalWidth * s, h = img.naturalHeight * s;
+    tx = Math.min(r.x, Math.max(r.x + r.w - w, tx));
+    ty = Math.min(r.y, Math.max(r.y + r.h - h, ty));
+  }
+  function center() {
+    const r = rect(), s = scale();
+    tx = r.x + (r.w - img.naturalWidth * s) / 2;
+    ty = r.y + (r.h - img.naturalHeight * s) / 2;
+    clamp();
+  }
+  function reset() { zoom = 1; $('zoom').value = 1; center(); draw(); }
+
+  function resize() {
+    view = Math.min(1, (innerWidth - 32) / CARD.w, (innerHeight - 32) / CARD.h);
+    view = Math.max(view, 0.3);
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(CARD.w * view * dpr); cv.height = Math.round(CARD.h * view * dpr);
+    cv.style.width = CARD.w * view + 'px'; cv.style.height = CARD.h * view + 'px';
+    draw();
+  }
+  addEventListener('resize', resize);
+
+  function draw() {
+    const k = cv.width / CARD.w;
+    ctx.setTransform(k, 0, 0, k, 0, 0);
+    ctx.fillStyle = '#16131c'; ctx.fillRect(0, 0, CARD.w, CARD.h);
+    const r = rect();
+    if (!img) {
+      ctx.fillStyle = '#6b6178'; ctx.font = '22px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText('เลือกรูปเพื่อเริ่ม', CARD.w / 2, CARD.h / 2);
+      if (mode === 'normal') { ctx.strokeStyle = '#e8c56a'; ctx.setLineDash([8, 6]); ctx.strokeRect(r.x, r.y, r.w, r.h); ctx.setLineDash([]); }
+      return;
+    }
+    const s = scale(), w = img.naturalWidth * s, h = img.naturalHeight * s;
+    if (mode === 'normal') {            // ghost the part of the image that will be cropped away
+      ctx.globalAlpha = 0.28; ctx.drawImage(img, tx, ty, w, h); ctx.globalAlpha = 1;
+      ctx.fillStyle = '#16131ccc'; ctx.fillRect(0, 0, CARD.w, CARD.h);
+    }
+    ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
+    ctx.drawImage(img, tx, ty, w, h); ctx.restore();
+    if ($('guides').checked) {
+      ctx.lineWidth = 2; ctx.font = '14px system-ui'; ctx.textAlign = 'left';
+      if (mode === 'normal') { ctx.strokeStyle = '#e8c56a'; ctx.strokeRect(r.x, r.y, r.w, r.h); }
+      for (const g of REGIONS) {
+        ctx.fillStyle = mode === 'full' ? '#0b0a0f99' : '#2a243344';
+        ctx.fillRect(g.x, g.y, g.w, g.h);
+        ctx.strokeStyle = '#e8c56a88'; ctx.setLineDash([6, 5]); ctx.strokeRect(g.x, g.y, g.w, g.h); ctx.setLineDash([]);
+        ctx.fillStyle = '#f5dc96'; ctx.fillText(g.name, g.x + 8, g.y + 18);
+      }
+      if (mode === 'full') {            // art window of the normal layout, as a reference
+        ctx.strokeStyle = '#6fcf97aa'; ctx.setLineDash([4, 6]); ctx.strokeRect(NORMAL_RECT.x, NORMAL_RECT.y, NORMAL_RECT.w, NORMAL_RECT.h); ctx.setLineDash([]);
+      }
+    }
+    updateInfo();
+  }
+
+  // ----- filename / info -----
+  const slug = v => v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  function filename() {
+    const num = String(Math.max(1, Math.min(999, +$('num').value || 1))).padStart(3, '0');
+    const parts = [slug($('series').value), num, slug($('cname').value), mode === 'normal' ? 'normal' : 'fullart'].filter(Boolean);
+    return parts.join('-') + (fmt === 'webp' ? '.webp' : '.png');
+  }
+  function outSize() { const r = rect(), k = +$('res').value; return { w: r.w * k, h: r.h * k }; }
+  function updateInfo() {
+    $('fname').textContent = filename();
+    const o = outSize();
+    let t = `ขนาดไฟล์ออก ${o.w}×${o.h}px`;
+    if (img) {
+      const need = scale() * +$('res').value;      // source px → output px
+      if (need > 1.5) t += ' · ⚠ รูปต้นฉบับเล็กกว่าที่ต้องใช้ ภาพอาจเบลอ';
+      $('info').innerHTML = t.replace('⚠', '<span class="warn">⚠</span>');
+    } else $('info').textContent = t;
+  }
+
+  // ----- load image -----
+  function load(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { img = im; $('save').disabled = false; reset(); };
+    im.src = url;
+  }
+  $('drop').onclick = () => $('file').click();
+  $('file').onchange = e => load(e.target.files[0]);
+  ['dragover', 'dragenter'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); $('drop').classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); $('drop').classList.remove('over'); }));
+  document.addEventListener('drop', e => load(e.dataTransfer.files[0]));
+
+  // ----- controls -----
+  function setMode(m) {
+    mode = m; $('mNormal').classList.toggle('on', m === 'normal'); $('mFull').classList.toggle('on', m === 'full');
+    $('modeHint').textContent = m === 'normal'
+      ? 'ช่องภาพกลางการ์ด 560×379 px (แนวนอน) — ส่วนที่เลยกรอบทองจะถูกตัดทิ้ง'
+      : 'เต็มทั้งใบ 630×880 px — กล่องดำคือส่วนที่ตัวอักษร/ค่าพลังจะลอยทับ ควรเลี่ยงใบหน้า';
+    if (img) reset(); else { draw(); updateInfo(); }
+  }
+  $('mNormal').onclick = () => setMode('normal');
+  $('mFull').onclick = () => setMode('full');
+  const setFmt = f => { fmt = f; $('fWebp').classList.toggle('on', f === 'webp'); $('fPng').classList.toggle('on', f === 'png'); updateInfo(); };
+  $('fWebp').onclick = () => setFmt('webp'); $('fPng').onclick = () => setFmt('png');
+  ['series', 'num', 'cname', 'res'].forEach(id => $(id).addEventListener('input', () => { updateInfo(); }));
+  $('guides').onchange = draw;
+  $('bCenter').onclick = () => { if (img) { center(); draw(); } };
+  $('bReset').onclick = () => { if (img) reset(); };
+
+  function setZoom(z, cx, cy) {   // zoom about a point given in card coords
+    if (!img) return;
+    z = Math.min(4, Math.max(1, z));
+    const before = scale(); zoom = z; const after = scale();
+    tx = cx - (cx - tx) * after / before; ty = cy - (cy - ty) * after / before;
+    $('zoom').value = zoom; clamp(); draw();
+  }
+  $('zoom').oninput = e => { const r = rect(); setZoom(+e.target.value, r.x + r.w / 2, r.y + r.h / 2); };
+
+  // ----- pointer: drag to pan, wheel / pinch to zoom -----
+  const wrap = $('wrap'), pts = new Map();
+  let lastDist = 0;
+  const toCard = e => { const b = cv.getBoundingClientRect(); return [(e.clientX - b.left) / view, (e.clientY - b.top) / view]; };
+  wrap.addEventListener('pointerdown', e => { pts.set(e.pointerId, e); wrap.setPointerCapture(e.pointerId); wrap.classList.add('drag'); lastDist = 0; });
+  wrap.addEventListener('pointermove', e => {
+    if (!img || !pts.has(e.pointerId)) return;
+    const prev = pts.get(e.pointerId); pts.set(e.pointerId, e);
+    if (pts.size === 1) { tx += (e.clientX - prev.clientX) / view; ty += (e.clientY - prev.clientY) / view; clamp(); draw(); }
+    else if (pts.size === 2) {
+      const [a, b] = [...pts.values()], d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      if (lastDist) { const [cx, cy] = toCard({ clientX: (a.clientX + b.clientX) / 2, clientY: (a.clientY + b.clientY) / 2 }); setZoom(zoom * d / lastDist, cx, cy); }
+      lastDist = d;
+    }
+  });
+  const up = e => { pts.delete(e.pointerId); lastDist = 0; if (!pts.size) wrap.classList.remove('drag'); };
+  wrap.addEventListener('pointerup', up); wrap.addEventListener('pointercancel', up);
+  wrap.addEventListener('wheel', e => { e.preventDefault(); const [cx, cy] = toCard(e); setZoom(zoom * Math.exp(-e.deltaY * 0.0015), cx, cy); }, { passive: false });
+
+  // ----- export -----
+  $('save').onclick = () => {
+    if (!img) return;
+    const r = rect(), o = outSize(), k = o.w / r.w, out = document.createElement('canvas');
+    out.width = o.w; out.height = o.h;
+    const c = out.getContext('2d'); c.imageSmoothingQuality = 'high';
+    c.drawImage(img, (tx - r.x) * k, (ty - r.y) * k, img.naturalWidth * scale() * k, img.naturalHeight * scale() * k);
+    out.toBlob(b => {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = filename(); a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }, fmt === 'webp' ? 'image/webp' : 'image/png', 0.92);
+  };
+
+  setMode('normal'); resize();
+</script>
+<script src="elements.js"></script>
+<script>
+// ===== Card editor tab (edits data/cards.json) =====
+(() => {
+  const g = id => document.getElementById(id);
+  const ELS = Object.fromEntries(Object.entries(ELEMENTS).map(([k, e]) => [k, [e.th, e.color, e.icon]]));
+  const RARITY = ['COMMON', 'RARE', 'EPIC', 'LEGEND'];
+  const NUM = ['cost', 'power', 'health'];
+  const TEXT = ['id', 'set', 'nameTh', 'nameEn', 'type', 'flavor'];
+  let cards = [], sel = 0, savedJson = '[]', loaded = false;
+
+  const slugify = v => (v || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  const cur = () => cards[sel];
+  const clean = c => {            // what actually goes into cards.json
+    const out = { ...c, art: { ...c.art }, ability: c.ability.filter(a => a.trim()) };
+    if (!out.art.fullart) delete out.art.fullart;
+    if (!out.flavor) delete out.flavor;
+    return out;
+  };
+  const serialize = () => JSON.stringify(cards.map(clean), null, 2) + '\n';
+  const isDirty = () => loaded && serialize() !== savedJson;
+
+  function nextId() {
+    const last = (cards[cards.length - 1] || {}).id || 'xx-000';
+    const m = last.match(/^(.*?)(\d+)$/);
+    return m ? m[1] + String(+m[2] + 1).padStart(m[2].length, '0') : last + '-001';
+  }
+  const blank = () => ({ id: nextId(), set: (cards[cards.length - 1] || {}).set || 'SET-01', cost: 1, power: 1, health: 1,
+    nameTh: '', nameEn: '', element: 'fire', rarity: 'COMMON', type: 'มอนสเตอร์', ability: [], flavor: '', art: { normal: '', fullart: '' } });
+
+  // ----- validation -----
+  function problems(c, i) {
+    const p = {};
+    if (!/^[a-z0-9]+-\d{3}$/.test(c.id)) p.id = 'ใช้รูปแบบ ตัวพิมพ์เล็ก-เลข3หลัก เช่น nr-002';
+    else if (cards.some((o, j) => j !== i && o.id === c.id)) p.id = 'id นี้ซ้ำกับการ์ดอื่น';
+    if (!c.nameTh.trim()) p.nameTh = 'ใส่ชื่อไทย';
+    if (!c.nameEn.trim()) p.nameEn = 'ใส่ชื่ออังกฤษ';
+    return p;
+  }
+
+  // ----- list -----
+  function renderList() {
+    g('eItems').innerHTML = cards.map((c, i) => {
+      const bad = Object.keys(problems(c, i)).length;
+      return `<button class="item${i === sel ? ' on' : ''}" data-i="${i}"><span class="dot" style="background:${(ELS[c.element] || ELS.fire)[1]}"></span>
+        <span class="nm">${esc(c.nameEn || c.nameTh || '(ยังไม่มีชื่อ)')}<small>${esc(c.id)}</small></span>${bad ? '<span class="bad" title="มีช่องที่ต้องแก้">●</span>' : ''}</button>`;
+    }).join('');
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+  // ----- form <-> data -----
+  function fillForm() {
+    const c = cur(); if (!c) return;
+    TEXT.forEach(k => g('k-' + k).value = c[k] ?? '');
+    NUM.forEach(k => g('k-' + k).value = c[k]);
+    g('k-art-normal').value = c.art.normal || ''; g('k-art-fullart').value = c.art.fullart || '';
+    const m = (c.art.normal || c.art.fullart || '').match(/assets\/characters\/([^/]+)\//);
+    g('eFolder').value = m ? m[1] : '';
+    g('eElements').innerHTML = Object.entries(ELS).map(([k, [th, col, icon]]) =>
+      `<button class="chip${c.element === k ? ' on' : ''}" data-el="${k}" style="${c.element === k ? 'border-color:' + col : ''}"><img src="${icon}" width="20" height="20" alt="">${th}</button>`).join('');
+    g('eRarity').innerHTML = RARITY.map(r => `<button class="${c.rarity === r ? 'on' : ''}" data-r="${r}">${r}</button>`).join('');
+    renderAbilities(); refresh();
+  }
+  function parseAb(s) { const m = s.match(/^<b>(.*?):?<\/b>\s*(.*)$/s); return m ? { n: m[1].replace(/:$/, ''), t: m[2] } : { n: '', t: s }; }
+  const buildAb = (n, t) => n.trim() ? `<b>${n.trim()}:</b> ${t}` : t;
+  function renderAbilities() {
+    g('eAbilities').innerHTML = cur().ability.map((s, i) => { const a = parseAb(s);
+      return `<div class="ab" data-i="${i}"><input class="abn" type="text" placeholder="ชื่อ (เช่น เมื่อลงสนาม)" value="${esc(a.n)}"><textarea placeholder="คำอธิบาย">${esc(a.t)}</textarea><button data-rm="${i}" title="ลบ">✕</button></div>`; }).join('')
+      || '<div class="hint">ยังไม่มีความสามารถ</div>';
+  }
+  function refresh() {   // after any change: errors, list, thumbs, preview, save state
+    const c = cur(), p = problems(c, sel);
+    ['id', 'nameTh', 'nameEn'].forEach(k => { g('e-' + k).textContent = p[k] || ''; g('k-' + k).classList.toggle('bad', !!p[k]); });
+    renderList(); thumbs(); preview(); status();
+  }
+  function thumb(el, path) {
+    if (!path) { el.className = 'thumb'; el.style.backgroundImage = ''; el.textContent = 'ไม่มี'; return; }
+    const im = new Image();
+    im.onload = () => { if (el.dataset.p === path) { el.className = 'thumb ok'; el.textContent = ''; el.style.backgroundImage = `url("../${path}")`; } };
+    im.onerror = () => { if (el.dataset.p === path) { el.className = 'thumb miss'; el.style.backgroundImage = ''; el.textContent = 'ไม่พบไฟล์'; } };
+    el.dataset.p = path; im.src = '../' + path;
+  }
+  const thumbs = () => { thumb(g('tNormal'), cur().art.normal); thumb(g('tFull'), cur().art.fullart); };
+  const preview = () => { const f = g('ePrev'); if (f.contentWindow && cur()) f.contentWindow.postMessage(clean(cur()), location.origin); };
+  g('ePrev').addEventListener('load', preview);
+
+  // ----- events -----
+  g('eForm').addEventListener('input', e => {
+    const t = e.target, c = cur();
+    if (t.id.startsWith('k-art-')) c.art[t.id.slice(6)] = t.value.trim();
+    else if (t.id.startsWith('k-')) { const k = t.id.slice(2); c[k] = NUM.includes(k) ? Math.max(0, parseInt(t.value || '0', 10) || 0) : t.value; }
+    else if (t.closest('.ab')) { const row = t.closest('.ab'); c.ability[+row.dataset.i] = buildAb(row.querySelector('input').value, row.querySelector('textarea').value); }
+    refresh();
+  });
+  g('eForm').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return; const c = cur();
+    if (b.dataset.step) { const [k, d] = b.dataset.step.split(':'); c[k] = Math.max(0, c[k] + +d); g('k-' + k).value = c[k]; refresh(); }
+    else if (b.dataset.el) { c.element = b.dataset.el; fillForm(); }
+    else if (b.dataset.r) { c.rarity = b.dataset.r; fillForm(); }
+    else if (b.dataset.rm !== undefined) { c.ability.splice(+b.dataset.rm, 1); renderAbilities(); refresh(); }
+  });
+  g('eAddAb').onclick = () => { cur().ability.push(''); renderAbilities(); refresh(); };
+  g('eAuto').onclick = () => {
+    const c = cur(), f = slugify(g('eFolder').value); if (!f) { g('eFolder').focus(); return; }
+    const base = `assets/characters/${f}/${c.id}-${slugify(c.nameEn.trim().split(/\s+/)[0]) || 'name'}`;
+    c.art.normal = base + '-normal.webp'; c.art.fullart = base + '-fullart.webp'; fillForm();
+  };
+  g('eItems').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) { sel = +b.dataset.i; fillForm(); } });
+  g('eAdd').onclick = () => { cards.push(blank()); sel = cards.length - 1; fillForm(); g('k-nameTh').focus(); };
+  g('eDup').onclick = () => { const c = JSON.parse(JSON.stringify(cur())); c.id = nextId(); cards.push(c); sel = cards.length - 1; fillForm(); };
+  g('eDel').onclick = () => {
+    if (!confirm(`ลบการ์ด ${cur().id} ?\n(ยังไม่หายจากไฟล์จนกว่าจะกดบันทึก)`)) return;
+    cards.splice(sel, 1); if (!cards.length) cards.push(blank()); sel = Math.min(sel, cards.length - 1); fillForm();
+  };
+
+  // ----- save -----
+  function msg(t, cls) { const m = g('eMsg'); m.textContent = t; m.className = 'msg ' + (cls || ''); }
+  function status() {
+    const bad = cards.some((c, i) => Object.keys(problems(c, i)).length);
+    g('eSave').disabled = bad || !isDirty();
+    g('eSave').textContent = isDirty() ? 'บันทึก data/cards.json ●' : 'บันทึกแล้ว ✓';
+    if (bad) msg('มีช่องที่ต้องแก้ไข (จุดสีแดงในรายการ) จึงยังบันทึกไม่ได้', 'bad');
+    else if (isDirty()) msg('มีการแก้ไขที่ยังไม่ได้บันทึก');
+    else if (loaded) msg('');
+  }
+  g('eSave').onclick = async () => {
+    const body = serialize();
+    try {
+      const r = await fetch('../data/cards.json', { method: 'PUT', body });
+      if (!r.ok) throw new Error(await r.text());
+      savedJson = body; status(); msg('บันทึกแล้ว ✓ (สำรองไฟล์เดิมไว้ที่ data/cards.json.bak)', 'ok');
+    } catch (err) {
+      msg('บันทึกตรงไม่ได้ — เปิดเว็บด้วย python3 serve.py หรือกด “ดาวน์โหลด JSON” แทน', 'bad');
+    }
+  };
+  g('eDl').onclick = () => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([serialize()], { type: 'application/json' }));
+    a.download = 'cards.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
+  addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 's' && !g('tab-cards').hidden) { e.preventDefault(); if (!g('eSave').disabled) g('eSave').click(); } });
+  addEventListener('beforeunload', e => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
+
+  // ----- load + tabs -----
+  fetch('../data/cards.json').then(r => r.json()).then(list => {
+    cards = list.map(c => ({ flavor: '', ...c, ability: c.ability || [], art: { normal: '', fullart: '', ...c.art } }));
+    if (!cards.length) cards.push(blank());
+    loaded = true;
+    savedJson = serialize();       // compare in normalised form so untouched files are not "dirty"
+    fillForm();
+  }).catch(() => msg('โหลด data/cards.json ไม่ได้ — เปิดเว็บผ่านเซิร์ฟเวอร์ (python3 serve.py)', 'bad'));
+
+  document.querySelectorAll('.top [data-tab]').forEach(b => b.onclick = () => {
+    document.querySelectorAll('.top [data-tab]').forEach(x => x.classList.toggle('on', x === b));
+    g('tab-art').hidden = b.dataset.tab !== 'art'; g('tab-cards').hidden = b.dataset.tab !== 'cards';
+    if (b.dataset.tab === 'art') resize(); else preview();
+    history.replaceState(null, '', b.dataset.tab === 'cards' ? '#cards' : location.pathname);
+  });
+  if (location.hash === '#cards') document.querySelector('[data-tab="cards"]').click();
+})();
+</script>
+</body>
+</html>

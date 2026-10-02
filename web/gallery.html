@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LostWorld TCG — Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Serif+Thai:wght@400;600;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 50% 0%, #1d1828, #0b0a0f 65%); color: #f1ead8; font-family: 'Noto Serif Thai', serif; }
+  header { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 16px;
+    background: #0b0a0fe6; backdrop-filter: blur(8px); border-bottom: 1px solid #2a2433; }
+  h1 { margin: 0 8px 0 0; font: 800 16px 'Cinzel', serif; letter-spacing: 2px; color: #e8c56a; }
+  input, select { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 999px; background: #1d1925; color: #f1ead8; border: 2px solid #3a3346; }
+  input[type=search] { flex: 1 1 160px; min-width: 120px; max-width: 280px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { display: flex; align-items: center; gap: 6px; font: 600 13px 'Noto Serif Thai', serif; padding: 6px 12px; border-radius: 999px;
+    background: #14111a; color: #f1ead8; border: 2px solid #3a3346; cursor: pointer; }
+  .chip img { width: 20px; height: 20px; }
+  .chip.on { border-color: var(--c, #e8c56a); background: #231e2c; }
+  .count { margin-left: auto; font-size: 13px; color: #8d8299; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 22px 18px; padding: 24px 16px 48px; max-width: 1400px; margin: 0 auto; }
+  /* mini card: frame + art + cost / element / stats overlays */
+  a.mini { position: relative; display: block; aspect-ratio: 630 / 880; border-radius: 12px; text-decoration: none; color: inherit;
+    border: 3px solid var(--c); background: #0f0d14; box-shadow: 0 8px 18px #0008; transition: transform .15s, box-shadow .15s; overflow: hidden; }
+  a.mini:hover, a.mini:focus-visible { transform: translateY(-6px) scale(1.03); box-shadow: 0 14px 28px #000a, 0 0 22px color-mix(in srgb, var(--c) 45%, transparent); outline: none; }
+  .mini img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .mini::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 55%, #0b0a0fee 92%); pointer-events: none; }
+  .cost { position: absolute; left: 6px; top: 6px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: #14203f; border: 2px solid #e8c56a; font: 800 17px 'Cinzel', serif; color: #fff4dc; }
+  .el { position: absolute; right: 6px; top: 6px; z-index: 2; width: 30px; height: 30px; border-radius: 8px; background: #0b0a0fcc; border: 2px solid var(--c); display: flex; align-items: center; justify-content: center; padding: 2px; }
+  .nm { position: absolute; left: 8px; right: 8px; bottom: 34px; z-index: 2; text-align: center; font-weight: 800; font-size: 15px; line-height: 1.2; text-shadow: 0 2px 6px #000; }
+  .nm small { display: block; font: 600 9px 'Cinzel', serif; letter-spacing: 2px; color: #cfc4a8; margin-top: 2px; }
+  .st { position: absolute; bottom: 4px; z-index: 2; min-width: 34px; height: 28px; padding: 0 8px; display: flex; align-items: center; justify-content: center;
+    font: 800 16px 'Cinzel', serif; color: #fff4dc; border: 2px solid #e8c56a; }
+  .st.p { left: 4px; background: #7a2416; border-radius: 14px 14px 14px 4px; }
+  .st.h { right: 4px; background: #1e4a3a; border-radius: 14px 14px 4px 14px; }
+  .rar { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 2; width: 10px; height: 10px; border-radius: 50%; background: var(--rc); box-shadow: 0 0 8px var(--rc); margin-bottom: 9px; }
+  /* cards without full art: the whole card face, drawn at 630x880 and scaled to the tile (--k set by JS) */
+  a.mini.full { border: 0; border-radius: 14px; background: #16131c; }
+  a.mini.full::after { display: none; }
+  .fc { position: absolute; left: 0; top: 0; width: 630px; height: 880px; transform: scale(var(--k, .3)); transform-origin: 0 0; padding: 18px; background: #16131c; }
+  .fc-in { width: 100%; height: 100%; border: 3px solid var(--a); border-radius: 16px; padding: 14px; background: #1d1925; display: flex; flex-direction: column; gap: 12px; }
+  .fc-row { display: flex; align-items: center; gap: 12px; }
+  .fc-cost { width: 64px; height: 64px; flex: none; transform: rotate(45deg); background: #0f0d14; border: 3px solid var(--a); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .fc-cost span { transform: rotate(-45deg); font: 800 30px 'Cinzel', serif; color: #f5dc96; }
+  .fc-names { flex: 1; padding-left: 10px; min-width: 0; }
+  .fc-th { font-size: 30px; font-weight: 800; line-height: 1.15; color: #f5ecd2; }
+  .fc-en { font: 600 14px 'Cinzel', serif; letter-spacing: 3px; color: #b8ab8c; }
+  .fc-el { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border: 2px solid var(--a); border-radius: 10px; background: #0f0d14; font-size: 12px; font-weight: 600; color: #e9dfc3; }
+  .fc-art { flex: 1; min-height: 0; border-radius: 10px; border: 2px solid #4a4256; background: #0f0d14 center/cover; position: relative; }
+  .fc-rar { position: absolute; left: 12px; top: 12px; padding: 4px 12px; border-radius: 999px; background: #0b0a0fcc; border: 1px solid var(--a); font: 600 12px 'Cinzel', serif; letter-spacing: 2px; color: #f5dc96; }
+  .fc-type { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; border-radius: 8px; background: #2a2433; border: 1px solid #4a4256; font-size: 15px; font-weight: 600; color: #e9dfc3; }
+  .fc-type em { font: normal 13px 'Cinzel', serif; letter-spacing: 2px; color: #b8ab8c; }
+  .fc-ab { height: 196px; padding: 14px 16px; border-radius: 10px; background: #efe6cf; color: #2a2230; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.55; overflow: hidden; }
+  .fc-fl { margin-top: auto; font-size: 14px; font-style: italic; color: #5e5266; }
+  .fc-stats { display: flex; justify-content: space-between; padding: 0 4px; }
+  .fc-orb { width: 58px; height: 58px; border: 3px solid #e8c56a; display: flex; align-items: center; justify-content: center; font: 800 28px 'Cinzel', serif; color: #fff4dc; }
+  .empty { grid-column: 1 / -1; text-align: center; color: #8d8299; padding: 60px 0; }
+  nav.links { display: flex; gap: 12px; font-size: 13px; }
+  nav.links a { color: #b8ab8c; text-decoration: none; } nav.links a:hover { color: #e8c56a; }
+</style>
+</head>
+<body>
+<header>
+  <h1>GALLERY</h1>
+  <input id="q" type="search" placeholder="ค้นหาชื่อ / รหัส" aria-label="ค้นหา">
+  <div class="chips" id="els"></div>
+  <select id="rar" aria-label="ความหายาก"><option value="">ทุกระดับ</option><option>COMMON</option><option>RARE</option><option>EPIC</option><option>LEGEND</option></select>
+  <select id="sort" aria-label="เรียงลำดับ"><option value="id">เรียงตามรหัส</option><option value="cost">ค่าร่าย</option><option value="power">พลังโจมตี</option><option value="health">พลังชีวิต</option></select>
+  <span class="count" id="count"></span>
+  <nav class="links"><a href="index.html">Preview</a><a href="crop.html#cards">แก้ไขการ์ด</a></nav>
+</header>
+<main class="grid" id="grid"></main>
+
+<script src="elements.js"></script>
+<script>
+  const RC = { COMMON: '#b8ab8c', RARE: '#4aa3df', EPIC: '#9b6bd6', LEGEND: '#e8c56a' };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let cards = [], elFilter = new Set();
+
+  $('els').innerHTML = Object.entries(ELEMENTS).map(([k, e]) => `<button class="chip" data-el="${k}" style="--c:${e.color}"><img src="${e.icon}" alt="">${e.th}</button>`).join('');
+  $('els').onclick = e => { const b = e.target.closest('.chip'); if (!b) return;
+    elFilter.has(b.dataset.el) ? elFilter.delete(b.dataset.el) : elFilter.add(b.dataset.el); b.classList.toggle('on'); draw(); };
+  ['q', 'rar', 'sort'].forEach(id => $(id).addEventListener('input', draw));
+
+  function draw() {
+    const q = $('q').value.trim().toLowerCase(), r = $('rar').value, s = $('sort').value;
+    const list = cards.filter(c => (!elFilter.size || elFilter.has(c.element)) && (!r || c.rarity === r)
+      && (!q || [c.id, c.nameTh, c.nameEn].some(v => v.toLowerCase().includes(q))))
+      .sort((a, b) => s === 'id' ? a.id.localeCompare(b.id) : (a[s] - b[s]) || a.id.localeCompare(b.id));
+    $('count').textContent = `${list.length} / ${cards.length} ใบ`;
+    $('grid').innerHTML = list.map(c => { const { th, color: col, icon } = ELEMENTS[c.element] || ELEMENTS.fire;
+      const href = `index.html?id=${encodeURIComponent(c.id)}`, tip = `${esc(c.id)} · ${esc(c.rarity)}`;
+      if (!c.art.fullart) return `<a class="mini full" href="${href}" title="${tip}" style="--a:${col}"><div class="fc"><div class="fc-in">
+        <div class="fc-row"><div class="fc-cost"><span>${c.cost}</span></div>
+          <div class="fc-names"><div class="fc-th">${esc(c.nameTh)}</div><div class="fc-en">${esc(c.nameEn)}</div></div>
+          <div class="fc-el"><img src="${icon}" width="36" height="36" alt="">${th}</div></div>
+        <div class="fc-art" style="background-image:url('../${esc(c.art.normal)}')"><span class="fc-rar">${esc(c.rarity)}</span></div>
+        <div class="fc-type"><span>${esc(c.type)}</span><em>${esc(c.set)} · ${esc(c.id.split('-')[1] || '')}</em></div>
+        ${c.ability.some(t => t.trim()) ? `<div class="fc-ab">${c.ability.map(t => `<div>${t}</div>`).join('')}${c.flavor ? `<div class="fc-fl">${esc(c.flavor)}</div>` : ''}</div>` : ''}
+        <div class="fc-stats"><div class="fc-orb" style="background:#7a2416;border-radius:50%">${c.power}</div><div class="fc-orb" style="background:#1e4a3a;border-radius:12px">${c.health}</div></div>
+      </div></div></a>`;
+      return `<a class="mini" href="${href}" style="--c:${col};--rc:${RC[c.rarity] || '#888'}" title="${tip}">
+        <img src="../${esc(c.art.fullart)}" alt="" loading="lazy">
+        <span class="cost">${c.cost}</span>
+        <span class="el"><img src="${icon}" width="24" height="24" alt=""></span>
+        <span class="nm">${esc(c.nameTh)}<small>${esc(c.nameEn)}</small></span>
+        <span class="st p">${c.power}</span><span class="st h">${c.health}</span><span class="rar"></span></a>`; }).join('')
+      || '<div class="empty">ไม่พบการ์ดที่ตรงกับตัวกรอง</div>';
+    rescale();
+  }
+  // scale factor for full-face tiles = tile width / 630
+  function rescale() { const t = $('grid').querySelector('.mini.full'); if (t) $('grid').style.setProperty('--k', t.clientWidth / 630); }
+  new ResizeObserver(rescale).observe($('grid'));
+  fetch('../data/cards.json').then(r => r.json()).then(l => { cards = l; draw(); })
+    .catch(() => { $('grid').innerHTML = '<div class="empty">โหลด data/cards.json ไม่ได้ — เปิดผ่าน python3 serve.py</div>'; });
+</script>
+</body>
+</html>
