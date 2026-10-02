@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" id="svg3347" sodipodi:version="0.32" inkscape:version="0.47 r22583" width="100" height="100" sodipodi:docname="Nature Icon Light.svg" inkscape:output_extension="org.inkscape.output.svg.inkscape" version="1.0">
+  <defs id="defs3350">
+    <inkscape:perspective sodipodi:type="inkscape:persp3d" inkscape:vp_x="0 : 50 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_z="100 : 50 : 1" inkscape:persp3d-origin="50 : 33.333333 : 1" id="perspective12"/>
+    <linearGradient id="linearGradientLight">
+      <stop offset="0" id="stopLight0" style="stop-color:#ffff00;stop-opacity:1"/>
+      <stop id="stopLight1" offset="1" style="stop-color:#ffffff;stop-opacity:1"/>
+    </linearGradient>
+    <radialGradient inkscape:collect="always" xlink:href="#linearGradientLight" id="radialGradientLight" cx="49.999996" cy="49.999996" fx="49.999996" fy="49.999996" r="50" gradientUnits="userSpaceOnUse"/>
+  </defs>
+  <sodipodi:namedview inkscape:window-height="940" inkscape:window-width="1280" inkscape:pageshadow="2" inkscape:pageopacity="0.0" guidetolerance="10.0" gridtolerance="10.0" objecttolerance="50" borderopacity="1.0" bordercolor="#666666" pagecolor="#ffffff" id="base" showgrid="false" inkscape:zoom="1" inkscape:cx="48.680924" inkscape:cy="24.557674" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:current-layer="svg3347" inkscape:snap-center="false" inkscape:object-nodes="false" inkscape:window-maximized="1" inkscape:snap-object-midpoints="true"/>
+  <path style="fill:url(#radialGradientLight);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:5.6603775;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" d="m 2.830185,31.132074 9.433963,-9.433963 0,-9.433962 9.433962,0 9.433962,-9.433963 37.73585,0 9.433963,9.433963 9.433963,0 0,9.433962 9.433962,9.433963 0,37.73585 -9.433962,9.433962 0,9.433963 -9.433963,0 -9.433963,9.433962 -37.73585,0 -9.433962,-9.433962 -9.433962,0 0,-9.433963 -9.433963,-9.433962 0,-37.73585 z" id="Light icon" sodipodi:nodetypes="ccccccccccccccccccccc"/>
+  <path d="m 78.301997,64.338015 -1.010791,6.732636 c -0.505448,3.158518 -2.27433,4.737776 -5.30662,4.737779 l -13.64561,0 c -3.0324,-3e-6 -4.548569,-1.413021 -4.54853,-4.239064 l 0,-22.442115 -8.33898,0 0,5.984563 c -3.9e-5,11.63666 -7.159759,19.366712 -21.479208,23.190184 l -2.27426,-5.735206 c 12.466339,-2.82604 18.699518,-9.226194 18.699538,-19.200477 l 0,-4.239066 -18.44685,0 0,-4.73778 24.51157,0 0,-22.691471 5.559311,0 c 1.684609,0.332526 1.76884,0.997477 0.25269,1.994855 l 0,20.696616 24.76426,0 0,4.73778 -18.19414,0 0,19.948547 c -4.1e-5,1.329905 0.58957,1.994856 1.76888,1.994855 l 8.844359,0 c 1.34767,10e-7 2.105762,-0.581832 2.274282,-1.745498 l 0.758079,-6.483278 z M 57.833587,38.654263 c 2.695391,-3.823434 4.88541,-8.228733 6.570101,-13.215913 l 5.812021,3.241639 c 0.67381,0.664995 0.42111,1.08059 -0.758091,1.246784 -1.684691,4.155986 -3.79049,7.896335 -6.31741,11.221058 z m -23.75347,2.244211 c -1.853119,-4.15591 -3.95891,-7.730022 -6.317409,-10.722344 l 5.559329,-3.241639 c 2.358481,2.826088 4.54851,6.483317 6.5701,10.9717 z" style="font-size:50px;font-family:MS Gothic;-inkscape-font-specification:MS Gothic" id="Light kanji"/>
+  <metadata id="metadata4616">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:title/>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
