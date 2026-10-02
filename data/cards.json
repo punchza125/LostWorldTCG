@@ -1,0 +1,156 @@
+[
+  {
+    "flavor": "“ฉันจะไม่ถอยคำพูดของตัวเอง”",
+    "id": "nr-001",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 2,
+    "health": 5,
+    "nameTh": "นารูโตะ อุซึมากิ",
+    "nameEn": "NARUTO UZUMAKI",
+    "element": "wind",
+    "rarity": "EPIC",
+    "type": "มอนสเตอร์ · นินจา / จักระ",
+    "ability": [
+      "<b>เมื่อลงสนาม:</b> สร้างความเสียหาย 2 แต้มให้มอนสเตอร์ศัตรู 1 ใบ",
+      "<b>จักระปั่นป่วน:</b> ถ้าพลังชีวิตของคุณเหลือน้อยกว่า 10 การ์ดใบนี้ได้รับพลังโจมตี +2"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-001-naruto-normal.webp",
+      "fullart": "assets/characters/naruto/nr-001-naruto-fullart.webp"
+    }
+  },
+  {
+    "id": "nr-003",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 2,
+    "health": 1,
+    "nameTh": "ซากุระ ฮารูโนะ",
+    "nameEn": "Sakura Haruno",
+    "element": "light",
+    "rarity": "COMMON",
+    "type": "Ninja",
+    "ability": [
+      "<b>เมื่อลงสนาม:</b> + 1 Health พันธมิตรทั้งหมดในสนาม"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-003-sakura-normal.webp",
+      "fullart": "assets/characters/naruto/nr-003-sakura-fullart.webp"
+    }
+  },
+  {
+    "flavor": "...",
+    "id": "nr-002",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 5,
+    "health": 2,
+    "nameTh": "ซาสิเกะ อูจิฮะ",
+    "nameEn": "Sasuke Uchiha",
+    "element": "fire",
+    "rarity": "RARE",
+    "type": "Ninja",
+    "ability": [
+      "<b>ลงสนาม:</b> อัญเชิญการ์ด \"คาถาบอลเพลิงไฟยักษ์\" ขึ้นมือ 1 ใบ\n"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-002-sasuke-normal.webp",
+      "fullart": "assets/characters/naruto/nr-002-sasuke-fullart.webp"
+    }
+  },
+  {
+    "flavor": "...",
+    "id": "nr-004",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 2,
+    "health": 1,
+    "nameTh": "โคโนฮะมารุ",
+    "nameEn": "Konohamaru",
+    "element": "earth",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-004-konohamaru-normal.webp"
+    }
+  },
+  {
+    "flavor": "พอดีไปส่งคุณยายข้ามถนนมาน่ะ",
+    "id": "nr-005",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 7,
+    "health": 5,
+    "nameTh": "คาคาชิ ฮาตาเคะ",
+    "nameEn": "KAKASHI HATAKE",
+    "element": "dark",
+    "rarity": "EPIC",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> เลือกใช้ effect ลงสนามของการ์ดใบไหนก็ได้ในสนามของฝั่งตรงข้าม 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-005-kakashi-normal.webp",
+      "fullart": "assets/characters/naruto/nr-005-kakashi-fullart.webp"
+    }
+  },
+  {
+    "flavor": "ติดกับฉันล่ะ",
+    "id": "nr-006",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 1,
+    "health": 2,
+    "nameTh": "อิรุกะ",
+    "nameEn": "Iruka",
+    "element": "dark",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Death:</b> สุ่ม Character \"โคโนฮะ\" ขึ้นมือ 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-006-iruka-normal.webp"
+    }
+  },
+  {
+    "id": "nr-007",
+    "set": "SET-01",
+    "cost": 8,
+    "power": 2,
+    "health": 6,
+    "nameTh": "อิทาจิ อูจิฮะ",
+    "nameEn": "Itachi Uchiha",
+    "element": "fire",
+    "rarity": "LEGEND",
+    "type": "Character",
+    "ability": [
+      "<b>Every turn:</b> Character ทุกตัวของฝ่ายตรงข้าม Health - 1",
+      "<b>ลงสนาม:</b> อัญเชิญการ์ด \"คาถาบอลเพลิงไฟยักษ์\" ขึ้นมือ 1 ใบ\n"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-007-itachi-normal.webp",
+      "fullart": "assets/characters/naruto/nr-007-itachi-fullart.webp"
+    }
+  },
+  {
+    "id": "nr-008",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 0,
+    "health": 0,
+    "nameTh": "กระสุนวงจักร",
+    "nameEn": "Rasengan",
+    "element": "wind",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>ใช้:</b> สร้างความเสียหาย -3 Health ต่อการ์ด character 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-008-rasengan-normal.webp"
+    }
+  }
+]
