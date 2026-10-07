@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#07060b">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>LostWorld TCG — Play (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Serif+Thai:wght@400;600;800&display=swap">
+<style>
+  :root { --flame: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'><path d='M12 1c2.5 6 9.5 9 9.5 18.5A9.5 9.5 0 0 1 2.5 19.5c0-5 3-7.5 4.5-10.5 1 3 2.2 4.4 3.4 4.6C9.6 8.4 10 4.4 12 1z'/></svg>"); --gold: #e8c56a; --line: #3a3346; --ok: #6fcf97; --bad: #ff7a5a; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }   /* iOS: no font jump when the phone rotates */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #07060b; color: #f1ead8; font-family: 'Noto Serif Thai', system-ui, sans-serif; user-select: none; -webkit-user-select: none; }
+  #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  .hud { position: fixed; z-index: 5; pointer-events: none; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: #0b0a10e0; border: 1px solid var(--line); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #hudEnemy { top: max(10px, env(safe-area-inset-top)); left: 10px; display: flex; flex-direction: column; gap: 6px; }
+  #hudMe { bottom: max(10px, env(safe-area-inset-bottom)); left: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .mana { display: flex; gap: 3px; align-items: center; }
+  /* mana gems on arcs around the round button: the enemy's above, ours below (LoR) */
+  /* mana (LoR): one big gem per player next to the round button — enemy's (red) above it, ours (blue) below it */
+  /* the round button never moves: mana gems and the attack-all button are pinned around it */
+  .orbWrap { position: relative; }
+  .mgem { position: absolute; right: 50%; display: flex; flex-direction: row-reverse; align-items: center; gap: 6px; pointer-events: none; transform: translateX(50%); }
+  .mgem.op { bottom: calc(100% + 14px); } .mgem.me { top: calc(100% + 14px); }
+  #bAttack { position: absolute; right: calc(100% + 16px); top: 50%; transform: translateY(-50%); white-space: nowrap; }
+  #bAttack:not([hidden]) { animation: popIn .22s ease-out; } @keyframes popIn { from { opacity: 0; transform: translateY(-50%) translateX(12px) scale(.9); } }
+  .mgem .gem { position: relative; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; flex-direction: column; line-height: 1;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+  .mgem.me .gem { background: radial-gradient(circle at 35% 30%, #8fd0ff, #1f5fd8 60%, #0d2a6e); }
+  .mgem.op .gem { background: radial-gradient(circle at 35% 30%, #ffb09a, #d8402a 60%, #6e140d); }
+  .mgem .gem b { font: 800 30px 'Cinzel', serif; color: #fff; text-shadow: 0 2px 3px #0008; font-variant-numeric: tabular-nums; }
+  .mgem .gem small { font: 700 12px 'Cinzel', serif; color: #ffffffcc; margin-top: 1px; }
+  .mgem .who { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font: 700 12px 'Noto Serif Thai', serif; white-space: nowrap; }
+  .mgem.me .who { color: #9fd0ff; } .mgem.op .who { color: #ff9a80; }
+  .mgem .sp { display: flex; gap: 3px; } .mgem .sp i { width: 11px; height: 11px; border-radius: 50%; background: #2a2236; border: 1px solid #6a4a8a; }
+  .mgem .sp i.on { background: radial-gradient(circle at 35% 30%, #f0c8ff, #9a4ae0); border-color: #e2b8ff; box-shadow: 0 0 6px #c08aff; }
+  .mana i { width: 13px; height: 18px; background: #26304a; -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'><path d='M12 1c2.5 6 9.5 9 9.5 18.5A9.5 9.5 0 0 1 2.5 19.5c0-5 3-7.5 4.5-10.5 1 3 2.2 4.4 3.4 4.6C9.6 8.4 10 4.4 12 1z'/></svg>") center / contain no-repeat; mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'><path d='M12 1c2.5 6 9.5 9 9.5 18.5A9.5 9.5 0 0 1 2.5 19.5c0-5 3-7.5 4.5-10.5 1 3 2.2 4.4 3.4 4.6C9.6 8.4 10 4.4 12 1z'/></svg>") center / contain no-repeat; transform-origin: 50% 100%; }
+  .mana i.on { background: linear-gradient(#e8f6ff 0%, #7cc4ff 35%, #2f7dff 75%, #1b4fd8 100%); filter: drop-shadow(0 0 5px #5ab0ff); animation: flicker 1.6s ease-in-out infinite; }
+  .mana i.on:nth-child(2n) { animation-delay: -.5s; } .mana i.on:nth-child(3n) { animation-delay: -1.1s; }
+  .mana i.sp { background: #33264a; } .mana i.sp.on { background: linear-gradient(#fbeaff, #d08cff 40%, #8a3ad8); filter: drop-shadow(0 0 5px #c08aff); }
+  @keyframes flicker { 0%, 100% { transform: scaleY(1) skewX(0); } 30% { transform: scaleY(1.12) skewX(-3deg); } 60% { transform: scaleY(.94) skewX(2deg); } }
+  #btns { position: fixed; z-index: 6; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  button.big { font: 800 16px 'Noto Serif Thai', serif; padding: 12px 22px; border-radius: 14px; border: 2px solid var(--line); background: #1d1925e6; color: #f1ead8; cursor: pointer; min-width: 132px; box-shadow: 0 6px 16px #000a; }
+  button.big.gold { background: linear-gradient(#f5dc96, #c8962e); color: #2a1d05; border-color: #fff3c4; }
+  button.big.red { background: linear-gradient(#e0603a, #8a2512); border-color: #ffb09a; }
+  button.big:disabled { opacity: .35; cursor: default; }
+  #prompt { position: fixed; z-index: 6; left: 0; right: 0; margin: 0 auto; width: fit-content; top: max(10px, env(safe-area-inset-top)); max-width: min(92vw, 560px); text-align: center; text-wrap: balance;
+    padding: 8px 16px; border-radius: 14px; background: #0b0a10dd; border: 1px solid var(--gold); color: #f5dc96; font-weight: 600; font-size: 15px; pointer-events: none; }
+  #prompt:empty { display: none; }
+  /* big card inspector (LoR-style): shown on hover / tap */
+  #inspect { position: fixed; z-index: 7; top: 50%; transform: translateY(-52%); display: flex; gap: 14px; align-items: center; pointer-events: none; }
+  /* tapping a card: it opens big in the middle over a dark backdrop (tap anywhere to close) */
+  #inspBg { position: fixed; inset: 0; z-index: 7; background: radial-gradient(ellipse at 50% 50%, #0b0a10c8, #030207f0 75%); animation: bgIn .18s ease-out; }
+  #inspBg[hidden] { display: none; } @keyframes bgIn { from { opacity: 0; } }
+  #inspect.modal, #inspect.modal.left, #inspect.modal.right { z-index: 8; left: 50%; right: auto; top: 50%; transform: translate(-50%, -50%); flex-direction: row; --cw: min(380px, 32vw, 72vh * .716); }
+  body.insp #side { z-index: 9; }
+  #inspect[hidden] { display: none; } #inspect.left { left: 3vw; } #inspect.right { right: 170px; flex-direction: row-reverse; }
+  .bcw { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .kwbox { width: 240px; display: flex; flex-direction: column; gap: 8px; }
+  .kwc { padding: 10px 12px; border-radius: 12px; background: #14111aee; border: 2px solid color-mix(in srgb, var(--k, #3a3346) 70%, transparent); font-size: 13px; line-height: 1.5; box-shadow: 0 6px 18px #000a; animation: bcIn .25s ease-out both; }
+  .kwc.tags { --k: #b8ab8c; } .tagl { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; } .tagl span { padding: 1px 10px; border-radius: 99px; background: #231e2c; border: 1px solid #4a4256; color: #e9dfc3; font-size: 12.5px; }
+  .kwc b { display: flex; align-items: center; gap: 6px; font-size: 15px; color: color-mix(in srgb, var(--k, #e8c56a) 70%, #fff); } .kwc.warn { --k: #ff7a5a; color: #ffb09a; } .kwc.info { --k: #9fd0ff; color: #cfe6ff; }
+  #bcAct { pointer-events: auto; display: flex; gap: 8px; } #bcAct:empty { display: none; }
+  /* round action orb (end turn / attack / block / pass) */
+  #side { position: fixed; z-index: 6; right: 22px; top: 50%; transform: translateY(-50%); }
+  .orb { width: 118px; height: 118px; border-radius: 50%; border: 4px solid #e8c56a; color: #fff; font: 800 20px 'Noto Serif Thai', serif; line-height: 1.15; cursor: pointer;
+    background: radial-gradient(circle at 35% 30%, #4a8fe0, #163a7a 70%); box-shadow: 0 0 0 6px #0b0a10aa, 0 10px 30px #000c, inset 0 -6px 14px #0006; text-shadow: 0 2px 0 #000; transition: transform .12s, filter .2s; }
+  .orb { transition: transform .12s cubic-bezier(.3,1.6,.5,1), filter .25s, background .25s; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .orb:hover:not(:disabled) { transform: scale(1.05); } .orb:active:not(:disabled), .orb.press { transform: scale(.88); }
+  .orb .ripple { position: absolute; inset: 0; border-radius: 50%; border: 4px solid #fff; animation: ripple .5s ease-out forwards; pointer-events: none; }
+  @keyframes ripple { from { transform: scale(.9); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+  .orb.ready::after { animation: orbPulse 1.6s ease-in-out infinite; }
+  .orb.wait::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 3px solid transparent; border-top-color: #e8c56a; border-right-color: #e8c56a66; animation: spin 1.1s linear infinite; }
+  .orb .lbl { display: block; animation: lblIn .2s ease-out; } @keyframes lblIn { from { opacity: 0; transform: scale(.7); } }
+  .orb.atk { background: radial-gradient(circle at 35% 30%, #ff9a5a, #8a2512 70%); }
+  .orb.blk { background: radial-gradient(circle at 35% 30%, #5ab0ff, #12407a 70%); }
+  .orb.play { background: radial-gradient(circle at 35% 30%, #ffe9a8, #b8862a 70%); color: #2a1d05; text-shadow: none; } .orb.play::after { animation: orbPulse 1s infinite; }
+  .orb.end { background: radial-gradient(circle at 35% 30%, #7d8aa0, #2a3244 70%); }
+  .orb.pass { background: radial-gradient(circle at 35% 30%, #a06be0, #3a1d5a 70%); }
+  .orb.wait { filter: grayscale(.7) brightness(.7); font-size: 15px; cursor: default; }
+  .orb { position: relative; } .orb::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; box-shadow: 0 0 34px #ffd27a; opacity: 0; pointer-events: none; }
+  .orb.atk::after, .orb.blk::after { animation: orbPulse 1s infinite; }
+  @keyframes orbPulse { 50% { opacity: 1; } }   /* opacity only: runs on the GPU, no repaint */
+  button.small { min-width: 0; padding: 7px 12px; font-size: 13px; }
+  #log { position: fixed; z-index: 8; left: 104px; top: 50%; transform: translateY(-50%); width: 340px; max-height: 70%; display: flex; flex-direction: column; border-radius: 14px; background: #0b0a10f2; border: 1px solid var(--line); font-size: 12.5px; line-height: 1.5; box-shadow: 0 16px 40px #000c; }
+  .lhead { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 14px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--gold); }
+  .lhead button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: #ffffff10; color: #fff; font-size: 16px; cursor: pointer; }
+  #logList { overflow: auto; padding: 8px 12px 12px; }
+  #logList .crow { display: flex; gap: 8px; align-items: center; margin: 6px 0; padding: 5px; border-radius: 10px; background: #ffffff08; border-left: 3px solid var(--o); }
+  #logList .crow .ths { display: flex; gap: 4px; flex: none; } #logList .crow span { min-width: 0; }
+  /* LoR-style history: small cards down the left side, newest at the bottom */
+  #hist { position: fixed; z-index: 6; left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  #histTiles { display: flex; flex-direction: column; gap: 6px; }
+  .th { position: relative; width: 52px; aspect-ratio: 630 / 880; border-radius: 7px; border: 2px solid var(--c); background: #0f0d14 center / cover; padding: 0; cursor: pointer; flex: none; box-shadow: 0 4px 10px #000a; }
+  .th::before { content: ''; position: absolute; left: -2px; right: -2px; bottom: -2px; height: 5px; border-radius: 0 0 6px 6px; background: var(--o); }
+  .th b { position: absolute; left: 2px; top: 2px; min-width: 16px; height: 16px; border-radius: 50%; font: 800 11px/16px 'Cinzel', serif; color: #fff; text-align: center; background: radial-gradient(circle at 35% 30%, #4f8cff, #12306e 70%); }
+  .th.sp b { background: radial-gradient(circle at 35% 30%, #a06be0, #3a1d5a 70%); }
+  .th i { position: absolute; right: 2px; bottom: 6px; font-style: normal; font-size: 12px; text-shadow: 0 1px 2px #000; }
+  #histTiles .th { width: 62px; animation: thIn .35s ease-out; } @keyframes thIn { from { opacity: 0; transform: translateX(-30px) scale(.8); } }
+  /* mulligan */
+  #mull { z-index: 15; background: radial-gradient(ellipse at 50% 40%, #1d1828d0, #07060bf0 75%); flex-direction: column; gap: 14px; }
+  #mull h1 { margin: 0; font: 800 clamp(22px, 4vw, 34px) 'Cinzel', serif; color: var(--gold); letter-spacing: 2px; text-align: center; } #mull p { margin: 0; color: #cfc4a8; text-align: center; }
+  .mcards { display: flex; gap: clamp(8px, 1.6vw, 18px); justify-content: center; flex-wrap: wrap; }
+  .mcard { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+  .mcard .bc { width: clamp(120px, 17vw, 210px); animation: none; transition: transform .2s, filter .2s; }
+  .mcard.out .bc { transform: translateY(8px) scale(.94); filter: saturate(.35) brightness(.55); }
+  .bc .swirl { display: none; } .mcard .bc .swirl { align-items: center; justify-content: center; }
+  .mcard.out .bc .swirl { display: flex; } .swirl::before { content: ''; width: 62%; aspect-ratio: 1; border-radius: 50%; border: 3cqw solid #b07cff; border-left-color: transparent; box-shadow: 0 0 6cqw #b07cff, inset 0 0 6cqw #b07cff88; animation: spin 1.1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .mcard button { min-width: 0; width: 100%; padding: 8px 6px; font-size: 14px; }
+  #log[hidden] { display: none; } #log .turn { color: var(--gold); margin-top: 6px; } #log .warn { color: var(--bad); } #log .dmg, #log .death { color: #ffb09a; } #log .buff { color: #b8ffb0; } #log .sys { color: #9fd0ff; }
+  .float { position: fixed; z-index: 8; pointer-events: none; font: 800 34px 'Cinzel', serif; text-shadow: 0 3px 0 #000, 0 0 12px #000; transform: translate(-50%, -50%); animation: rise 1s ease-out forwards; }
+  .mark { position: fixed; left: 0; top: 0; z-index: 7; pointer-events: none; font: 800 22px 'Cinzel', serif; padding: 2px 8px; border-radius: 10px; background: #0b0a10cc; border: 1px solid #ff6a4a; color: #ffb09a; animation: markIn .25s ease-out; will-change: transform; }
+  .mark.die { font-size: 13px; padding: 1px 4px; border-color: #ffffff55; opacity: .9; } .mark.face { color: #ff8a6a; } .mark.face.die { background: #8a2512ee; color: #fff; border-color: #fff; }
+  @keyframes markIn { from { opacity: 0; } }
+  .float.dmg { color: #ff6a4a; } .float.heal { color: #8affa0; } .float.buff { color: #ffe08a; font-size: 26px; } .float.status { color: #9fd0ff; font-size: 22px; font-family: 'Noto Serif Thai', serif; }
+  @keyframes rise { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.6); } 15% { opacity: 1; transform: translate(-50%, -60%) scale(1.15); } 100% { opacity: 0; transform: translate(-50%, -160%) scale(1); } }
+  #banner { position: fixed; z-index: 9; left: 0; right: 0; top: 42%; text-align: center; pointer-events: none; font: 800 clamp(26px, 6vw, 54px) 'Noto Serif Thai', serif; color: #fff3c4;
+    text-shadow: 0 4px 0 #000, 0 0 24px #e8c56a; opacity: 0; }
+  #banner.show { animation: banner 1.3s ease-out forwards; }
+  @keyframes banner { 0% { opacity: 0; transform: scale(1.4); letter-spacing: 12px; } 20% { opacity: 1; transform: scale(1); letter-spacing: 2px; } 75% { opacity: 1; } 100% { opacity: 0; transform: scale(.96); } }
+  .screen { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 30%, #1d1828ee, #07060bf5 70%); padding: 16px; overflow: auto; }
+  .screen[hidden] { display: none; }
+  .box { width: min(560px, 100%); padding: 22px; border-radius: 20px; background: #14111aee; border: 1px solid var(--line); box-shadow: 0 20px 60px #000c; }
+  .box h1 { margin: 0 0 4px; font: 800 26px 'Cinzel', serif; color: var(--gold); letter-spacing: 3px; } .box h2 { margin: 16px 0 8px; font-size: 16px; color: #f5dc96; }
+  .box p { color: #cfc4a8; font-size: 14px; margin: 6px 0; }
+  select.sel { width: 100%; font: 600 15px 'Noto Serif Thai', serif; padding: 10px 12px; border-radius: 12px; background: #1d1925; color: #f1ead8; border: 2px solid var(--line); }
+  .decks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .deckBtn { text-align: left; padding: 12px; border-radius: 14px; border: 2px solid var(--line); background: #1d1925; color: inherit; font: inherit; cursor: pointer; }
+  .deckBtn.on { border-color: var(--gold); background: #2a2233; } .deckBtn b { display: block; font-size: 16px; } .deckBtn small { color: #b8ab8c; }
+  .opts label { display: flex; gap: 8px; align-items: center; font-size: 14px; margin: 6px 0; color: #cfc4a8; }
+  .row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .notes { font-size: 13px; color: #cfc4a8; max-height: 40vh; overflow: auto; padding-left: 18px; }
+  .notes li { margin: 4px 0; }
+  a { color: var(--gold); }
+  /* phone held sideways: small HUD, the table gets the space */
+  @media (orientation: landscape) and (max-height: 520px) {
+    .pill { font-size: 11px; padding: 3px 9px; gap: 5px; } .mana i { width: 9px; height: 13px; }
+    #hudEnemy, #hudMe { gap: 4px; left: max(6px, env(safe-area-inset-left)); } #hudEnemy { top: 6px; } #hudMe { bottom: max(6px, env(safe-area-inset-bottom)); }
+    #prompt { top: 4px; font-size: 12px; padding: 4px 12px; max-width: 50vw; border-radius: 10px; }
+    #side { right: max(14px, calc(env(safe-area-inset-right) + 8px)); } .orb { width: 92px; height: 92px; font-size: 17px; border-width: 3px; } .orb.wait { font-size: 13px; }
+    .mgem.op { bottom: calc(100% + 10px); } .mgem.me { top: calc(100% + 10px); } #bAttack { right: calc(100% + 10px); }
+    .orbWrap { gap: 6px; } .mgem .gem { width: 44px; height: 44px; } .mgem .gem b { font-size: 21px; } .mgem .gem small { font-size: 9px; } .mgem .who { font-size: 10px; } .mgem .sp i { width: 8px; height: 8px; }
+    button.big { font-size: 13px; padding: 7px 12px; min-width: 0; border-radius: 10px; } button.small { padding: 5px 9px; font-size: 11.5px; }
+    #btns { right: max(8px, env(safe-area-inset-right)); bottom: 6px; }
+    #hist { left: max(6px, env(safe-area-inset-left)); gap: 4px; } #histTiles { gap: 4px; } #histTiles .th { width: 36px; } #histTiles .th:nth-last-child(n+3) { display: none; }
+    .th b { min-width: 13px; height: 13px; font-size: 9px; line-height: 13px; } #logBtn { padding: 5px 8px !important; }
+    #log { left: 54px; width: 300px; max-height: 88%; font-size: 11.5px; }
+    #inspect { --cw: min(24vw, 74vh * .716); --rs: .7; } .kwbox { width: 200px; gap: 5px; } .kwc { padding: 6px 9px; font-size: 11.5px; } .kwc b { font-size: 12.5px; }
+    #inspect { gap: 8px; } #inspect.right { right: 104px; } #inspect.modal { --cw: min(30vw, 80vh * .716); }
+    #banner { font-size: clamp(20px, 4.4vw, 34px); }
+    #mull { gap: 6px; padding: 8px; } #mull h1 { font-size: 20px; } #mull p { font-size: 12px; } .mcard { gap: 5px; } .mcard .bc { width: min(17vw, 50vh * .716); }
+  }
+  #rotate { display: none; }
+  @media (orientation: portrait) and (pointer: coarse) {
+    #rotate { display: flex; position: fixed; inset: 0; z-index: 50; flex-direction: column; gap: 18px; align-items: center; justify-content: center; text-align: center; padding: 24px;
+      background: radial-gradient(ellipse at 50% 40%, #1d1828, #07060b 75%); color: #f5dc96; font-size: 18px; font-weight: 700; }
+    #rotate .ph { width: 64px; height: 112px; border: 4px solid var(--gold); border-radius: 14px; animation: rot 2.2s ease-in-out infinite; }
+    #rotate small { color: #cfc4a8; font-weight: 400; font-size: 14px; }
+  }
+  @keyframes rot { 0%, 25% { transform: rotate(0); } 55%, 85% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
+  @media (max-width: 700px) {
+    #inspect, #inspect.left, #inspect.right { left: 50%; right: auto; top: 46%; transform: translate(-50%, -50%); flex-direction: column; }
+    #inspect { --cw: 52vw; --rs: .6; } .kwbox { width: 78vw; }
+    #inspect.modal, #inspect.modal.left, #inspect.modal.right { flex-direction: column; --cw: 52vw; }
+    #side { top: auto; bottom: max(14px, env(safe-area-inset-bottom)); right: 12px; transform: none; } .orb { width: 92px; height: 92px; font-size: 16px; }
+    #btns { bottom: max(124px, calc(env(safe-area-inset-bottom) + 114px)); }
+    #log { left: 8px; right: 8px; width: auto; top: 70px; transform: none; max-height: 55%; }
+    #hist { top: auto; bottom: max(118px, calc(env(safe-area-inset-bottom) + 108px)); transform: none; } #histTiles { display: none; }
+    button.big { min-width: 112px; padding: 10px 16px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="hud" id="hudEnemy"><span class="pill" id="enemyInfo"></span></div>
+<div class="hud" id="hudMe"><span class="pill" id="myInfo"></span></div>
+<div id="prompt"></div>
+<div id="side">
+  <div class="orbWrap"><div class="mgem op" id="enemyMana"></div><button class="orb wait" id="bMain" disabled>…</button><div class="mgem me" id="myMana"></div></div>
+  <button class="big red small" id="bAttack" hidden>⚔ โจมตีทั้งหมด</button>
+</div>
+<div id="btns">
+  <button class="big" id="bAlt" hidden></button>
+</div>
+<div id="hist"><div id="histTiles"></div><button class="big" id="logBtn" style="min-width:0;padding:8px 12px" title="ประวัติการเล่น">📜</button><button class="big" id="giveUp" style="min-width:0;padding:8px 12px" title="ยอมแพ้ (เริ่มเกมใหม่)">🏳</button></div>
+<div class="screen" id="giveUpAsk" hidden><div class="box" style="max-width:360px;text-align:center"><h2 style="margin-top:0">ยอมแพ้เกมนี้?</h2><p>เกมนี้จะนับเป็นแพ้ แล้วเริ่มเกมใหม่ได้ทันที</p><div class="row" style="justify-content:center"><button class="big red" id="giveUpYes">🏳 ยอมแพ้</button><button class="big" id="giveUpNo">เล่นต่อ</button></div></div></div>
+<div id="log" hidden><div class="lhead"><b>ประวัติการเล่น</b><button id="logX" title="ปิด">✕</button></div><div id="logList"></div></div>
+<div class="screen" id="mull" hidden><h1>มือแรก</h1><p>แตะการ์ดที่อยากเปลี่ยน — การ์ดใหม่จะจั่วมาแทน แล้วใบเดิมสับกลับเข้าเด็ค</p><div class="mcards" id="mullCards"></div><p id="mullWho"></p><button class="big gold" id="mullOk">ตกลง</button></div>
+<div id="inspBg" hidden></div>
+<div id="inspect" hidden><div class="bcw"><div id="bc"></div><div id="bcAct"></div></div><div class="kwbox" id="kwbox"></div></div>
+<div id="banner"></div>
+<div id="rotate"><div class="ph"></div>หมุนโทรศัพท์เป็นแนวนอนเพื่อเล่น<small>เกมนี้ออกแบบให้เล่นแนวนอน</small></div>
+
+<div class="screen" id="start">
+  <div class="box">
+    <h1>LOSTWORLD TCG</h1>
+    <p>Prototype ทดลองเล่นกับ AI — ระบบแบบ Legends of Runeterra: เล่นเป็นรอบ ผลัดกันทำทีละอย่าง · สิทธิ์โจมตี ⚔ สลับทุกรอบ (รอบแรกยังโจมตีไม่ได้) · พลังชีวิต 20 · มานา +1 ต่อรอบถึง 10 · มานาที่เหลือเก็บไว้ใช้กับเวทย์ได้ 3 · ความเสียหายบนตัวละครอยู่ถาวร</p>
+    <h2>เด็คของคุณ</h2>
+    <select id="myDeck" class="sel"></select>
+    <h2>เด็คของ AI</h2>
+    <select id="oppDeck" class="sel"></select>
+    <p style="font-size:13px"><a href="deck.html">✎ จัดเด็ค</a> — เด็คที่บันทึกในหน้าจัดเด็คจะขึ้นในรายการนี้</p>
+    <h2>ตัวเลือก</h2>
+    <div class="opts">
+      <label><input type="checkbox" id="optReveal"> เปิดมือฝ่ายตรงข้าม (สำหรับทดสอบ)</label>
+      <label><input type="checkbox" id="optWatch"> ให้ AI เล่นทั้งสองฝั่ง (ดูเฉยๆ)</label>
+      <label><input type="checkbox" id="optFast"> แอนิเมชันเร็วขึ้น</label>
+    </div>
+    <div class="row"><button class="big gold" id="bStart">เริ่มเล่น</button><a class="big" href="gallery.html" style="text-decoration:none;display:inline-flex;align-items:center">แกลเลอรี</a></div>
+    <p style="margin-top:14px;font-size:12px">วิธีเล่น: แตะการ์ดเพื่อดูรายละเอียด · ลากการ์ดบนมือขึ้นไปบนสนามหรือกด “ลงการ์ด” · กด “โจมตี” แล้วเลือกตัวละคร · ตอนถูกโจมตี แตะตัวเรา แล้วแตะตัวที่โจมตีเพื่อบล็อก</p>
+  </div>
+</div>
+<div class="screen" id="over" hidden><div class="box" id="overBox"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="elements.js"></script>
+<script src="cardview.js"></script>
+<script src="game/engine.js"></script>
+<script src="game/effects.js"></script>
+<script src="game/ai.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let SPEED = 1;                                   // animation time multiplier
+const T = s => s * SPEED;
+
+// =====================================================================================
+//  Three.js scene
+// =====================================================================================
+const renderer = new THREE.WebGLRenderer({ canvas: $('c'), antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
+const CW = 1, CH = 880 / 630;                    // card size in world units
+let L = {};                                      // layout (depends on screen aspect)
+const camBase = new THREE.Vector3();
+let shake = 0;
+
+function resize() {
+  const w = innerWidth, h = innerHeight, aspect = w / h;
+  renderer.setSize(w, h, false); camera.aspect = aspect;
+  const portrait = aspect < 1, compact = !portrait && h < 520;   // compact = phone held sideways
+  L = compact
+    ? { portrait, compact, hand0: -3.9, board0: -2.38, board1: 2.48, combat0: -.79, combat1: .87, hand1: 5.3, av0: [-5.6, -.95], av1: [-5.6, 1.05], deck0: [-5.6, -2.75], deck1: [-5.6, 2.85], spacing: 1.55, unitS: 1.32, needW: 13.0, needH: 8.5, handScale: 1.3 }
+    : portrait
+    ? { portrait, hand0: -5.75, board0: -2.45, board1: 2.55, combat0: -.78, combat1: .82, hand1: 6.4, av0: [-2.8, -4.05], av1: [-2.8, 4.4], deck0: [3.05, -4.05], deck1: [3.05, 4.4], spacing: 1.17, needW: 7.5, needH: 14.0, handScale: 1.0 }
+    : { portrait, hand0: -4.05, board0: -2.4, board1: 2.5, combat0: -.8, combat1: .88, hand1: 5.25, av0: [-5.6, -.95], av1: [-5.6, 1.05], deck0: [-5.6, -2.85], deck1: [-5.6, 2.95], spacing: 1.55, unitS: 1.32, needW: 13.4, needH: 9.0, handScale: 1.3 };
+  const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  const d = Math.max(L.needH / 2 / tan, L.needW / 2 / (tan * aspect)) * 1.03;
+  const tilt = 0.2;
+  L.halfW = d * tan * aspect;                     // visible half-width at the table (approx.)
+  camBase.set(0, -Math.sin(tilt) * d + 0.2, Math.cos(tilt) * d);
+  camera.position.copy(camBase); camera.lookAt(0, 0.2, 0); camera.updateProjectionMatrix();
+  if (typeof layoutAll === 'function') { placeStatic(); layoutAll(0); }
+}
+
+// ---------- textures ----------
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.anisotropy = 4; return t; }
+function cut(ctx, x, y, w, h, c) { ctx.beginPath(); ctx.moveTo(x + c, y); ctx.lineTo(x + w - c, y); ctx.lineTo(x + w, y + c); ctx.lineTo(x + w, y + h - c); ctx.lineTo(x + w - c, y + h); ctx.lineTo(x + c, y + h); ctx.lineTo(x, y + h - c); ctx.lineTo(x, y + c); ctx.closePath(); }   // cut-corner shape (spell scrolls)
+function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+const tableTex = canvasTex(1024, 1024, (x, w, h) => {
+  const top = x.createLinearGradient(0, 0, 0, h / 2); top.addColorStop(0, '#120b16'); top.addColorStop(1, '#3a1f2e');      // enemy territory
+  x.fillStyle = top; x.fillRect(0, 0, w, h / 2);
+  const bot = x.createLinearGradient(0, h / 2, 0, h); bot.addColorStop(0, '#1c2f4a'); bot.addColorStop(1, '#0a0f1a');      // our territory
+  x.fillStyle = bot; x.fillRect(0, h / 2, w, h / 2);
+  const v = x.createRadialGradient(w / 2, h / 2, 60, w / 2, h / 2, w * .62); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.6)'); x.fillStyle = v; x.fillRect(0, 0, w, h);
+  for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(255,240,200,${Math.random() * .045})`; x.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
+  // the bar between the territories
+  const bar = x.createLinearGradient(0, h / 2 - 7, 0, h / 2 + 7); bar.addColorStop(0, '#3a2a10'); bar.addColorStop(.5, '#e8c56a'); bar.addColorStop(1, '#3a2a10');
+  x.fillStyle = bar; x.fillRect(0, h / 2 - 5, w, 10);
+  x.fillStyle = 'rgba(232,197,106,.25)'; x.fillRect(0, h / 2 - 9, w, 2); x.fillRect(0, h / 2 + 7, w, 2);
+});
+const table = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshBasicMaterial({ map: tableTex }));
+table.position.z = -0.05; scene.add(table);
+const rowTex = canvasTex(512, 96, (x, w, h) => { rr(x, 4, 4, w - 8, h - 8, 20); x.fillStyle = 'rgba(0,0,0,.28)'; x.fill(); x.strokeStyle = 'rgba(232,197,106,.35)'; x.lineWidth = 3; x.stroke(); });   // where units stand
+// arena: 6 combat slots per side (attackers / blockers line up here)
+const slotTex = canvasTex(160, 220, (x, w, h) => { x.setLineDash([14, 10]); x.lineWidth = 6; x.strokeStyle = 'rgba(232,197,106,.9)'; rr(x, 6, 6, w - 12, h - 12, 18); x.stroke(); x.fillStyle = 'rgba(232,197,106,.06)'; x.fill(); });
+const slots = [0, 1].map(() => Array.from({ length: 6 }, () => { const m = new THREE.Mesh(new THREE.PlaneGeometry(CW * 1.04, CH * 1.04), new THREE.MeshBasicMaterial({ map: slotTex, transparent: true, depthWrite: false, opacity: .25 })); m.position.z = -0.035; scene.add(m); return m; }));
+const arenaTex = canvasTex(512, 256, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(255,120,60,.0)'); g.addColorStop(.5, 'rgba(255,140,60,.10)'); g.addColorStop(1, 'rgba(255,120,60,.0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); });
+const arena = new THREE.Mesh(new THREE.PlaneGeometry(8.4, 3.4), new THREE.MeshBasicMaterial({ map: arenaTex, transparent: true, depthWrite: false, opacity: 0 })); arena.position.z = -0.045; scene.add(arena);
+const slotX = (k, n) => (k - (n - 1) / 2) * L.spacing;
+const rows = [0, 1].map(() => { const m = new THREE.Mesh(new THREE.PlaneGeometry(7.6, 1.75), new THREE.MeshBasicMaterial({ map: rowTex, transparent: true, depthWrite: false })); m.position.z = -0.04; scene.add(m); return m; });
+const backTex = canvasTex(320, 448, (x, w, h) => {
+  rr(x, 0, 0, w, h, 22); x.save(); x.clip();
+  const g = x.createLinearGradient(0, 0, w, h); g.addColorStop(0, '#2b1c45'); g.addColorStop(1, '#120c1e'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  x.strokeStyle = '#e8c56a'; x.lineWidth = 8; rr(x, 14, 14, w - 28, h - 28, 16); x.stroke();
+  x.strokeStyle = '#e8c56a66'; x.lineWidth = 3; for (let r = 30; r < 120; r += 18) { x.beginPath(); x.arc(w / 2, h / 2, r, 0, 7); x.stroke(); }
+  x.fillStyle = '#f5dc96'; x.font = '800 64px Cinzel, serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('LW', w / 2, h / 2 + 4); x.restore();
+});
+const haloTex = canvasTex(256, 320, (x, w, h) => { const g = x.createRadialGradient(w / 2, h / 2, 60, w / 2, h / 2, w * .62); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.62, 'rgba(255,255,255,.95)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); });
+const shadowTex = canvasTex(128, 160, (x, w, h) => { const g = x.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w * .6); g.addColorStop(0, 'rgba(0,0,0,.6)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); });
+const cardGeo = new THREE.PlaneGeometry(CW, CH), haloGeo = new THREE.PlaneGeometry(CW * 1.45, CH * 1.32), shadowGeo = new THREE.PlaneGeometry(CW * 1.5, CH * 1.4);
+
+// ---------- images ----------
+const IMG = {};
+function img(src, onload) {
+  if (!src) return null;
+  if (IMG[src]) { if (IMG[src].complete) return IMG[src]; IMG[src].cbs.push(onload); return null; }
+  const im = new Image(); im.cbs = [onload]; im.onload = () => { im.cbs.forEach(f => f && f()); im.cbs = []; }; im.src = src; IMG[src] = im; return null;
+}
+const svgImg = (key, color) => { const s = kwIcon(key, 64).replace(/currentColor/g, color || '#fff'); return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ')); };
+
+// ---------- card views ----------
+const views = new Map();      // uid -> view
+let G = null, ME = 0, OPP = 1, REVEAL = false;
+function makeView(inst) {
+  let v = views.get(inst.uid); if (v) { v.inst = inst; return v; }
+  const cv = document.createElement('canvas'); cv.width = FW; cv.height = FH;
+  const tex = new THREE.CanvasTexture(cv); tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const g = new THREE.Group();
+  // cards are drawn in painter's order (renderOrder from height, set every frame) instead of the depth buffer:
+  // overlapping tilted cards in the hand used to cut through each other and the text flickered
+  const front = new THREE.Mesh(cardGeo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false }));
+  const back = new THREE.Mesh(cardGeo, new THREE.MeshBasicMaterial({ map: backTex, transparent: true, depthTest: false })); back.rotation.y = Math.PI;
+  const halo = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({ map: haloTex, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, opacity: 0 })); halo.position.z = -0.004; halo.renderOrder = 20;   // all glows before any card face
+  g.add(halo, front, back);
+  const shadow = new THREE.Mesh(shadowGeo, new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, depthTest: false })); shadow.position.z = -0.03; shadow.renderOrder = 10;
+  scene.add(g); scene.add(shadow);
+  v = { uid: inst.uid, inst, g, front, back, halo, shadow, cv, tex, sig: '', glow: null, flash: 0, tw: null };
+  front.userData.v = v; back.userData.v = v;
+  views.set(inst.uid, v); drawFace(v);
+  return v;
+}
+function killView(v) { scene.remove(v.g); scene.remove(v.shadow); v.tex.dispose(); views.delete(v.uid); }
+
+const elColor = c => (ELEMENTS[c.element] || ELEMENTS.fire).color;
+function unitState(v) { const u = v.inst; return G && G.alive(u) ? u : null; }
+function faceSig(v) {
+  const u = unitState(v), c = v.inst.card;
+  const handCost = G && G.players[ME].hand.includes(v.inst) ? G.costOf(G.players[ME], v.inst) : c.cost;
+  return u ? [G.power(u), G.hp(u), G.maxHp(u), u.stunned, u.sealedBy, u.zero, u.barrier, [...u.kws].join(), u.sick, u.lvl, c.id].join('|') : 'h' + handCost + '|' + v.inst.bonusP + '|' + v.inst.bonusH + '|' + c.id;
+}
+// card face on the table = the normal card layout (cost · name · element / art window / type bar / ability box / stats)
+const FW = 384, FH = 536;
+const segTh = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter('th', { granularity: 'word' }) : null;
+function abilityRuns(html) {        // "<b>ลงสนาม:</b> text" -> [{t, b}] split into wrappable words
+  const runs = []; String(html).replace(/\n/g, ' ').split(/(<b>.*?<\/b>)/).forEach(part => {
+    if (!part) return; const b = /^<b>/.test(part), t = part.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    const words = segTh ? [...segTh.segment(t)].map(x => x.segment) : t.split(/(\s+)/);
+    for (const w of words) if (w) runs.push({ t: w, b });
+  });
+  return runs;
+}
+function layoutText(x, paras, maxW, size) {   // greedy wrap; returns lines of [{t,b,x}]
+  const lines = [];
+  for (const runs of paras) {
+    let line = [], lw = 0;
+    for (const r of runs) {
+      x.font = `${r.b ? 800 : 500} ${size}px "Noto Serif Thai", serif`; const ww = x.measureText(r.t).width;
+      if (lw + ww > maxW && line.length && r.t.trim()) { lines.push(line); line = []; lw = 0; }
+      if (!line.length && !r.t.trim()) continue;
+      line.push({ t: r.t, b: r.b, x: lw }); lw += ww;
+    }
+    if (line.length) lines.push(line);
+  }
+  return lines;
+}
+// unit on the field (LoR style): the art, two big stat boxes on top, keyword icons at the bottom — readable at a glance
+function drawUnitFace(v, u) {   // LoR board unit: full art, keyword badge on top, big attack | health shields at the bottom
+  const x = v.cv.getContext('2d'), w = FW, h = FH, c = v.inst.card, col = elColor(c), hero = isHero(c), redraw = () => { v.sig = ''; };
+  x.clearRect(0, 0, w, h); x.textBaseline = 'middle'; x.textAlign = 'center';
+  const top = 34, bot = h - 18;            // art window
+  x.save(); rr(x, 8, top, w - 16, bot - top, 18); x.clip();
+  const src = cardArt(c), im = src && img('../' + src, redraw);
+  if (im) { const k = Math.max((w - 16) / im.width, (bot - top) / im.height), [fx, fy] = artFocus(c); x.drawImage(im, 8 + (w - 16 - im.width * k) * fx, top + (bot - top - im.height * k) * fy, im.width * k, im.height * k); }
+  else { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, col); g.addColorStop(1, '#14111a'); x.fillStyle = g; x.fillRect(0, 0, w, h); }
+  const g = x.createLinearGradient(0, top, 0, bot); g.addColorStop(.6, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.55)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  if (u.stunned) { x.fillStyle = 'rgba(70,130,255,.4)'; x.fillRect(0, 0, w, h); }
+  x.restore();
+  // gold frame (thicker / brighter for heroes)
+  x.save(); rr(x, 8, top, w - 16, bot - top, 18);
+  const fg = x.createLinearGradient(0, top, 0, bot); fg.addColorStop(0, hero ? '#fff3c4' : '#d9b46a'); fg.addColorStop(.5, hero ? '#c8962e' : '#8a6a32'); fg.addColorStop(1, hero ? '#f5dc96' : '#c8a058');
+  x.strokeStyle = fg; x.lineWidth = hero ? 14 : 10; x.stroke(); x.restore();
+  // keyword badge: a dark diamond plate at the top edge, icons in their colours
+  const marks = [...u.kws].filter(k => KEYWORDS[k]);
+  if (marks.length) {
+    const sz = 64, bw = Math.max(110, marks.length * (sz + 8) + 40), bx = w / 2 - bw / 2;
+    x.save(); x.beginPath(); x.moveTo(bx, top); x.lineTo(bx + 22, top - 30); x.lineTo(bx + bw - 22, top - 30); x.lineTo(bx + bw, top); x.lineTo(bx + bw - 22, top + 40); x.lineTo(bx + 22, top + 40); x.closePath();
+    x.fillStyle = '#0d0b12'; x.fill(); x.lineWidth = 5; x.strokeStyle = hero ? '#f5dc96' : '#d9b46a'; x.stroke(); x.restore();
+    marks.forEach((k, i) => {
+      const cx = w / 2 + (i - (marks.length - 1) / 2) * (sz + 8), cy = top + 5, kc = KEYWORDS[k].color;
+      x.save(); x.shadowColor = kc; x.shadowBlur = 12; const ic = img(svgImg(k, kc), redraw); if (ic) x.drawImage(ic, cx - sz / 2, cy - sz / 2, sz, sz); x.restore();
+    });
+  }
+  // attack (orange) | health (red) shields along the bottom, numbers as big as LoR's
+  const pw = G.power(u), hp = G.hp(u), mx = G.maxHp(u), basePw = c.power || 0, baseHp = c.health || 0;
+  const shield = (cx, val, c1, c2, tc) => {
+    const sw = 132, sh = 120, sx = cx - sw / 2, sy = h - sh - 4;
+    x.save(); x.beginPath(); x.moveTo(sx, sy); x.lineTo(sx + sw, sy); x.lineTo(sx + sw, sy + sh * .62); x.quadraticCurveTo(sx + sw, sy + sh * .9, cx, sy + sh); x.quadraticCurveTo(sx, sy + sh * .9, sx, sy + sh * .62); x.closePath();
+    const gb = x.createLinearGradient(0, sy, 0, sy + sh); gb.addColorStop(0, c1); gb.addColorStop(1, c2); x.fillStyle = gb; x.fill();
+    x.lineWidth = 6; x.strokeStyle = hero ? '#fff3c4' : '#e8c56a'; x.stroke(); x.restore();
+    x.font = '800 92px Cinzel, serif'; x.lineWidth = 12; x.strokeStyle = '#1a0805'; x.strokeText(String(val), cx, sy + sh * .46); x.fillStyle = tc; x.fillText(String(val), cx, sy + sh * .46);
+  };
+  shield(w / 2 - 70, pw, '#f6a24a', '#b04a14', pw > basePw ? '#a8ff9a' : pw < basePw ? '#ffc0b0' : '#fff');
+  shield(w / 2 + 70, hp, '#e8484a', '#7a1010', hp < mx ? '#ff9a8a' : mx > baseHp ? '#a8ff9a' : '#fff');
+  // level-up progress
+  const need = G.levelNeed(u);
+  if (need) { x.font = '800 26px Cinzel, serif'; const t = `⬆ ${u.lvl || 0}/${need}`, tw = x.measureText(t).width + 30; rr(x, w / 2 - tw / 2, top + 54, tw, 40, 20); x.fillStyle = 'rgba(11,10,16,.85)'; x.fill(); x.lineWidth = 2; x.strokeStyle = '#e8c56a'; x.stroke(); x.fillStyle = '#ffd36a'; x.fillText(t, w / 2, top + 75); }
+  // statuses
+  const tags = [];
+  if (u.stunned) tags.push(['STUN', '#4a8dff']);
+  if (u.sealedBy) tags.push(['ผนึก', '#9b6bd6']);
+  if (u.zero) tags.push(['P=0', '#777']);
+  if (u.barrier) tags.push(['เกราะคาถา', '#2bb7d6']);
+  if (G.hasAbilityText(c) && !G.eff(c)) tags.push(['⚠ effect ยังไม่ทำ', '#c0392b']);
+  tags.forEach(([t, bg], i) => { x.font = '800 30px "Noto Serif Thai", serif'; const tw = x.measureText(t).width + 30, yy = h / 2 - 10 + i * 46; rr(x, w / 2 - tw / 2, yy - 20, tw, 40, 20); x.fillStyle = bg; x.fill(); x.fillStyle = '#fff'; x.fillText(t, w / 2, yy + 1); });
+  v.tex.needsUpdate = true;
+}
+function drawFace(v) {     // on the table: full art + cost / name / keywords / stats; tap the card to read its text
+  const x = v.cv.getContext('2d'), w = FW, h = FH, c = v.inst.card, u = unitState(v), spell = LW.isSpellData(c), col = elColor(c), hero = isHero(c), lvl = isLevelForm(c);
+  if (unitState(v)) return drawUnitFace(v, unitState(v));   // on the field: big stats
+  const redraw = () => { v.sig = ''; };
+  x.clearRect(0, 0, w, h); x.textBaseline = 'middle';
+  // spells are ninja scrolls: cut corners + wooden rollers, so they read differently from characters at a glance
+  const shape = (ins) => spell ? cut(x, ins, 22 + ins, w - ins * 2, h - 44 - ins * 2, 40) : rr(x, ins, ins, w - ins * 2, h - ins * 2, 26 - ins * .6);
+  x.save(); shape(0); x.clip();
+  const src = cardArt(c), im = src && img('../' + src, redraw);
+  if (im) { const k = Math.max(w / im.width, h / im.height), [fx, fy] = artFocus(c); x.drawImage(im, (w - im.width * k) * fx, (h - im.height * k) * fy, im.width * k, im.height * k); }   // crop around the art focus
+  else { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, col); g.addColorStop(1, '#14111a'); x.fillStyle = g; x.fillRect(0, 0, w, h); }
+  const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(11,10,15,.55)'); g.addColorStop(.16, 'rgba(11,10,15,0)'); g.addColorStop(.52, 'rgba(11,10,15,0)'); g.addColorStop(.78, 'rgba(11,10,15,.85)'); g.addColorStop(1, 'rgba(11,10,15,.97)');
+  x.fillStyle = g; x.fillRect(0, 0, w, h);
+  if (u && u.stunned) { x.fillStyle = 'rgba(80,140,255,.3)'; x.fillRect(0, 0, w, h); }
+  x.restore();
+  // frame
+  x.save(); shape(5);
+  if (hero) { const gg = x.createLinearGradient(0, 0, w, h); gg.addColorStop(0, '#fff3c4'); gg.addColorStop(.5, '#c8962e'); gg.addColorStop(1, '#f5dc96'); x.strokeStyle = gg; x.lineWidth = 11; }
+  else { x.strokeStyle = col; x.lineWidth = spell ? 5 : 9; }
+  x.stroke(); if (spell) { shape(15); x.lineWidth = 3; x.stroke(); } x.restore();
+  if (spell) for (const ry of [6, h - 34]) {   // the scroll's wooden rollers
+    const gr = x.createLinearGradient(0, ry, 0, ry + 28); gr.addColorStop(0, '#5a3a1c'); gr.addColorStop(.3, '#c9934f'); gr.addColorStop(.45, '#f0c98a'); gr.addColorStop(.7, '#a8733a'); gr.addColorStop(1, '#4a2e14');
+    rr(x, 2, ry, w - 4, 28, 14); x.fillStyle = gr; x.fill(); x.lineWidth = 2; x.strokeStyle = '#2a1a0a'; x.stroke();
+  }
+  // cost (diamond for characters, circle for spells) + element
+  const cost = G && G.players[ME].hand.includes(v.inst) ? G.costOf(G.players[ME], v.inst) : c.cost;
+  x.save(); x.translate(54, 54);
+  if (spell) { x.beginPath(); x.arc(0, 0, 34, 0, 7); const gc = x.createRadialGradient(-10, -10, 2, 0, 0, 36); gc.addColorStop(0, mix(col, '#ffffff', .4)); gc.addColorStop(1, mix(col, '#000000', .4)); x.fillStyle = gc; }
+  else { x.rotate(Math.PI / 4); rr(x, -27, -27, 54, 54, 8); x.fillStyle = hero ? '#c8962e' : '#0f0d14'; }
+  x.fill(); x.lineWidth = 5; x.strokeStyle = hero ? '#fff3c4' : '#e8c56a'; x.stroke(); x.restore();
+  numText(x, cost, 54, 57, 42, cost < c.cost ? '#9affb0' : '#fff');
+  const ei = img((ELEMENTS[c.element] || {}).icon, redraw); if (ei) x.drawImage(ei, w - 90, 16, 74, 74);
+  if (hero) { x.font = '800 16px Cinzel, serif'; const t = lvl ? '★ LEVEL UP' : '★ HERO', tw = x.measureText(t).width + 30; rr(x, w / 2 - tw / 2, 4, tw, 26, 9); const gh = x.createLinearGradient(0, 4, 0, 30); gh.addColorStop(0, '#fff3c4'); gh.addColorStop(1, '#c8962e'); x.fillStyle = gh; x.fill(); x.fillStyle = '#2a1d05'; x.textAlign = 'center'; x.fillText(t, w / 2, 18); }
+  const need = u && G.levelNeed(u);   // level-up progress, e.g. ⬆ 1/3
+  if (need) { x.font = '800 20px Cinzel, serif'; const t = `⬆ ${u.lvl || 0}/${need}`, tw = x.measureText(t).width + 26; rr(x, w / 2 - tw / 2, 38, tw, 30, 15); x.fillStyle = 'rgba(11,10,16,.8)'; x.fill(); x.lineWidth = 2; x.strokeStyle = '#e8c56a'; x.stroke(); x.fillStyle = '#ffd36a'; x.textAlign = 'center'; x.fillText(t, w / 2, 54); }
+  // name
+  x.textAlign = 'center'; x.fillStyle = '#fff'; x.shadowColor = '#000'; x.shadowBlur = 10;
+  let fs = 36; x.font = `800 ${fs}px "Noto Serif Thai", serif`; while (x.measureText(c.nameTh).width > w - 40 && fs > 18) { fs -= 2; x.font = `800 ${fs}px "Noto Serif Thai", serif`; }
+  x.fillText(c.nameTh, w / 2, h - (spell ? 132 : 150)); x.shadowBlur = 0;
+  // keyword / spell-speed icons under the name
+  const kws = u ? [...u.kws].filter(k => KEYWORDS[k]) : (c.keywords || []).filter(k => KEYWORDS[k]);
+  const marks = kws.map(k => [k, KEYWORDS[k].color]); if (spell && SPEEDS[c.speed]) marks.push([c.speed, SPEEDS[c.speed].color]);
+  marks.forEach(([k, color], i) => {
+    const cx = w / 2 + (i - (marks.length - 1) / 2) * 58, cy = h - (spell ? 84 : 102);
+    x.beginPath(); x.arc(cx, cy, 25, 0, 7); x.fillStyle = color; x.fill(); x.lineWidth = 3; x.strokeStyle = '#fff8'; x.stroke();
+    const ic = img(svgImg(k, '#fff'), redraw); if (ic) x.drawImage(ic, cx - 16, cy - 16, 32, 32);
+  });
+  if (spell) { x.font = '800 21px Cinzel, serif'; x.fillStyle = '#e9dfc3'; x.fillText('✦ SPELL ✦', w / 2, h - 60); }
+  else {
+    const pw = u ? G.power(u) : (c.power || 0) + v.inst.bonusP, hp = u ? G.hp(u) : (c.health || 0) + v.inst.bonusH, mx = u ? G.maxHp(u) : hp;
+    const basePw = c.power || 0, baseHp = c.health || 0;
+    x.beginPath(); x.arc(56, h - 54, 42, 0, 7); const gp = x.createRadialGradient(44, h - 68, 4, 56, h - 54, 44); gp.addColorStop(0, '#f08050'); gp.addColorStop(1, '#8a2512'); x.fillStyle = gp; x.fill(); x.lineWidth = 6; x.strokeStyle = '#e8c56a'; x.stroke();
+    numText(x, pw, 56, h - 50, 52, pw > basePw ? '#b8ffb0' : pw < basePw ? '#ffb0a0' : '#fff');
+    x.save(); rr(x, w - 98, h - 96, 84, 84, 18); const gh2 = x.createRadialGradient(w - 68, h - 68, 4, w - 56, h - 54, 46); gh2.addColorStop(0, '#4fc07e'); gh2.addColorStop(1, '#164a33'); x.fillStyle = gh2; x.fill(); x.lineWidth = 6; x.strokeStyle = '#e8c56a'; x.stroke(); x.restore();
+    numText(x, hp, w - 56, h - 50, 52, hp < mx ? '#ff8a7a' : mx > baseHp ? '#b8ffb0' : '#fff');
+  }
+  // statuses
+  const tags = [];
+  if (u && u.stunned) tags.push(['STUN', '#4a8dff']);
+  if (u && u.sealedBy) tags.push(['ผนึก', '#9b6bd6']);
+  if (u && u.zero) tags.push(['P=0', '#888']);
+  if (u && u.barrier) tags.push(['เกราะคาถา', '#2bb7d6']);
+  if (G && G.hasAbilityText(c) && !G.eff(c)) tags.push(['⚠ effect ยังไม่ทำ', '#c0392b']);
+  else if (G && G.outdated(c)) tags.push(['⚠ effect อาจไม่ตรง', '#c0392b']);
+  x.textAlign = 'center';
+  tags.forEach(([t, bg], i) => { x.font = '700 21px "Noto Serif Thai", serif'; const tw = x.measureText(t).width + 22, yy = 116 + i * 36; rr(x, w / 2 - tw / 2, yy - 15, tw, 30, 15); x.fillStyle = bg; x.fill(); x.fillStyle = '#fff'; x.fillText(t, w / 2, yy + 1); });
+  v.tex.needsUpdate = true;
+}
+function mix(a, b, t) {   // blend two #rrggbb colours
+  const p = s => [1, 3, 5].map(i => parseInt(String(s).slice(i, i + 2), 16) || 0), A = p(a), B = p(b);
+  return '#' + A.map((v, i) => Math.round(v * (1 - t) + B[i] * t).toString(16).padStart(2, '0')).join('');
+}
+function numText(x, n, cx, cy, size, color) {
+  x.font = `800 ${size}px Cinzel, serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.lineWidth = 7; x.strokeStyle = '#000'; x.strokeText(String(n), cx, cy); x.fillStyle = color; x.fillText(String(n), cx, cy);
+}
+function syncFaces() { for (const v of views.values()) { const s = faceSig(v); if (s !== v.sig) { v.sig = s; drawFace(v); } } }
+
+// ---------- static meshes: decks + avatars ----------
+const decks = [0, 1].map(() => { const g = new THREE.Group(); for (let k = 0; k < 4; k++) { const m = new THREE.Mesh(cardGeo, new THREE.MeshBasicMaterial({ map: backTex, transparent: true })); m.position.set(k * .015, k * .015, k * .012); g.add(m); } g.scale.setScalar(.82); scene.add(g); return g; });
+const avatars = [0, 1].map(i => {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; const tex = new THREE.CanvasTexture(cv);
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.25, 1.25), new THREE.MeshBasicMaterial({ map: tex, transparent: true })); scene.add(m);
+  return { cv, tex, m, life: null };
+});
+function drawAvatar(i) {
+  const a = avatars[i], p = G.players[i], act = G.actor === i, tok = G.token === i; if (a.life === p.life && a.active === act && a.tok === tok) return; a.life = p.life; a.active = act; a.tok = tok;
+  const x = a.cv.getContext('2d'); x.clearRect(0, 0, 256, 256);
+  x.beginPath(); x.arc(128, 128, 112, 0, 7); const g = x.createRadialGradient(100, 90, 10, 128, 128, 120); g.addColorStop(0, i === ME ? '#3a6fb0' : '#a03a3a'); g.addColorStop(1, '#14111a'); x.fillStyle = g; x.fill();
+  x.lineWidth = a.active ? 14 : 8; x.strokeStyle = a.active ? '#ffe08a' : '#e8c56a88'; x.stroke();
+  numText(x, Math.max(0, p.life), 128, 120, 92, p.life <= 10 ? '#ff8a7a' : '#fff');
+  x.font = '700 26px "Noto Serif Thai", serif'; x.fillStyle = '#e9dfc3'; x.fillText(i === ME ? 'คุณ' : 'ศัตรู', 128, 196);
+  if (tok) { x.beginPath(); x.arc(208, 48, 40, 0, 7); x.fillStyle = '#c8962e'; x.fill(); x.lineWidth = 5; x.strokeStyle = '#fff3c4'; x.stroke(); x.font = '800 44px serif'; x.fillStyle = '#2a1d05'; x.fillText('⚔', 208, 52); }
+  a.tex.needsUpdate = true;
+}
+function placeStatic() {
+  [0, 1].forEach(i => {
+    const r = i === ME ? L.board0 : L.board1; rows[i].position.set(0, r, -0.04); rows[i].scale.set(L.portrait ? .97 : 1, 1, 1);
+    rows[i].scale.x *= L.spacing / 1.2; rows[i].scale.y = L.unitS || 1;   // rows fit 6 (bigger) units
+    const cy = i === ME ? L.combat0 : L.combat1; slots[i].forEach((m, k) => { m.position.set(slotX(k, 6), cy, -0.035); m.scale.setScalar(L.unitS || 1); });
+    arena.position.set(0, (L.combat0 + L.combat1) / 2, -0.045);
+    const dk = i === ME ? L.deck0 : L.deck1; decks[i].position.set(dk[0], dk[1], 0);
+    const av = i === ME ? L.av0 : L.av1; avatars[i].m.position.set(av[0], av[1], 0.05);
+  });
+}
+
+// ---------- tweens ----------
+const tweens = []; let freezeUntil = 0;
+const ease = { out: t => 1 - Math.pow(1 - t, 3), inOut: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, back: t => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }, in: t => t * t * t, lin: t => t };
+function tween(v, to, dur, e) {
+  const g = v.g || v;
+  return new Promise(res => {
+    for (let k = tweens.length - 1; k >= 0; k--) if (tweens[k].g === g) { tweens[k].res(); tweens.splice(k, 1); }   // replace running tween on the same object
+    const from = { x: g.position.x, y: g.position.y, z: g.position.z, rx: g.rotation.x, ry: g.rotation.y, rz: g.rotation.z, s: g.scale.x };
+    const tgt = Object.assign({}, from, to);
+    if (!(dur > 0)) { apply(g, tgt); res(); return; }
+    const tw = { g, from, to: tgt, t0: performance.now(), dur: T(dur) * 1000, e: ease[e || 'inOut'], res };
+    tweens.push(tw);
+    // fallback: finish even if frames are not rendered (hidden tab / background), so the game never stalls
+    setTimeout(() => { const k = tweens.indexOf(tw); if (k >= 0) { tweens.splice(k, 1); apply(g, tgt); res(); } }, tw.dur + 400);
+  });
+}
+function apply(g, s) { g.position.set(s.x, s.y, s.z); g.rotation.set(s.rx, s.ry, s.rz); g.scale.setScalar(s.s); }
+function stepTweens(now) {
+  if (now < freezeUntil) { for (const t of tweens) t.t0 += 16; return; }
+  for (let k = tweens.length - 1; k >= 0; k--) {
+    const t = tweens[k], p = Math.min(1, (now - t.t0) / t.dur), e = t.e(p), s = {};
+    for (const key in t.to) s[key] = t.from[key] + (t.to[key] - t.from[key]) * e;
+    apply(t.g, s);
+    if (p >= 1) { tweens.splice(k, 1); t.res(); }
+  }
+}
+const hitStop = ms => { freezeUntil = performance.now() + ms * SPEED; };
+
+// ---------- particles ----------
+const bursts = [];
+const dotTex = canvasTex(64, 64, (x) => { const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.4, 'rgba(255,255,255,.5)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); });
+function burst(pos, color, n, speed, life) {
+  n = n || 40; const geo = new THREE.BufferGeometry(), P = new Float32Array(n * 3), V = [];
+  for (let i = 0; i < n; i++) { P[i * 3] = pos.x; P[i * 3 + 1] = pos.y; P[i * 3 + 2] = pos.z + .1; const a = Math.random() * 6.28, s = (speed || 3) * (.4 + Math.random()); V.push([Math.cos(a) * s, Math.sin(a) * s, Math.random() * 2]); }
+  geo.setAttribute('position', new THREE.BufferAttribute(P, 3));
+  const mat = new THREE.PointsMaterial({ size: .16, map: dotTex, color: new THREE.Color(color), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  mat.depthTest = false; const pts = new THREE.Points(geo, mat); pts.renderOrder = 9000; scene.add(pts);   // sparks always on top
+  bursts.push({ pts, V, t0: performance.now(), life: (life || .8) * 1000 });
+}
+// ---------- bigger effects: shockwave rings, light rays, rising sparks (hero entrance, level up, dying cards) ----------
+const fxs = [];
+const ringTex = canvasTex(256, 256, (x) => { const g = x.createRadialGradient(128, 128, 70, 128, 128, 128); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.72, 'rgba(255,255,255,.9)'); g.addColorStop(.82, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 256, 256); });
+const raysTex = canvasTex(512, 512, (x) => {
+  x.translate(256, 256);
+  for (let i = 0; i < 18; i++) { x.rotate(Math.PI * 2 / 18); const g = x.createLinearGradient(0, 0, 0, -250); g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.beginPath(); x.moveTo(-10 - (i % 3) * 5, 0); x.lineTo(0, -250); x.lineTo(10 + (i % 3) * 5, 0); x.fill(); }
+  const c = x.createRadialGradient(0, 0, 0, 0, 0, 120); c.addColorStop(0, 'rgba(255,255,255,1)'); c.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = c; x.fillRect(-256, -256, 512, 512);
+});
+function fxPlane(tex, color, pos, size, order) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), new THREE.MeshBasicMaterial({ map: tex, color: new THREE.Color(color), transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }));
+  m.position.copy(pos); m.renderOrder = order || 60; scene.add(m); return m;
+}
+function addFx(obj, life, update) { fxs.push({ obj, t0: performance.now(), life: life * 1000 * SPEED, update }); }
+function stepFx(now) {
+  for (let k = fxs.length - 1; k >= 0; k--) {
+    const f = fxs[k], p = Math.min(1, (now - f.t0) / f.life); f.update(f.obj, p);
+    if (p >= 1) { scene.remove(f.obj); f.obj.geometry.dispose(); f.obj.material.dispose(); fxs.splice(k, 1); }
+  }
+}
+function sparks(pos, color, n, opts) {   // particles with their own velocity field (rise = drift up the screen)
+  opts = opts || {}; const geo = new THREE.BufferGeometry(), P = new Float32Array(n * 3), V = [];
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * 6.28, r = (opts.radius || .2) * Math.random();
+    P[i * 3] = pos.x + Math.cos(a) * r; P[i * 3 + 1] = pos.y + Math.sin(a) * r * .8; P[i * 3 + 2] = (pos.z || 0) + .1;
+    const sp = (opts.speed || 1.2) * (.3 + Math.random());
+    V.push(opts.rise ? [(Math.random() - .5) * .6, sp, Math.random() * .8] : [Math.cos(a) * sp, Math.sin(a) * sp, Math.random() * 1.5]);
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(P, 3));
+  const mat = new THREE.PointsMaterial({ size: opts.size || .14, map: dotTex, color: new THREE.Color(color), transparent: true, depthTest: false, depthWrite: false, blending: opts.dark ? THREE.NormalBlending : THREE.AdditiveBlending });
+  const pts = new THREE.Points(geo, mat); pts.renderOrder = 9000; scene.add(pts);
+  bursts.push({ pts, V, t0: performance.now(), life: (opts.life || 1) * 1000, drag: opts.rise ? .985 : .94 });
+}
+// a hero arrives: golden shockwaves, turning light rays, a column of rising sparks, a camera kick
+function heroFx(at, color, big) {
+  const pos = new THREE.Vector3(at.x, at.y, .05), gold = '#ffd36a';
+  [0, .12, big ? .24 : null].forEach((delay, i) => { if (delay == null) return;
+    const ring = fxPlane(ringTex, i === 1 ? color : gold, pos, 1, 70 + i);
+    addFx(ring, (big ? 1.3 : 1) + delay, (m, p) => { const q = Math.max(0, p - delay / ((big ? 1.3 : 1) + delay)); const s = .4 + q * (big ? 9 : 6); m.scale.set(s, s * .85, 1); m.material.opacity = q > 0 ? (1 - q) * .9 : 0; });
+  });
+  const rays = fxPlane(raysTex, gold, new THREE.Vector3(at.x, at.y, .2), big ? 6 : 4.2, 65);
+  addFx(rays, big ? 1.8 : 1.4, (m, p) => { m.rotation.z = p * 1.2; const s = .5 + Math.sin(Math.min(p * 2.2, 1) * Math.PI / 2) * .8; m.scale.set(s, s, 1); m.material.opacity = Math.sin(p * Math.PI) * (big ? .95 : .7); });
+  sparks(pos, gold, big ? 160 : 90, { rise: true, radius: .9, speed: big ? 2.6 : 1.8, life: big ? 1.9 : 1.5, size: .15 });
+  sparks(pos, '#fff3c4', big ? 70 : 40, { speed: big ? 4 : 3, life: .9, size: .12 });
+  shake = big ? .45 : .28; freezeUntil = performance.now() + (big ? 160 : 90);
+}
+function stepBursts(now, dt) {
+  for (let k = bursts.length - 1; k >= 0; k--) {
+    const b = bursts[k], p = (now - b.t0) / b.life, P = b.pts.geometry.attributes.position.array;
+    for (let i = 0; i < b.V.length; i++) { P[i * 3] += b.V[i][0] * dt; P[i * 3 + 1] += b.V[i][1] * dt; P[i * 3 + 2] += b.V[i][2] * dt; const dr = b.drag || .94; b.V[i][0] *= dr; b.V[i][1] *= dr; }
+    b.pts.geometry.attributes.position.needsUpdate = true; b.pts.material.opacity = Math.max(0, 1 - p);
+    if (p >= 1) { scene.remove(b.pts); b.pts.geometry.dispose(); bursts.splice(k, 1); }
+  }
+}
+
+// ---------- layout ----------
+let selected = null, hovered = null, hoverAt = null, dragging = null, handOpen = false;   // handOpen: phone hand spread out
+let attackSel = new Set(), blockPairs = {}, blockPick = null;
+const pulls = new Map();   // challenger (ours) -> enemy dragged in front of it (LoR: Challenger)
+const hasChallenger = () => [...attackSel].some(a => G.has(a, 'challenger'));
+function attackPrompt() {
+  if (!attackSel.size) return '';
+  if (hasChallenger() && !pulls.size) return 'ตัวท้าดวลอยู่ในแนวโจมตี — ลากศัตรูมาวางตรงหน้ามันเพื่อบังคับให้สู้ แล้วกดปุ่มกลม “โจมตี!”';
+  return 'ลากตัวละครเข้า/ออกจากแนวโจมตีได้ แล้วกดปุ่มกลม “โจมตี!”';
+}
+function handPos(i, n, k, v) {
+  const mid = (n - 1) / 2, d = k - mid;
+  if (i === ME && L.compact) {               // phone (LoR mobile): a small fan in the bottom-right corner; tap it to spread the hand out
+    if (handOpen && (mode === 'main' || mode === 'respond')) {
+      const sp = Math.min(1.5, 10.5 / Math.max(n, 1));
+      const p = { x: d * sp - .3, y: -3.05 - Math.abs(d) * Math.abs(d) * .02, z: 1.3 + k * .015, rx: .15, ry: 0, rz: -d * .03, s: 1.7 };
+      if (v === selected) { p.y += .75; p.z += .5; p.s = 1.95; p.rz = 0; }
+      return p;
+    }
+    // LoR mobile: an overlapping row that climbs gently to the bottom-right corner; every card shows its left strip (cost + art)
+    const right = Math.min(L.halfW - .8, 7.6), sp = Math.min(.82, 4.6 / Math.max(n - 1, 1)), t = n > 1 ? k / (n - 1) : 1;
+    const p = { x: right - (n - 1 - k) * sp, y: -3.45 + t * .3 - (dragging ? .5 : 0), z: .5 + k * .02, rx: .12, ry: 0, rz: .1 - t * .1, s: 1.45 };
+    if (v === hovered) { p.y += .35; p.z += .3; }
+    return p;
+  }
+  if (i === ME) {
+    const sp = Math.min(L.portrait ? .74 : L.compact ? 1.12 : .92, (L.portrait ? 6.4 : L.compact ? 9 : 7.6) / Math.max(n, 1)), s = L.handScale;
+    let p = { x: d * sp, y: L.hand0 - Math.abs(d) * Math.abs(d) * .025, z: .4 + k * .012, rx: .5, ry: 0, rz: -d * .045, s };
+    if (v === selected || v === hovered) { p.y += .55; p.z += .5; p.s = s * 1.18; p.rz = 0; }
+    return p;
+  }
+  const sp = Math.min(.55, 5 / Math.max(n, 1));
+  return { x: d * sp, y: L.hand1, z: .3 + k * .01, rx: -.15, ry: REVEAL ? 0 : Math.PI, rz: d * .04, s: .72 };
+}
+function boardPos(i, n, k) { return { x: (k - (n - 1) / 2) * L.spacing, y: i === ME ? L.board0 : L.board1, z: .02, rx: 0, ry: 0, rz: 0, s: L.unitS || 1 }; }
+function targetFor(v) {
+  if (!G) return null;
+  const si = G.stack.findIndex(e => e.x === v.inst);
+  if (si >= 0) return { x: L.portrait ? 2.5 : 3.55, y: .1 - si * .35, z: .9 + si * .06, rx: 0, ry: 0, rz: .05, s: .78 };
+  for (const i of [0, 1]) {
+    const p = G.players[i];
+    let k = p.hand.indexOf(v.inst); if (k >= 0) return handPos(i, p.hand.length, k, v);
+    k = p.board.indexOf(v.inst);
+    if (k >= 0) {
+      const t = boardPos(i, p.board.length, k), dir = i === ME ? 1 : -1;
+      const arenaY = i === ME ? L.combat0 : L.combat1;
+      if (G.combat) {
+        const atk = G.combat.attackers, a = atk.indexOf(v.inst);
+        if (a >= 0) { t.x = slotX(a, atk.length); t.y = arenaY; t.z = .15; }
+        const blockEntry = Object.entries(G.combat.blocks || {}).find(([, b]) => b === v.inst);
+        const pending = Object.entries(blockPairs).find(([, b]) => b === v.inst);
+        const forced = Object.entries(G.combat.forced || {}).find(([, b]) => b === v.inst);   // pulled by an enemy challenger
+        const be = forced || blockEntry || pending;
+        if (be) { const ai = atk.findIndex(x => x.uid == be[0]); if (ai >= 0) { t.x = slotX(ai, atk.length); t.y = arenaY; t.z = .15; } }
+      } else if (attackSel.has(v.inst)) { const order = [...attackSel], a = order.indexOf(v.inst); t.x = slotX(a, order.length); t.y = arenaY; t.z = .14; }
+      else if (i === OPP) for (const [a, e] of pulls) if (e === v.inst && attackSel.has(a)) { const order = [...attackSel]; t.x = slotX(order.indexOf(a), order.length); t.y = arenaY; t.z = .14; }   // pulled in front of our challenger
+      if (v === selected) t.z += .1;
+      if (mode === 'target' && targetOpts.includes(v.inst)) { t.z += .35; t.s = (t.s || 1) * 1.08; }
+      return t;
+    }
+  }
+  return null;
+}
+function layoutAll(dur) {
+  for (const v of views.values()) { if (v.busy) continue; const t = targetFor(v); if (t) tween(v, t, dur == null ? .32 : dur, 'out'); }
+}
+
+// ---------- glow / halos ----------
+function glowFor(v) {
+  if (!G || G.over) return null;
+  const u = v.inst, me = G.players[ME];
+  if (mode === 'target' && targetOpts.includes(u)) return '#ff6a4a';
+  if (mode === 'main' && attackSel.has(u)) return '#ffb347';
+  if (mode === 'main' && u.owner === OPP && G.players[OPP].board.includes(u) && hasChallenger()) return [...pulls.values()].includes(u) ? '#ff6a4a' : u.stunned ? null : '#ff9a6a';
+  if (mode === 'block') {
+    if (blockPick === u || (dragging && dragging.inst === u)) return '#ffe08a';
+    if (dropTarget === u) return '#ffffff';
+    if (me.board.includes(u) && G.canBlock(u)) return Object.values(blockPairs).includes(u) ? '#ffb347' : '#6fcf97';
+    if (G.combat && G.combat.attackers.includes(u)) return '#ff6a4a';
+  }
+  if ((mode === 'main' || mode === 'respond') && me.hand.includes(u) && !G.whyNot(me, u)) return '#6fcf97';
+  if (mode === 'main' && me.board.includes(u) && G.canAttack(u)) return '#4a8a6a';
+  if (v === selected) return '#ffe08a';
+  if (isHero(u.card) && (G.players[0].board.includes(u) || G.players[1].board.includes(u))) return '#e8b84a';   // heroes stand out
+  return null;
+}
+
+// ---------- render loop ----------
+let last = performance.now();
+let slowFrames = 0, pr = Math.min(devicePixelRatio, 2);
+function frame(now) {
+  requestAnimationFrame(frame);
+  const raw = now - last, dt = Math.min(raw / 1000, .05); last = now;
+  if (!document.hidden && raw > 0 && raw < 200) {        // ~30 fps for a while -> render fewer pixels
+    slowFrames = raw > 28 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+    if (slowFrames > 90 && pr > 1.25) { pr = Math.max(1.25, pr - .35); renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight, false); slowFrames = 0; }
+  }
+  stepTweens(now); stepBursts(now, dt); stepFx(now);
+  if (G) {      // arena slots: brighter where you can put a card now
+    const me = G.players[ME], myAtk = (mode === 'main' && !G.attackBlocked(me)) || (dragging && dragKind === 'attack');
+    const blk = mode === 'block' || (dragging && dragKind === 'block'), pulse = .55 + .25 * Math.sin(now / 220);
+    slots[ME].forEach(m => { m.material.opacity += ((myAtk && (attackSel.size || dragging) || blk ? pulse : 0) - m.material.opacity) * .2; });
+    slots[OPP].forEach(m => { m.material.opacity += ((G.combat && G.combat.attacker === OPP || (dragging && dragKind === 'pull') ? .5 : 0) - m.material.opacity) * .2; });
+    arena.material.opacity += ((G.combat || attackSel.size || (dragging && dragKind) ? 1 : 0) - arena.material.opacity) * .08;
+  }
+  if (G && now - (frame.sync || 0) > 250) {
+    frame.sync = now; syncFaces();
+    const me = G.players[ME], live = mode === 'main' || mode === 'respond';
+    for (const v of views.values()) v.dim = live && me.hand.includes(v.inst) && !!G.whyNot(me, v.inst);
+  }
+  if (G && G.over && !showOver.done && now - (frame.overAt || (frame.overAt = now)) > 2500) { showOver.done = true; showOver(G.winner); }   // never get stuck after a win
+  if (G && (G.combat || marks.size || combatPreview.on)) { combatPreview(); combatPreview.on = !!G.combat; }
+  for (const v of views.values()) {
+    const col = glowFor(v);
+    const target = col ? .55 + .25 * Math.sin(now / 260) : 0;
+    v.halo.material.opacity += (target - v.halo.material.opacity) * .2; if (col) v.halo.material.color.set(col);
+    if (G && isHero(v.inst.card) && G.alive(v.inst) && Math.random() < dt * 2.2) sparks(new THREE.Vector3(v.g.position.x, v.g.position.y - .2, v.g.position.z), '#ffd36a', 2, { rise: true, radius: .5, speed: .6, life: 1.2, size: .09 });
+    const ord = 100 + Math.round(v.g.position.z * 400) + (v === dragging ? 5000 : 0); v.front.renderOrder = v.back.renderOrder = ord;
+    if (v.doom) {        // predicted to die this combat: throbbing red, trembling, smoking embers
+      const q = .5 + .5 * Math.sin(now / 85);
+      v.front.material.color.setRGB(1, .38 + .3 * q, .34 + .26 * q);
+      v.front.position.set((Math.random() - .5) * .035, (Math.random() - .5) * .025, 0); v.front.rotation.z = Math.sin(now / 40) * .015;
+      if (Math.random() < dt * 9) sparks(new THREE.Vector3(v.g.position.x, v.g.position.y - .3, v.g.position.z), Math.random() < .5 ? '#ff4a2a' : '#ffb36a', 3, { rise: true, radius: .45, speed: .9, life: .9, size: .1 });
+      if (Math.random() < dt * 4) sparks(new THREE.Vector3(v.g.position.x, v.g.position.y, v.g.position.z), '#1a0c10', 2, { rise: true, radius: .4, speed: .5, life: 1.4, size: .3, dark: true });
+    } else if (v.front.position.x || v.front.rotation.z) { v.front.position.set(0, 0, 0); v.front.rotation.z = 0; }
+    if (v.doom) {}
+    else if (v.flash < 0) { v.flash = Math.min(0, v.flash + dt * 1.2); const f = -v.flash; v.front.material.color.setRGB(1 + f * .8, 1 + f * .6, 1 + f * .1); }
+    else if (v.flash > 0) { v.flash -= dt * 3; v.front.material.color.setRGB(1, 1 - v.flash * .6, 1 - v.flash * .6); }
+    else { const b = v.dim ? .5 : 1; v.front.material.color.setRGB(b, b, b); }   // dim = can't afford it right now
+    const z = v.g.position.z; v.shadow.position.set(v.g.position.x + .06 + z * .08, v.g.position.y - .1 - z * .14, -.03);
+    v.shadow.scale.setScalar(v.g.scale.x * (1 + z * .15)); v.shadow.material.opacity = Math.max(.15, .7 - z * .3); v.shadow.visible = v.g.visible;
+  }
+  if (shake > 0) { shake -= dt; const s = shake * .35; camera.position.set(camBase.x + (Math.random() - .5) * s, camBase.y + (Math.random() - .5) * s, camBase.z); } else camera.position.copy(camBase);
+  renderer.render(scene, camera);
+}
+
+// ---------- screen helpers ----------
+function toScreen(at) { const p = (at.g ? at.g.position : at).clone(); p.project(camera); return { x: (p.x + 1) / 2 * innerWidth, y: (1 - p.y) / 2 * innerHeight }; }
+function floatText(at, text, cls) { const s = toScreen(at), el = document.createElement('div'); el.className = 'float ' + cls; el.textContent = text; el.style.left = s.x + 'px'; el.style.top = s.y + 'px'; document.body.appendChild(el); setTimeout(() => el.remove(), 1100); }
+function banner(text) { const b = $('banner'); b.textContent = text; b.classList.remove('show'); void b.offsetWidth; b.classList.add('show'); }
+const worldOf = i => { const a = avatars[i].m.position; return new THREE.Vector3(a.x, a.y, .2); };
+
+// =====================================================================================
+//  engine events -> animations
+// =====================================================================================
+const UI = {
+  async event(type, d) {
+    switch (type) {
+      case 'log': return addLog(d.text, d.kind, d.cards, d.player);
+      case 'draw': case 'create': {
+        const v = makeView(d.card), i = d.player, dk = i === ME ? L.deck0 : L.deck1;
+        if (type === 'create') apply(v.g, { x: 0, y: i === ME ? -1 : 1.4, z: 1.2, rx: 0, ry: i === ME || REVEAL ? 0 : Math.PI, rz: 0, s: .2 });
+        else apply(v.g, { x: dk[0], y: dk[1], z: .1, rx: 0, ry: Math.PI, rz: .1, s: .82 });
+        if (type === 'create') { await tween(v, { s: 1.3, z: 1.6 }, .28, 'back'); burst(v.g.position, elColor(v.inst.card), 24, 2); await sleep(T(250)); }
+        const t = targetFor(v); if (t) await tween(v, t, d.opening ? .22 : .42, 'out');
+        layoutAll(); refreshHUD(); return;
+      }
+      case 'mulligan': {      // returned cards fly back into the deck, the replacements come out
+        const dk = d.player === ME ? L.deck0 : L.deck1;
+        await Promise.all(d.back.map(x => { const v = views.get(x.uid); if (!v) return; v.busy = true; return tween(v, { x: dk[0], y: dk[1], z: .3, ry: Math.PI, s: .82 }, .32, 'in').then(() => killView(v)); }));
+        for (const x of d.drawn) { const v = makeView(x); apply(v.g, { x: dk[0], y: dk[1], z: .1, rx: 0, ry: Math.PI, rz: .1, s: .82 }); }
+        syncFaces(); layoutAll(.4); refreshHUD(); await sleep(T(450)); return;
+      }
+      case 'transform': {     // LoR: a duplicate hero in hand turns into its hero spell
+        const old = views.get(d.from.uid), v = makeView(d.to);
+        if (old) { apply(v.g, { x: old.g.position.x, y: old.g.position.y, z: old.g.position.z, rx: old.g.rotation.x, ry: old.g.rotation.y, rz: old.g.rotation.z, s: old.g.scale.x }); burst(old.g.position, '#e8c56a', 40, 2.4, .7); killView(old); }
+        syncFaces(); layoutAll(.3); await sleep(T(450)); return;
+      }
+      case 'lvl': {             // level-up progress tick
+        const v = views.get(d.unit.uid); if (!v) return;
+        floatText(v, `⬆ ${d.unit.lvl}/${d.need}`, 'buff'); sparks(v.g.position, '#ffd36a', 30, { rise: true, radius: .4, speed: 1.2, life: 1 }); syncFaces(); await sleep(T(350)); return;
+      }
+      case 'levelup': {         // LoR-style: the card spins up into its level-up form in a blast of light
+        const v = views.get(d.unit.uid); if (!v) return; v.busy = true;
+        const t = targetFor(v) || { x: v.g.position.x, y: v.g.position.y, z: 0, rx: 0, ry: 0, rz: 0, s: 1 };
+        banner(`⬆ ${d.unit.card.nameTh} เลเวลอัพ!`);
+        await tween(v, { z: 1.6, s: 1.5, rz: 0 }, .3, 'out');
+        heroFx(v.g.position, elColor(d.unit.card), true);
+        await tween(v, { ry: Math.PI * 2 }, .5, 'inOut'); v.g.rotation.y = 0; v.sig = ''; syncFaces();
+        await sleep(T(250)); await tween(v, t, .35, 'back'); v.busy = false; layoutAll(); refreshHUD(); await sleep(T(300)); return;
+      }
+      case 'relevel': { const v = views.get(d.card.uid); if (v) { v.sig = ''; syncFaces(); burst(v.g.position, '#ffd36a', 30, 2); } return; }   // a copy of a levelled hero
+      case 'burn': { const v = makeView(d.card); const dk = d.player === ME ? L.deck0 : L.deck1; apply(v.g, { x: dk[0], y: dk[1], z: .5, rx: 0, ry: 0, rz: 0, s: 1 }); await tween(v, { y: dk[1] + .8, z: 1.2 }, .3); burst(v.g.position, '#ff6a2a', 40, 3); await tween(v, { s: .01 }, .3, 'in'); killView(v); return; }
+      case 'enter': {
+        const v = makeView(d.unit); v.busy = true; syncFaces();
+        const t = targetFor(v);
+        if (d.from === 'hand') {
+          await tween(v, { z: 1.4, s: 1.25, ry: 0, rx: 0, rz: 0, y: v.g.position.y + (d.player === ME ? .8 : -.8) }, .22, 'out');
+          await tween(v, Object.assign({}, t, { z: .6, s: 1.15 }), .3, 'inOut');
+          await tween(v, t, .16, 'in'); shake = .12; burst(new THREE.Vector3(t.x, t.y, 0), elColor(v.inst.card), 26, 2.2, .6);
+          if (isHero(v.inst.card)) { heroFx(t, elColor(v.inst.card)); v.flash = -1; floatText(v, '★ HERO', 'buff'); await sleep(T(650)); }
+        } else {
+          apply(v.g, Object.assign({}, t, { s: .05, z: 1 })); burst(new THREE.Vector3(t.x, t.y, .3), d.from === 'clone' ? '#e9fff2' : '#ffe08a', 40, 2.6);
+          await tween(v, t, .45, 'back');
+          if (isHero(v.inst.card)) { heroFx(t, elColor(v.inst.card)); await sleep(T(500)); }
+        }
+        v.busy = false; layoutAll(); refreshHUD(); return;
+      }
+      case 'cast': {          // show the spell; slow/fast ones then wait on the stack at the side
+        const v = makeView(d.card); v.busy = true; drawFace(v);
+        await tween(v, { x: 0, y: .05, z: 2.2, rx: 0, ry: 0, rz: 0, s: 1.5 }, .34, 'out');
+        burst(v.g.position, elColor(v.inst.card), 30, 2.4, .7);
+        await sleep(T(d.burst ? 200 : 520));
+        if (!d.burst) { v.busy = false; layoutAll(.3); await sleep(T(300)); }
+        refreshHUD(); return;
+      }
+      case 'resolve': {
+        const v = makeView(d.card); v.busy = true;
+        await tween(v, { x: 0, y: .05, z: 2.2, rx: 0, ry: 0, rz: 0, s: 1.65 }, .25, 'out');
+        burst(v.g.position, elColor(v.inst.card), 60, 3.5, 1); v.flash = .8; await sleep(T(380));
+        await tween(v, { x: L.portrait ? 2.55 : 3.6, y: .05, z: 1.1, s: .82, rz: .04 }, .25, 'out');   // out of the way while you pick a target
+        return;
+      }
+      case 'spelldone': { const v = views.get(d.card.uid); if (v) { await tween(v, { s: .05, z: 3, rz: .6 }, .3, 'in'); killView(v); } layoutAll(); refreshHUD(); return; }
+      case 'attack-declare': {
+        syncFaces(); layoutAll(.35);
+        for (const t of Object.values(d.forced || {})) { const fv = views.get(t.uid); if (fv) { floatText(fv, 'ถูกท้าดวล!', 'status'); burst(fv.g.position, '#ff8a5a', 24, 1.8); } }   // challenger pulled this one in
+        await sleep(T(d.forced && Object.keys(d.forced).length ? 700 : 380)); return;
+      }
+      case 'blocks': { blockPairs = {}; layoutAll(.35); await sleep(T(420)); return; }
+      case 'strike': {
+        const v = views.get(d.unit.uid); if (!v) return;
+        const from = { x: v.g.position.x, y: v.g.position.y, z: v.g.position.z };
+        const to = d.target ? views.get(d.target.uid).g.position : worldOf(d.player);
+        v.busy = true;
+        await tween(v, { x: from.x + (to.x - from.x) * .7, y: from.y + (to.y - from.y) * .7, z: .9, rz: (to.x - from.x) * -.08 }, .2, 'in');
+        hitStop(70); shake = d.target ? .18 : .3; burst(new THREE.Vector3(to.x, to.y, .3), '#ffd27a', 30, 3, .5);
+        await tween(v, Object.assign({}, from, { rz: 0 }), .25, 'out'); v.busy = false; return;
+      }
+      case 'clash': {
+        const a = views.get(d.a.uid), b = views.get(d.b.uid); if (!a || !b) return;
+        const pa = a.g.position.clone(), pb = b.g.position.clone(), mid = pa.clone().lerp(pb, .5);
+        a.busy = b.busy = true;
+        await Promise.all([tween(a, { x: mid.x, y: mid.y - (pb.y > pa.y ? .55 : -.55), z: .8 }, .18, 'in'), tween(b, { x: mid.x, y: mid.y + (pb.y > pa.y ? .55 : -.55), z: .8 }, .18, 'in')]);
+        hitStop(90); shake = .25; burst(mid, '#ffe08a', 46, 3.4, .6);
+        await Promise.all([tween(a, { x: pa.x, y: pa.y, z: pa.z }, .26, 'out'), tween(b, { x: pb.x, y: pb.y, z: pb.z }, .26, 'out')]);
+        a.busy = b.busy = false; return;
+      }
+      case 'damage': { const v = views.get(d.unit.uid); if (v) { v.flash = 1; floatText(v, '-' + d.amount, 'dmg'); syncFaces(); const p = v.g.position.clone(); if (!d.combat) { burst(p, '#ff6a4a', 18, 2); shake = .1; } await sleep(T(d.combat ? 120 : 260)); } return; }
+      case 'player-damage': { floatText(worldOf(d.player), '-' + d.amount, 'dmg'); shake = Math.min(.5, .15 + d.amount * .04); burst(worldOf(d.player), '#ff4a2a', 40, 3); drawAvatar(d.player); refreshHUD(); await sleep(T(320)); return; }
+      case 'buff': { const v = views.get(d.unit.uid); if (v) { floatText(v, `${d.p >= 0 ? '+' : ''}${d.p}|${d.h >= 0 ? '+' : ''}${d.h}`, 'buff'); burst(v.g.position, d.permanent ? '#ffe08a' : '#b8ffb0', 20, 1.6); syncFaces(); await sleep(T(260)); } return; }
+      case 'heal': { const v = views.get(d.unit.uid); if (v) { floatText(v, '+' + d.amount, 'heal'); syncFaces(); await sleep(T(200)); } return; }
+      case 'stun': case 'status': case 'barrier': { const v = views.get(d.unit.uid); if (v) { floatText(v, type === 'stun' ? 'STUN' : type === 'barrier' ? 'กัน!' : d.text, 'status'); burst(v.g.position, type === 'stun' ? '#4a8dff' : '#9fe3ff', 20, 1.6); syncFaces(); await sleep(T(260)); } return; }
+      case 'trigger': {
+        const v = views.get(d.unit.uid); if (!v) return;
+        v.busy = true; v.trig = true;
+        const mine = d.unit.owner === ME, base = targetFor(v) || {};
+        prompt(`✦ ${d.unit.card.nameTh} — Every turn กำลังทำงาน`);
+        await tween(v, { x: base.x, y: (base.y || 0) + (mine ? .55 : -.55), z: 1.3, s: 1.35, rz: 0 }, .32, 'back');
+        burst(v.g.position, elColor(v.inst.card), 34, 1.8, .8); v.flash = .5;
+        selected = v; showPanel(v); trigShown = v;
+        await sleep(T(700)); return;
+      }
+      case 'trigger-end': {
+        const v = views.get(d.unit.uid);
+        if (trigShown) { if (selected === trigShown) selected = null; hidePanel(); trigShown = null; }
+        if (v) { await sleep(T(250)); v.busy = false; v.trig = false; await tween(v, targetFor(v) || {}, .3, 'out'); }
+        prompt(''); layoutAll(); return;
+      }
+      case 'death': {
+        const v = views.get(d.unit.uid); if (!v) return; v.busy = true;
+        burst(v.g.position, elColor(v.inst.card), 50, 3, .9);
+        await tween(v, { z: .8, rz: (Math.random() - .5) * .8, s: 1.08 }, .14, 'out');
+        await tween(v, { z: -0.6, s: .3, rx: .9 }, .38, 'in'); killView(v); layoutAll(); refreshHUD(); return;
+      }
+      case 'bounce': { const v = views.get(d.unit.uid); if (v) { v.inst = d.card; v.busy = true; burst(v.g.position, '#9fe3ff', 24, 2); await tween(v, { z: 1.4, s: 1.1 }, .18); v.busy = false; v.sig = ''; syncFaces(); layoutAll(.4); await sleep(T(380)); } return; }
+      case 'round': { selected = null; attackSel.clear(); pulls.clear(); drawAvatar(0); drawAvatar(1); syncFaces(); banner(`รอบที่ ${d.round} · ${d.token === ME ? 'คุณ' : 'ศัตรู'}ถือสิทธิ์โจมตี ⚔`); refreshHUD(); await sleep(T(900)); return; }
+      case 'actor': { drawAvatar(0); drawAvatar(1); refreshHUD(); return; }
+      case 'roundend': { syncFaces(); layoutAll(); refreshHUD(); addLog('— จบรอบ: มานาที่เหลือ (สูงสุด 3) เก็บไว้ใช้กับเวทย์ · บัฟชั่วคราวหมด —', 'sys'); return; }
+      case 'combat-end': { blockPairs = {}; syncFaces(); layoutAll(.35); refreshHUD(); await sleep(T(250)); return; }
+      case 'gameover': return showOver(d.winner);
+    }
+  },
+};
+
+// =====================================================================================
+//  human controller + input
+// =====================================================================================
+let trigShown = null;
+let mode = 'idle', targetOpts = [], targetResolve = null, targetCtx = null, actionResolve = null, blockResolve = null, respondResolve = null, acting = false;
+function setMode(m) { mode = m; refreshHUD(); }
+const Human = {
+  mulligan(G, p, hand) {
+    return new Promise(res => {
+      const out = new Set();
+      const draw = () => {
+        $('mullCards').innerHTML = hand.map(x => `<div class="mcard${out.has(x) ? ' out' : ''}" data-uid="${x.uid}">${bigCardHtml(x.card)}<button class="big">${out.has(x) ? 'ยกเลิก' : 'แทนที่'}</button></div>`).join('');
+        $('mullOk').textContent = out.size ? `เปลี่ยน ${out.size} ใบ` : 'ตกลง';
+      };
+      $('mullCards').onclick = ev => { const m = ev.target.closest('.mcard'); if (!m) return; const x = hand.find(h => h.uid == m.dataset.uid); out.has(x) ? out.delete(x) : out.add(x); draw(); };
+      $('mullOk').onclick = () => { $('mull').hidden = true; res([...out]); };
+      $('mullWho').textContent = G.first === ME ? 'คุณถือสิทธิ์โจมตีรอบแรก ⚔' : 'ศัตรูถือสิทธิ์โจมตีรอบแรก — คุณได้โจมตีรอบที่ 2';
+      draw(); $('mull').hidden = false; hidePanel();
+      if (Q.has('selftest')) setTimeout(() => {    // test: replace the first card, then confirm
+        $('mullCards').firstElementChild.click(); const ok = $('mullCards').querySelector('.mcard.out') && $('mullOk').textContent.includes('1');
+        addLog(`MULLTEST ${ok ? 'OK' : 'FAIL'}`, 'sys'); $('mullOk').click();
+      }, 400);
+    });
+  },
+  isAI: false,
+  takeAction(G, p) {
+    return new Promise(res => {
+      actionResolve = res; mode = 'main';
+      prompt(G.attackBlocked(p) ? 'ตาของคุณ: ลงการ์ด ใช้เวทย์ หรือกด “ผ่าน”' : 'ตาของคุณ (ถือสิทธิ์โจมตี ⚔): ลงการ์ด ลากตัวละครขึ้นไปโจมตี หรือกด “ผ่าน”');
+      refreshHUD(); layoutAll();
+    });
+  },
+  choose(G, p, options, ctx) {
+    return new Promise(res => {
+      const prev = mode; targetCtx = ctx;
+      const units = options.filter(o => o && o.uid), others = options.filter(o => !(o && o.uid));
+      targetOpts = units;
+      targetResolve = v => { targetResolve = null; targetOpts = []; targetCtx = null; mode = prev; altButtons([]); prompt(''); refreshHUD(); res(v); };
+      mode = 'target'; prompt(ctx.prompt || 'เลือกเป้าหมาย'); selected = null; hovered = null; hidePanel(); layoutAll(.2);
+      altButtons([...others.map(o => [o.label, () => targetResolve(o)]), ...(ctx.optional ? [['ข้าม', () => targetResolve(null)]] : [])]);
+      refreshHUD();
+    });
+  },
+  declareBlocks(G, p, attackers) {
+    return new Promise(res => {
+      blockPairs = Object.assign({}, G.combat.forced || {}); blockPick = null; mode = 'block';   // challenged units are already in place
+      prompt('ฝ่ายตรงข้ามโจมตี! ลากตัวเราไปวางหน้าศัตรูที่จะบล็อก แล้วกดปุ่มกลม “บล็อก”');
+      blockResolve = () => { const out = blockPairs; blockResolve = null; blockPick = null; mode = 'idle'; prompt(''); altButtons([]); res(Object.fromEntries(Object.entries(out))); };
+      altButtons([]); refreshHUD(); layoutAll();
+    });
+  },
+  respond(G, p, ctx) {
+    if (!canRespond(p)) return Promise.resolve();                     // nothing castable: pass automatically
+    return new Promise(res => {
+      const top = G.stack[G.stack.length - 1];
+      mode = 'respond';
+      prompt(G.combat ? 'ช่วงต่อสู้: ใช้เวทย์เร็ว/ฉับพลันได้ หรือกดปุ่มกลม “ผ่าน”' : top ? `${top.p.i === ME ? 'คุณ' : 'ศัตรู'}ใช้ ${top.x.card.nameTh} — ตอบโต้ด้วยเวทย์เร็ว/ฉับพลัน หรือกด “ผ่าน”` : 'ตอบโต้ได้ หรือกด “ผ่าน”');
+      respondResolve = () => { respondResolve = null; mode = 'idle'; prompt(''); altButtons([]); res(); };
+      altButtons([]); refreshHUD();
+    });
+  },
+};
+function canRespond(p) { return p.hand.some(c => G.isSpell(c) && G.speedOf(c) !== 'slow' && !G.whyNot(p, c)); }   // only fast/burst spells can answer
+function prompt(t) { setText($('prompt'), t); }
+function finishAction(kind) {
+  handOpen = false;
+  const r = actionResolve; actionResolve = null; mode = 'idle'; selected = null; hidePanel(); attackSel.clear(); pulls.clear(); prompt(''); refreshHUD(); layoutAll(); if (r) r(kind);
+}
+let altList = [];
+function altButtons(list) { altList = list; renderAlt(); }
+function renderAlt() {
+  clearAltBox(); const b = $('bAlt'); b.hidden = true; b.onclick = null;
+  if (!['target', 'block', 'respond'].includes(mode) || !altList.length) return;
+  if (altList.length === 1) { b.hidden = false; b.textContent = altList[0][0]; b.onclick = altList[0][1]; return; }
+  const box = document.createElement('div'); box.id = 'altBox'; box.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end';
+  altList.forEach(([t, f]) => { const x = document.createElement('button'); x.className = 'big'; x.textContent = t; x.onclick = f; box.appendChild(x); });
+  $('btns').prepend(box);
+}
+const clearAltBox = () => { const b = $('altBox'); if (b) b.remove(); };
+
+async function act(fn) {
+  if (acting) return; acting = true; const prev = mode; mode = 'busy'; selected = null; hidePanel(); refreshHUD();
+  try { await fn(); } catch (e) { console.error(e); addLog('⚠ error: ' + e.message, 'warn'); }
+  acting = false;
+  if (!G.over && mode === 'busy') mode = prev === 'respond' ? (respondResolve ? 'respond' : 'idle') : prev; refreshHUD(); layoutAll();
+}
+async function tryPlay(v) {
+  const me = G.players[ME], why = G.whyNot(me, v.inst);
+  if (why) { const old = $('prompt').textContent; prompt('เล่นไม่ได้: ' + why); setTimeout(() => { if (mode === 'main' || mode === 'respond') prompt(old); }, 1600); layoutAll(); return; }
+  const wasRespond = mode === 'respond', burst = G.isSpell(v.inst) && G.speedOf(v.inst) === 'burst';
+  handOpen = false;
+  await act(() => G.play(me, v.inst));
+  if (G.over) return;
+  if (burst) {                                              // burst spells don't use up your action / priority
+    if (wasRespond && respondResolve && !canRespond(me)) respondResolve();   // nothing left to answer with: pass automatically
+    return;
+  }
+  if (wasRespond) { if (respondResolve) respondResolve(); } else if (actionResolve) finishAction('acted');
+}
+
+// raycasting
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function pickView(ev) {
+  scene.updateMatrixWorld(); camera.updateMatrixWorld();   // positions may have moved since the last rendered frame
+  ndc.set(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera);
+  const objs = []; for (const v of views.values()) objs.push(v.front, v.back);
+  let best = null; for (const h of ray.intersectObjects(objs)) if (!best || h.object.renderOrder > best.object.renderOrder) best = h;   // the card drawn on top wins
+  return best ? best.object.userData.v : null;
+}
+function pickTarget(ev) {
+  if (!targetOpts.length) return null;
+  scene.updateMatrixWorld(); camera.updateMatrixWorld();
+  ndc.set(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera);
+  const objs = []; for (const v of views.values()) objs.push(v.front, v.back);
+  for (const h of ray.intersectObjects(objs)) { const u = h.object.userData.v.inst; if (targetOpts.includes(u)) return u; }   // look through cards in front
+  let best = null, bd = Math.max(44, Math.min(innerWidth, innerHeight) * .09);   // at least a finger's width on small phones                                                            // or the nearest target to the tap
+  for (const u of targetOpts) { const v = views.get(u.uid); if (!v) continue; const sp = toScreen(v), d = Math.hypot(sp.x - ev.clientX, sp.y - ev.clientY); if (d < bd) { bd = d; best = u; } }
+  return best;
+}
+function planePoint(ev, z) { ndc.set(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera); const pl = new THREE.Plane(new THREE.Vector3(0, 0, 1), -z); const p = new THREE.Vector3(); ray.ray.intersectPlane(pl, p); return p; }
+let down = null, dragKind = null, dropTarget = null;
+// the attacker under the pointer (or the nearest one on screen, within reach) while dragging a blocker
+function attackerUnder(ev, except) {
+  if (!G || !G.combat) return null;
+  let best = null, bd = Math.min(innerWidth, innerHeight) * .16;
+  for (const a of G.combat.attackers) {
+    const av = views.get(a.uid); if (!av || av === except || !G.alive(a)) continue;
+    const s = toScreen(av), d = Math.hypot(s.x - ev.clientX, s.y - ev.clientY);
+    if (d < bd) { bd = d; best = a; }
+  }
+  return best;
+}
+$('c').addEventListener('pointerdown', ev => { down = { x: ev.clientX, y: ev.clientY, v: pickView(ev), t: performance.now() }; });
+$('c').addEventListener('pointermove', ev => {
+  if (down && down.v && !dragging && (mode === 'main' || mode === 'respond') && G.players[ME].hand.includes(down.v.inst) && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) > 14) { dragging = down.v; dragging.busy = true; selected = null; hidePanel(); if (handOpen) { handOpen = false; layoutAll(.2); } }
+  if (down && down.v && !dragging && mode === 'block' && G.players[ME].board.includes(down.v.inst) && G.canBlock(down.v.inst) && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) > 10) {
+    dragging = down.v; dragging.busy = true; dragKind = 'block'; blockPick = null; hidePanel();
+  }
+  if (down && down.v && !dragging && mode === 'main' && G.players[OPP].board.includes(down.v.inst) && !down.v.inst.stunned && hasChallenger() && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) > 10) {
+    dragging = down.v; dragging.busy = true; dragKind = 'pull'; selected = null; hidePanel(); prompt('วางศัตรูในช่องตรงหน้าตัวท้าดวลของคุณ');
+  }
+  if (dragging && dragKind === 'pull') { const p = planePoint(ev, .9); tween(dragging, { x: p.x, y: p.y, z: .9, rx: 0, rz: 0, s: 1.1 }, 0); return; }
+  if (down && down.v && !dragging && mode === 'main' && G.players[ME].board.includes(down.v.inst) && G.canAttack(down.v.inst) && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) > 10) {
+    dragging = down.v; dragging.busy = true; dragKind = 'attack'; selected = null; hidePanel();
+  }
+  if (dragging && dragKind === 'attack') { const p = planePoint(ev, .9); tween(dragging, { x: p.x, y: p.y, z: .9, rx: 0, rz: 0, s: 1.1 }, 0); return; }
+  if (dragging && dragKind === 'block') {
+    const p = planePoint(ev, .9); tween(dragging, { x: p.x, y: p.y, z: .9, rx: 0, rz: 0, s: 1.12 }, 0);
+    dropTarget = attackerUnder(ev, dragging); return;
+  }
+  if (dragging) { const p = planePoint(ev, 1.2); tween(dragging, { x: p.x, y: p.y, z: 1.2, rx: .2, rz: 0, s: 1.15 }, 0); return; }
+  if (ev.pointerType === 'mouse') {
+    const v = pickView(ev);
+    if (mode === 'target') return;
+    let h = v && G && G.players[ME].hand.includes(v.inst) ? v : null;   // hover only lifts hand cards; the big card opens on click
+    if (!h && hovered && hoverAt && Math.abs(ev.clientX - hoverAt.x) < hoverAt.r && ev.clientY > hoverAt.y - hoverAt.r * 2.2) h = hovered;   // pointer still on its resting spot
+    if (h !== hovered) { hovered = h; hoverAt = h ? { x: ev.clientX, y: ev.clientY, r: Math.max(18, innerHeight * .045) } : null; layoutAll(.18); }
+  }
+});
+$('c').addEventListener('pointerup', ev => {
+  const d = down; down = null;
+  if (dragging && dragKind === 'pull') {     // enemy dropped in the arena -> faces the nearest challenger of ours
+    const v = dragging, p = planePoint(ev, .9); dragging = null; dragKind = null; v.busy = false;
+    for (const [a, e] of pulls) if (e === v.inst) pulls.delete(a);
+    if (p.y > L.combat0 + .3 && p.y < L.board1 - .6) {
+      const order = [...attackSel]; let best = null, bd = 1e9;
+      for (const a of order.filter(a => G.has(a, 'challenger'))) { const dx = Math.abs(slotX(order.indexOf(a), order.length) - p.x); if (dx < bd) { bd = dx; best = a; } }
+      if (best) { pulls.set(best, v.inst); burst(new THREE.Vector3(p.x, L.combat1, .3), '#ff8a5a', 22, 1.6); }
+    }
+    prompt(attackPrompt()); refreshHUD(); layoutAll(.25); return;
+  }
+  if (dragging && dragKind === 'attack') {
+    const v = dragging, p = planePoint(ev, .9); dragging = null; dragKind = null; v.busy = false;
+    if (p.y > (L.board0 + L.combat0) / 2) attackSel.add(v.inst); else { attackSel.delete(v.inst); pulls.delete(v.inst); }   // dropped in the arena = joins the attack
+    prompt(attackPrompt());
+    refreshHUD(); layoutAll(.25); return;
+  }
+  if (dragging && dragKind === 'block') {
+    const v = dragging, a = dropTarget || attackerUnder(ev, v); dragging = null; dragKind = null; dropTarget = null; v.busy = false;
+    if (a) assignBlock(v.inst, a);
+    else { for (const k in blockPairs) if (blockPairs[k] === v.inst && !(G.combat.forced || {})[k]) delete blockPairs[k]; }   // dropped elsewhere = no block (challenged ones stay)
+    layoutAll(.25); return;
+  }
+  if (dragging) { const v = dragging; dragging = null; dragKind = null; v.busy = false; const p = planePoint(ev, 1.2); if (p.y > (L.compact ? L.board0 - 1.1 : L.hand0 + 1.7)) tryPlay(v); else layoutAll(); return; }
+  if (!d) return;
+  if (mode === 'target') { const t = pickTarget(ev); if (t) return targetResolve(t); }
+  clickView(d.v);
+});
+const isVisible = v => !(v.inst.owner === OPP && G.players[OPP].hand.includes(v.inst) && !REVEAL);
+function assignBlock(b, a) {            // b = our blocker, a = attacker; returns true when assigned
+  if (!G.canBlock(b, a)) { prompt(b.stunned ? 'ตัวนี้บล็อกไม่ได้ (ติด Stun)' : `${a.card.nameEn} น่าสะพรึง — บล็อกได้เฉพาะตัวที่มีพลังโจมตี 3 ขึ้นไป`); return false; }
+  if (G.combat.forced[a.uid]) { prompt('ตัวนี้ท้าดวลไว้แล้ว — คู่ต่อสู้ถูกกำหนดแล้ว'); return false; }
+  for (const k in blockPairs) if (blockPairs[k] === b) delete blockPairs[k];
+  blockPairs[a.uid] = b;                              // whoever blocked this attacker before goes back to its row prompt('ฝ่ายตรงข้ามโจมตี! ลากตัวเราไปวางหน้าศัตรูที่จะบล็อก แล้วกดปุ่มกลม “บล็อก”');
+  const bv = views.get(b.uid); if (bv) burst(bv.g.position, '#ffe08a', 16, 1.4, .4);
+  return true;
+}
+function clickView(v) {
+  if (!G) return;
+  const me = G.players[ME];
+  if (mode === 'target') { if (v && targetOpts.includes(v.inst)) targetResolve(v.inst); else if (v && isVisible(v)) openInspect(v); return; }
+  if (mode === 'block') {           // blocking is drag-only (LoR): a tap just opens the card
+    if (!v) { hidePanel(); return; }
+    openInspect(v); return;
+  }
+  if (L.compact && handOpen && !(v && me.hand.includes(v.inst))) { handOpen = false; selected = null; hidePanel(); layoutAll(.25); return; }   // tap outside closes the spread hand
+  if (L.compact && !handOpen && v && me.hand.includes(v.inst) && (mode === 'main' || mode === 'respond')) { handOpen = true; selected = null; hidePanel(); layoutAll(.25); return; }
+  if (!v) { selected = null; hidePanel(); layoutAll(.2); refreshHUD(); return; }
+  if (!isVisible(v)) return;
+  if ((mode === 'main' || mode === 'respond') && me.hand.includes(v.inst)) { selected = selected === v ? null : v; selected ? openInspect(v, true) : hidePanel(); layoutAll(.2); refreshHUD(); return; }
+  selected = selected === v ? null : v; selected ? openInspect(v) : hidePanel(); layoutAll(.2); refreshHUD();
+}
+
+// ---------- combat preview (LoR-style): who dies, how much reaches the player ----------
+const marks = new Map();   // uid / 'p0' / 'p1' -> DOM badge
+function mark(key, at, text, cls) {
+  let el = marks.get(key); if (!el) { el = document.createElement('div'); el.className = 'mark'; document.body.appendChild(el); marks.set(key, el); }
+  el.__keep = true; const sp = toScreen(at); setText(el, text); el.className = 'mark ' + cls;
+  el.style.transform = `translate(${Math.round(sp.x)}px, ${Math.round(sp.y)}px) translate(-50%, -50%)`;
+}
+function combatPreview() {
+  for (const el of marks.values()) el.__keep = false;
+  const doomed = new Set();
+  const C = G && !G.over && G.combat;
+  if (C) {
+    const blocks = Object.assign({}, C.blocks || {}, mode === 'block' ? blockPairs : {});
+    const hit = (to, n) => to.barrier ? 0 : G.has(to, 'tough') ? Math.max(0, n - 1) : n;
+    let face = 0;
+    for (const a of C.attackers) {
+      if (!G.alive(a)) continue;
+      const b = blocks[a.uid] && G.alive(blocks[a.uid]) ? blocks[a.uid] : null;
+      if (!b) { face += G.power(a); continue; }
+      const bDies = hit(b, G.power(a)) >= G.hp(b), qs = G.has(a, 'quickstrike');
+      const aDies = !(qs && bDies) && hit(a, G.power(b)) >= G.hp(a);
+      const va = views.get(a.uid), vb = views.get(b.uid);
+      if (aDies && va) doomed.add(va);
+      if (bDies && vb) doomed.add(vb);
+    }
+    const def = 1 - C.attacker;
+    if (face > 0) mark('p' + def, worldOf(def), '−' + face, G.players[def].life <= face ? 'die face' : 'face');
+  }
+  for (const [k, el] of marks) if (!el.__keep) { el.remove(); marks.delete(k); }
+  for (const v of views.values()) v.doom = doomed.has(v);
+}
+
+// ---------- buttons ----------
+// press feedback: squash + white ripple + a short buzz on Android
+$('bMain').addEventListener('pointerdown', () => {
+  const o = $('bMain'); if (o.disabled) return;
+  const r = document.createElement('span'); r.className = 'ripple'; o.appendChild(r); setTimeout(() => r.remove(), 520);
+  try { navigator.vibrate && navigator.vibrate(12); } catch (e) {}
+});
+$('bMain').onclick = () => {
+  if ((mode === 'main' || mode === 'respond') && selected && G.players[ME].hand.includes(selected.inst) && !G.whyNot(G.players[ME], selected.inst)) return tryPlay(selected);
+  if (mode === 'main' && attackSel.size) return confirmAttack();
+  if (mode === 'main' && actionResolve) return finishAction('pass');
+  if (mode === 'block' && blockResolve) return blockResolve();
+  if (mode === 'respond' && respondResolve) return respondResolve();
+};
+$('bAttack').onclick = () => {
+  if (mode !== 'main') return;
+  const me = G.players[ME];
+  if (attackSel.size) { attackSel.clear(); pulls.clear(); }
+  else attackSel = new Set(me.board.filter(u => G.canAttack(u) && G.power(u) > 0));
+  prompt(attackPrompt());
+  selected = null; hidePanel(); refreshHUD(); layoutAll(.25);
+};
+async function confirmAttack() {
+  const me = G.players[ME], list = [...attackSel].filter(u => G.canAttack(u));
+  if (!list.length) { prompt('ยังไม่ได้เลือกตัวที่จะโจมตี'); return; }
+  const challenges = {};
+  mode = 'busy';
+  for (const a of list) { const t = pulls.get(a); if (t && G.has(a, 'challenger') && G.alive(t) && !t.stunned) challenges[a.uid] = t; }   // enemies dragged in front of challengers
+  attackSel.clear(); pulls.clear(); prompt('');
+  mode = 'main'; await act(() => G.attack(me, list, challenges));
+  if (!G.over && actionResolve) finishAction('acted');
+}
+$('logBtn').onclick = () => { $('log').hidden = !$('log').hidden; if (!$('log').hidden) $('logList').scrollTop = 1e9; };
+$('logX').onclick = () => { $('log').hidden = true; };
+
+// ---------- HUD ----------
+function manaGem(p, who) {    // big gem: mana left / max, plus the spell-mana pips (max 3)
+  const bank = G.R.spellBank || 0; let pips = ''; for (let k = 0; k < bank; k++) pips += `<i class="${k < p.spellMana ? 'on' : ''}"></i>`;
+  return `<div class="gem"><b>${p.mana}</b><small>/${p.maxMana}</small></div><div class="who">${who}<span class="sp" title="มานาเวทย์ (เก็บข้ามรอบ ใช้กับเวทย์)">${pips}</span></div>`;
+}
+function manaHtml(p) { let s = ''; for (let k = 0; k < p.maxMana; k++) s += `<i class="${k < p.mana ? 'on' : ''}"></i>`; if (G.R.spellBank) { s += '<span style="width:6px"></span>'; for (let k = 0; k < G.R.spellBank; k++) s += `<i class="sp ${k < p.spellMana ? 'on' : ''}"></i>`; } return s + ` <b style="margin-left:6px;min-width:2.4em">${p.mana}${p.spellMana ? '+' + p.spellMana : ''}</b>`; }
+// write to the DOM only when the content really changes (avoids re-layout, flicker and restarted CSS animations)
+function setHTML(el, h) { if (el.__h !== h) { el.__h = h; el.innerHTML = h; } }
+function setText(el, t) { if (el.textContent !== t) el.textContent = t; }
+function refreshHUD() {
+  if (!G) return;
+  const me = G.players[ME], op = G.players[OPP];
+  setHTML($('myMana'), manaGem(me, 'มานาคุณ')); setHTML($('enemyMana'), manaGem(op, 'มานาศัตรู'));
+  setText($('myInfo'), `${G.token === ME ? '⚔ ถือสิทธิ์โจมตี · ' : ''}${myDeckName ? myDeckName + ' · ' : ''}เด็ค ${me.deck.length} · มือ ${me.hand.length}`);
+  setText($('enemyInfo'), `${G.token === OPP ? '⚔ ' : ''}${op.name} · มือ ${op.hand.length} · เด็ค ${op.deck.length} · รอบ ${G.round}`);
+  drawAvatar(0); drawAvatar(1);
+  const orb = $('bMain'); let label = '…', cls = 'wait';
+  const me0 = G.players[ME], sel = selected && me0.hand.includes(selected.inst) && !G.whyNot(me0, selected.inst) ? selected : null;
+  if ((mode === 'main' || mode === 'respond') && sel) { label = 'เล่น'; cls = 'play'; }
+  else if (mode === 'main') { label = attackSel.size ? 'โจมตี!' : G.passStreak === 1 ? 'จบ<br>รอบ' : 'ผ่าน'; cls = attackSel.size ? 'atk' : G.passStreak === 1 ? 'end' : ''; }
+  else if (mode === 'block') { label = 'บล็อก'; cls = 'blk'; }
+  else if (mode === 'respond') { label = 'ผ่าน'; cls = 'pass'; }
+  else if (G.actor === OPP) label = 'ตา<br>ศัตรู';
+  setHTML(orb, `<span class="lbl">${label}</span>`); const oc = 'orb ' + cls + (cls !== 'wait' ? ' ready' : ''); if (orb.className !== oc) orb.className = oc; orb.disabled = cls === 'wait';
+  const canAtk = mode === 'main' && !G.attackBlocked(me) && me.board.some(u => G.canAttack(u) && G.power(u) > 0);
+  $('bAttack').hidden = !canAtk; setText($('bAttack'), attackSel.size ? 'ยกเลิกโจมตี' : '⚔ โจมตีทั้งหมด');
+  renderAlt();
+  syncFaces();
+}
+
+// ---------- detail panel ----------
+// the big DOM card (inspector, mulligan). o overrides cost / stats / keywords / status pills
+function bigCardHtml(c, o = {}) { return CardView.html(c, o); }   // web/cardview.js
+function showPanel(v, actions) {
+  const c = v.inst.card, u = unitState(v), me = G.players[ME], spell = LW.isSpellData(c), el = ELEMENTS[c.element] || ELEMENTS.fire, hero = isHero(c);
+  const inHand = me.hand.includes(v.inst), why = inHand ? G.whyNot(me, v.inst) : '';
+  const cost = inHand ? G.costOf(me, v.inst) : c.cost, art = c.art && (c.art.fullart || c.art.normal);
+  const kws = (u ? [...u.kws] : (c.keywords || [])).filter(k => KEYWORDS[k]).map(k => [k, KEYWORDS[k]]);
+  if (spell && SPEEDS[c.speed]) kws.push([c.speed, SPEEDS[c.speed]]);
+  const pw = u ? G.power(u) : (c.power || 0) + v.inst.bonusP, hp = u ? G.hp(u) : (c.health || 0) + v.inst.bonusH, mx = u ? G.maxHp(u) : hp;
+  const cmp = (n, base) => n > base ? 'up' : n < base ? 'down' : '';
+  const st = [];
+  if (u) { if (u.stunned) st.push(['STUN', '#4a8dff']); if (u.sealedBy) st.push(['ถูกผนึก', '#9b6bd6']); if (u.zero) st.push(['Power 0', '#777']); if (u.barrier) st.push(['เกราะคาถา', '#2bb7d6']); }
+  $('bc').innerHTML = CardView.fan(c, CARDS, { cost, kws, st, pw, hp, pwCls: cmp(pw, c.power || 0), hpCls: hp < mx ? 'down' : cmp(mx, c.health || 0) });   // + linked level-up / hero spell
+  const side = [];
+  if ((c.tags || []).length) side.push((c.tags || []).length ? `<div class="kwc tags"><b>แท็ก</b><div class="tagl">${c.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div></div>` : '');
+  for (const [k, x] of kws) side.push(`<div class="kwc" style="--k:${x.color}"><b><span style="color:${x.color}">${kwIcon(k, 18)}</span>${x.th}</b>${esc(x.desc)}</div>`);
+  if (u && (u.tempP || u.tempH)) side.push(`<div class="kwc info"><b>บัฟชั่วคราว</b>${u.tempP >= 0 ? '+' : ''}${u.tempP}|${u.tempH >= 0 ? '+' : ''}${u.tempH} ถึงจบรอบ</div>`);
+  if (hero && c.levelUpCondition && c.levelUp) {   // level-up progress (counts while the hero is on the field)
+    const need = u ? G.levelNeed(u) : ((G.eff(c) || {}).lvl || {}).need, to = CARDS.find(x => x.id === c.levelUp);
+    side.push(`<div class="kwc" style="--k:#e8c56a"><b>⬆ เลเวลอัพ${need ? ` ${u ? (u.lvl || 0) : 0}/${need}` : ''}</b>${esc(c.levelUpCondition)}${to ? ` → ${esc(to.nameTh)}` : ''}<br><small style="opacity:.75">นับเฉพาะตอนการ์ดใบนี้อยู่บนสนาม</small></div>`);
+  }
+  if (G.hasAbilityText(c) && !G.eff(c)) side.push('<div class="kwc warn"><b>⚠ effect ยังไม่ทำ</b>ในเกมจะเล่นแบบไม่มี effect</div>');
+  else if (G.outdated(c)) side.push('<div class="kwc warn"><b>⚠ effect อาจไม่ตรง</b>ข้อความการ์ดถูกแก้หลังเขียนโค้ด — ในเกมอาจยังทำงานแบบเดิม</div>');
+  if (actions && inHand && why) side.push(`<div class="kwc warn"><b>เล่นไม่ได้</b>${esc(why)}</div>`);
+  $('kwbox').innerHTML = CardView.gyroButton() + side.join('');   // phones: button to turn on tilt
+  $('bcAct').innerHTML = actions && inHand && !why ? `<button class="big gold" id="pPlay">${spell ? 'ใช้เวทย์' : 'ลงการ์ด'}</button>` : '';
+  const b = $('pPlay'); if (b) b.onclick = () => tryPlay(v);
+  // show it on the side of the screen away from the card
+  const sx = v.g ? toScreen(v).x : 0; $('inspect').dataset.uid = ''; $('inspect').className = sx > innerWidth / 2 ? 'left' : 'right';
+  $('inspect').hidden = false;
+}
+function hidePanel() { $('inspect').hidden = true; $('inspect').classList.remove('modal'); $('inspBg').hidden = true; document.body.classList.remove('insp'); }
+function openInspect(v, actions) {   // user-opened: centred, dark backdrop
+  showPanel(v, actions); $('inspect').classList.add('modal'); $('inspBg').hidden = false; document.body.classList.add('insp');
+}
+$('inspBg').onclick = () => { selected = null; hidePanel(); layoutAll(.2); refreshHUD(); };
+
+// ---------- log ----------
+const histCards = new Map();                       // uid -> card instance, for tapping a history tile
+const ownerCol = i => i === ME ? '#4f8cff' : '#e0504a';
+function thumbHtml(x, player, icon) {
+  histCards.set(x.uid, x);
+  const c = x.card, el = ELEMENTS[c.element] || ELEMENTS.fire, art = c.art && (c.art.normal || c.art.fullart);
+  return `<button class="th${LW.isSpellData(c) ? ' sp' : ''}" data-uid="${x.uid}" style="--c:${el.color};--o:${ownerCol(player)};background-image:url('../${esc(art)}')" title="${esc(c.nameTh)}"><b>${x.playedCost ?? c.cost}</b>${icon ? `<i>${icon}</i>` : ''}</button>`;
+}
+function addLog(text, kind, cards, player) {
+  const d = document.createElement('div'); d.className = kind || '';
+  if (cards && cards.length) {
+    const icon = kind === 'atk' ? '⚔' : kind === 'spell' ? '✦' : '';
+    d.classList.add('crow'); d.style.setProperty('--o', ownerCol(player));
+    d.innerHTML = `<div class="ths">${cards.slice(0, 4).map(x => thumbHtml(x, player, icon)).join('')}</div><span>${esc(text)}</span>`;
+    if (kind === 'play' || kind === 'spell') {        // LoR: the last few played cards stay visible on the side
+      const t = $('histTiles'); t.insertAdjacentHTML('beforeend', thumbHtml(cards[0], player, icon));
+      while (t.children.length > 4) t.firstElementChild.remove();
+    }
+  } else d.textContent = text;
+  $('logList').appendChild(d); $('logList').scrollTop = 1e9;
+}
+function onThumb(ev) {
+  const b = ev.target.closest('.th'); if (!b || !G) return;
+  const x = histCards.get(+b.dataset.uid); if (!x) return;
+  const live = views.get(x.uid), v = live && live.inst === x ? live : { inst: x };
+  if (!$('inspect').hidden && $('inspect').dataset.uid == x.uid) { hidePanel(); return; }
+  openInspect(v); $('inspect').dataset.uid = x.uid;
+}
+$('histTiles').addEventListener('click', onThumb); $('logList').addEventListener('click', onThumb);
+
+// =====================================================================================
+//  setup / game over
+// =====================================================================================
+let SYNC = null, CARDS = [], DECKS = [], deckChoice = 'konoha', startedAt = 0;
+let myDeckName = '';
+const deckIds = key => key.startsWith('auto:') ? LW.buildDeck(CARDS, LW.THEMES[key.slice(5)]) : (DECKS.find(d => d.id === key) || {}).cards || [];
+// give up -> lose now; rematch = same decks / options, straight into a new game
+$('giveUp').onclick = () => { if (G && !G.over) $('giveUpAsk').hidden = false; };
+$('giveUpNo').onclick = () => { $('giveUpAsk').hidden = true; };
+$('giveUpYes').onclick = () => {
+  $('giveUpAsk').hidden = true; if (!G || G.over) return;
+  G.over = true; G.winner = OPP; mode = 'idle'; hidePanel(); prompt('');
+  addLog('คุณยอมแพ้', 'sys'); showOver(OPP);
+};
+function rematch() {
+  const q = new URLSearchParams(location.search); q.set('auto', '1');
+  q.set('mine', $('myDeck').value); q.set('opp', $('oppDeck').value);
+  location.search = q.toString();
+}
+function showOver(w) {
+  if (showOver.shown) return; showOver.shown = showOver.done = true;
+  mode = 'idle'; hidePanel(); prompt(''); $('giveUpAsk').hidden = true;
+  const mins = ((Date.now() - startedAt) / 60000).toFixed(1);
+  const notes = [...G.notes], uns = [...G.unsupported].map(id => G.cards[id].nameEn + ' (' + id + ')');
+  $('overBox').innerHTML = `<h1>${w == null ? 'เสมอ' : w === ME ? 'ชนะ!' : 'แพ้'}</h1>
+    <p>ใช้ ${G.round} รอบ · ${mins} นาที · พลังชีวิตคุณ ${G.players[ME].life} / ศัตรู ${G.players[OPP].life}</p>
+    <h2>สิ่งที่พบระหว่างเล่น (${notes.length})</h2>
+    <ul class="notes">${notes.map(n => `<li>${esc(n)}</li>`).join('') || '<li>ไม่มี</li>'}</ul>
+    ${uns.length ? `<h2>effect ที่ยังไม่ได้เขียนโค้ด</h2><ul class="notes">${uns.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+    <div class="row"><button class="big gold" onclick="location.reload()">เล่นอีกครั้ง</button><button class="big" onclick="rematch()">รีเกม (เด็คเดิม)</button><a class="big" href="gallery.html" style="text-decoration:none">แกลเลอรี</a></div>`;
+  setTimeout(() => { $('over').hidden = false; }, 900);
+}
+async function startGame() {
+  if (matchMedia('(pointer: coarse)').matches && !Q.has('auto')) {
+    try { const el = document.documentElement; if (el.requestFullscreen) await el.requestFullscreen({ navigationUI: 'hide' }); } catch (e) {}
+    try { if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch (e) {}
+  }
+  REVEAL = $('optReveal').checked; SPEED = $('optFast').checked ? .55 : 1;
+  const watch = $('optWatch').checked;
+  const mine = deckIds($('myDeck').value), theirs = deckIds($('oppDeck').value);
+  try { localStorage.setItem('lw.myDeck', $('myDeck').value); } catch (e) {}
+  myDeckName = $('myDeck').selectedOptions[0] ? $('myDeck').selectedOptions[0].textContent.replace(/\s*\(.*$/, '') : '';
+  if (mine.length < 10 || theirs.length < 10) { alert('เด็คมีการ์ดน้อยเกินไป — ไปจัดเด็คก่อน'); return; }
+  const ai = LW.AI({ wait: ms => sleep(T(ms)), stepMs: 450, thinkMs: 250 });
+  G = new LW.Game({ cards: CARDS, effects: LW.EFFECTS, synced: SYNC, first: Math.random() < .5 ? 0 : 1, decks: [mine, theirs], controllers: [watch ? LW.AI({ wait: ms => sleep(T(ms)), stepMs: 450, thinkMs: 250 }) : Human, ai], names: ['คุณ', 'AI'], ui: UI });
+  $('start').hidden = true; startedAt = Date.now();
+  placeStatic(); refreshHUD();
+  try { await G.start(); } catch (e) { console.error(e); addLog('⚠ error: ' + e.message, 'warn'); $('log').hidden = false; }
+}
+Promise.all([
+  fetch('../data/cards.json', { cache: 'no-store' }).then(r => r.json()),
+  fetch('../data/decks.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : []).catch(() => []),
+  fetch('game/effects-sync.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null),
+]).then(([list, decks, sync]) => {
+  SYNC = sync;
+  CARDS = list; DECKS = Array.isArray(decks) ? decks : [];
+  const opts = [...DECKS.map(d => [d.id, `${d.name || 'เด็คไม่มีชื่อ'} (${d.cards.length} ใบ${d.cards.length !== 40 ? ' — ไม่ครบ 40' : ''})`]),
+    ...Object.entries(LW.THEMES).map(([k, t]) => ['auto:' + k, 'อัตโนมัติ: ' + t.name])];
+  const html = opts.map(([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join('');
+  $('myDeck').innerHTML = html; $('oppDeck').innerHTML = html;
+  const ready = DECKS.find(d => d.cards.length === 40);
+  let last = null; try { last = localStorage.getItem('lw.myDeck'); } catch (e) {}   // the deck you played last time
+  const known = v => v && [...$('myDeck').options].some(o => o.value === v);
+  $('myDeck').value = Q.get('deck') ? 'auto:' + deckChoice : known(last) ? last : ready ? ready.id : 'auto:konoha';
+  $('oppDeck').value = 'auto:' + (($('myDeck').value === 'auto:gato') ? 'konoha' : 'gato');
+  if (Q.get('mine')) $('myDeck').value = Q.get('mine'); if (Q.get('opp')) $('oppDeck').value = Q.get('opp');   // rematch keeps the decks
+  if (Q.has('auto')) setTimeout(startGame, 300);
+  if (Q.has('log')) $('log').hidden = false;
+}).catch(() => { $('myDeck').outerHTML = '<p>โหลด data/cards.json ไม่ได้ — เปิดผ่าน python3 serve.py</p>'; });
+$('bStart').onclick = startGame;
+// URL options for quick testing / demos: ?watch=1&fast=1&reveal=1&deck=gato&auto=1
+const Q = new URLSearchParams(location.search);
+if (Q.has('watch')) $('optWatch').checked = true; if (Q.has('fast')) $('optFast').checked = true; if (Q.has('reveal')) $('optReveal').checked = true;
+if (Q.get('deck') && LW.THEMES[Q.get('deck')]) deckChoice = Q.get('deck');
+if (Q.has('debugrect')) setTimeout(() => { $('prompt').textContent = JSON.stringify(['bMain', 'bAttack', 'btns'].map(id => { const r = $(id).getBoundingClientRect(); return [id, Math.round(r.left), Math.round(r.width), $(id).hidden]; }).concat([['vw', innerWidth, document.documentElement.clientWidth]])); }, 6000);
+// a broken animation must not stall the game: log it, release the cards and carry on
+UI.event = (orig => async function (type, d) {
+  try { return await orig.call(this, type, d); }
+  catch (e) { console.error(e); addLog(`⚠ UI error (${type}): ${e.message}`, 'warn'); for (const v of views.values()) v.busy = false; layoutAll(.2); refreshHUD(); }
+})(UI.event);
+addEventListener('error', e => { try { addLog('⚠ error: ' + e.message, 'warn'); } catch (_) {} });
+// ?selftest=1 — drives the human side through the real UI paths (play, targets, attack, block, respond) for automated checks
+if (Q.has('selftest')) setInterval(() => {
+  if (!G || G.over) return;
+  const me = G.players[ME];
+  if (mode === 'main' && !acting) {
+    const c = me.hand.find(x => !G.whyNot(me, x));
+    if (Q.has('handtest') && L.compact && c && views.get(c.uid) && window.__hand !== G.round && !window.__handBusy) {   // phone hand: tap fan → spread, tap card → select, drag it up → play
+      window.__hand = G.round; window.__handBusy = true; const cv = $('c');
+      const tap = (x, y) => { cv.dispatchEvent(new PointerEvent('pointerdown', { clientX: x, clientY: y, bubbles: true, pointerType: 'touch' })); cv.dispatchEvent(new PointerEvent('pointerup', { clientX: x, clientY: y, bubbles: true, pointerType: 'touch' })); };
+      const v = views.get(c.uid), at = () => toScreen(v);
+      let a = at(); tap(a.x, a.y - 10); const opened = handOpen;
+      setTimeout(() => {
+        a = at(); tap(a.x, a.y - 10); const sel = selected === v;
+        if (Q.has('handshot')) return;
+        setTimeout(() => {
+          a = at(); const fire = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { clientX: x, clientY: y, bubbles: true, pointerType: 'touch' }));
+          fire('pointerdown', a.x, a.y); [40, 90, 140, 190].forEach((d, k) => setTimeout(() => fire('pointermove', a.x, a.y - d * innerHeight / 400), 40 * (k + 1)));
+          setTimeout(() => { fire('pointerup', a.x, a.y - 190 * innerHeight / 400); setTimeout(() => { addLog(`HANDTEST ${opened && sel && !me.hand.includes(c) ? 'OK' : 'FAIL'}: open=${opened} sel=${sel} played=${!me.hand.includes(c)}`, 'sys'); window.__handBusy = false; }, 900); }, 260);
+        }, 800);
+      }, 800);   // wait for the hand to finish moving (headless Chrome renders few frames)
+      return;
+    }
+    if (window.__handBusy) return;
+    if (c && views.get(c.uid)) return tryPlay(views.get(c.uid));
+    if (Q.has('shot') && !window.__shot && me.hand.length && !Q.has('noclick')) { window.__shot = true; clickView(views.get(me.hand[0].uid)); return; }
+    if (Q.has('shot')) return;
+    const ready = me.board.find(u => G.canAttack(u) && G.power(u) > 0);
+    const chg = me.board.find(u => G.canAttack(u) && G.has(u, 'challenger')), foe0 = G.players[OPP].board.find(u => !u.stunned);
+    if (Q.has('pulltest') && chg && foe0 && !G.attackBlocked(me) && !window.__atk && views.get(foe0.uid)) {   // LoR Challenger: put the challenger in the attack line, drag an enemy in front of it
+      window.__atk = true; attackSel.add(chg); layoutAll(.2); const cv = $('c'), fire = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { clientX: x, clientY: y, bubbles: true, pointerType: 'touch' }));
+      setTimeout(() => {
+        const order = [...attackSel], from = toScreen(views.get(foe0.uid)), to = toScreen(new THREE.Vector3(slotX(order.indexOf(chg), order.length), L.combat1, 0));
+        fire('pointerdown', from.x, from.y); [.25, .5, .75, 1].forEach((t, k) => setTimeout(() => fire('pointermove', from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t), 40 * (k + 1)));
+        setTimeout(() => { fire('pointerup', to.x, to.y); addLog(`PULLTEST ${pulls.get(chg) === foe0 ? 'OK' : 'FAIL'}: ${foe0.card.nameEn} → ${chg.card.nameEn}`, 'sys'); setTimeout(() => { $('bMain').click(); window.__atk = false; }, 300); }, 260);
+      }, 500);
+      return;
+    }
+    if (Q.has('dragtest') && ready && !G.attackBlocked(me) && !attackSel.size && !window.__atk) {   // drag a unit forward = joins the attack
+      window.__atk = true; const sv = toScreen(views.get(ready.uid)), c = $('c');
+      const fire = (type, x, y) => c.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: y, bubbles: true, pointerType: 'touch' }));
+      fire('pointerdown', sv.x, sv.y); [30, 70, 110, 150].forEach((d, k) => setTimeout(() => fire('pointermove', sv.x, sv.y - d), 40 * (k + 1)));
+      setTimeout(() => { fire('pointerup', sv.x, sv.y - 150); addLog(`ATKDRAG ${attackSel.has(ready) ? 'OK' : 'FAIL'}: ${ready.card.nameEn}`, 'sys'); setTimeout(() => { window.__atk = false; $('bMain').click(); }, 200); }, 260);
+      return;
+    }
+    if (window.__atk) return;
+    if (!G.attackBlocked(me) && me.board.some(u => G.canAttack(u) && G.power(u) > 0)) {
+      $('bAttack').click();
+      const ch = [...attackSel].find(u => G.has(u, 'challenger')), foe = G.players[OPP].board.find(u => !u.stunned);
+      if (Q.has('dragtest') && ch && foe && views.get(foe.uid)) {   // drag an enemy in front of our challenger (LoR Challenger)
+        window.__atk = true; const cv = $('c'), fire = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { clientX: x, clientY: y, bubbles: true, pointerType: 'touch' }));
+        setTimeout(() => {
+          const order = [...attackSel], from = toScreen(views.get(foe.uid)), to = toScreen(new THREE.Vector3(slotX(order.indexOf(ch), order.length), L.combat1, 0));
+          fire('pointerdown', from.x, from.y); [.25, .5, .75, 1].forEach((t, k) => setTimeout(() => fire('pointermove', from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t), 40 * (k + 1)));
+          setTimeout(() => { fire('pointerup', to.x, to.y); addLog(`PULLTEST ${pulls.get(ch) === foe ? 'OK' : 'FAIL'}: ${foe.card.nameEn} → ${ch.card.nameEn}`, 'sys'); setTimeout(() => { window.__atk = false; $('bMain').click(); }, 300); }, 260);
+        }, 400);
+        return;
+      }
+      return setTimeout(() => $('bMain').click(), 150);
+    }
+    return $('bMain').click();
+  }
+  if (mode === 'target' && Q.has('targettest') && targetOpts.length && !window.__tgt) {   // tap the target like a finger would (slightly off-centre)
+    window.__tgt = true; const opts0 = targetOpts, u = targetOpts[0], sp = toScreen(views.get(u.uid)), c = $('c');
+    const fire = (type) => c.dispatchEvent(new PointerEvent(type, { clientX: sp.x + 18, clientY: sp.y + 14, bubbles: true, pointerType: 'touch' }));
+    fire('pointerdown'); setTimeout(() => { fire('pointerup'); setTimeout(() => { addLog(`TAPTEST ${mode !== 'target' || targetOpts !== opts0 ? 'OK' : 'FAIL'}: ${u.card.nameEn}`, 'sys'); window.__tgt = false; if (mode === 'target' && targetOpts === opts0) targetResolve(u); }, 120); }, 60);
+    return;
+  }
+  if (mode === 'target' && window.__tgt) return;
+  if (mode === 'target') { if (targetOpts.length) return targetResolve(targetOpts[0]); const b = $('bAlt'); if (!b.hidden) return b.click(); const x = document.querySelector('#altBox button'); if (x) return x.click(); }
+  if (mode === 'block' && Q.has('dragtest') && !window.__dragging) {
+    const a = G.combat.attackers.find(a => !G.combat.forced[a.uid]), b = a && me.board.find(u => G.canBlock(u, a));
+    if (a && b && !blockPairs[a.uid]) {
+      window.__dragging = true;
+      const sb = toScreen(views.get(b.uid)), sa = toScreen(views.get(a.uid)), c = $('c');
+      const fire = (type, x, y) => c.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: y, bubbles: true, pointerType: 'touch' }));
+      fire('pointerdown', sb.x, sb.y);
+      [.25, .5, .75, 1].forEach((t, k) => setTimeout(() => fire('pointermove', sb.x + (sa.x - sb.x) * t, sb.y + (sa.y - sb.y) * t), 40 * (k + 1)));
+      setTimeout(() => { fire('pointerup', sa.x, sa.y); addLog(`DRAGTEST ${blockPairs[a.uid] === b ? 'OK' : 'FAIL'}: ${b.card.nameEn} → ${a.card.nameEn}`, 'sys'); setTimeout(() => { window.__dragging = false; blockResolve && blockResolve(); }, 300); }, 260);
+    } else if (blockResolve) blockResolve();
+    return;
+  }
+  if (mode === 'block' && window.__dragging) return;
+  if (mode === 'block') { const a = G.combat.attackers.find(a => !G.combat.forced[a.uid]); const b = a && me.board.find(u => G.canBlock(u, a)); if (a && b) blockPairs[a.uid] = b; return blockResolve(); }
+  if (mode === 'respond') return respondResolve();
+}, 350);
+window.addEventListener('error', e => { addLog('⚠ error: ' + e.message, 'warn'); });
+window.addEventListener('unhandledrejection', e => { addLog('⚠ error: ' + (e.reason && e.reason.message || e.reason), 'warn'); });
+addEventListener('resize', resize); resize();
+document.fonts && document.fonts.ready.then(() => { for (const v of views.values()) v.sig = ''; });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

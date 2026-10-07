@@ -1,4 +1,7 @@
 node_modules/
 .DS_Store
 card-game-project-1/
-data/cards.json.bak
+data/*.bak
+.certs/
+__pycache__/
+*.tmp

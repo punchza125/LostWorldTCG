@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LostWorld TCG — จัดเด็ค</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Noto+Serif+Thai:wght@400;600;800&display=swap">
+<style>
+  :root { --gold: #e8c56a; --line: #3a3346; --ok: #6fcf97; --bad: #ff7a5a; --side: 380px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 30% 0%, #1d1828, #0b0a0f 65%); color: #f1ead8; font-family: 'Noto Serif Thai', system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 14px; background: #0b0a0fe6; backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin-right: var(--side); }
+  h1 { margin: 0 6px 0 0; font: 800 16px 'Cinzel', serif; letter-spacing: 2px; color: var(--gold); }
+  input, select { font: inherit; font-size: 14px; padding: 7px 12px; border-radius: 999px; background: #1d1925; color: #f1ead8; border: 2px solid var(--line); }
+  input[type=search] { flex: 1 1 160px; max-width: 260px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; font: 600 13px inherit; padding: 5px 10px; border-radius: 999px; background: #14111a; color: #f1ead8; border: 2px solid var(--line); cursor: pointer; }
+  .chip img { width: 18px; height: 18px; } .chip.on { border-color: var(--c, var(--gold)); background: #231e2c; }
+  nav.links { margin-left: auto; display: flex; gap: 12px; font-size: 13px; } nav.links a { color: #b8ab8c; text-decoration: none; } nav.links a:hover { color: var(--gold); }
+  main { margin-right: var(--side); display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px 12px; padding: 16px 14px 60px; }
+  /* collection tile */
+  .t { position: relative; aspect-ratio: 630 / 880; border-radius: 12px; overflow: hidden; border: 3px solid var(--c); background: #0f0d14 center / cover; cursor: pointer; box-shadow: 0 6px 14px #0009; transition: transform .12s; container-type: inline-size; }
+  .t:hover { transform: translateY(-4px); } .t:active { transform: scale(.97); }
+  .t.out { filter: grayscale(.8) brightness(.55); cursor: default; }
+  .t::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 50%, #0b0a0fee 92%); }
+  .t .c { position: absolute; z-index: 2; left: 4cqw; top: 4cqw; width: 22cqw; height: 22cqw; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #14203f; border: 2px solid var(--gold); font: 800 12cqw 'Cinzel', serif; }
+  .t .el { position: absolute; z-index: 2; right: 4cqw; top: 4cqw; width: 18cqw; }
+  .t .n { position: absolute; z-index: 2; left: 4cqw; right: 4cqw; bottom: 17cqw; text-align: center; font-weight: 800; font-size: 8cqw; line-height: 1.15; text-shadow: 0 2px 4px #000; }
+  .t .s { position: absolute; z-index: 2; bottom: 3cqw; font: 800 10cqw 'Cinzel', serif; min-width: 18cqw; height: 15cqw; display: flex; align-items: center; justify-content: center; border-radius: 99px; border: 2px solid var(--gold); }
+  .t .s.p { left: 3cqw; background: #8a2512; } .t .s.h { right: 3cqw; background: #164a33; } .t .s.sp { left: 50%; transform: translateX(-50%); background: #3a1d5a; font-size: 6cqw; padding: 0 3cqw; }
+  .t .have { position: absolute; z-index: 3; top: 28cqw; left: 50%; transform: translateX(-50%); padding: 1cqw 4cqw; border-radius: 99px; background: var(--gold); color: #1d1925; font: 800 8cqw 'Cinzel', serif; box-shadow: 0 2px 8px #000; }
+  .t .hero { position: absolute; z-index: 3; top: 0; left: 50%; transform: translateX(-50%); font: 800 5cqw 'Cinzel', serif; padding: 0 5cqw; background: linear-gradient(#fff3c4, #c8962e); color: #2a1d05; letter-spacing: 1cqw; }
+  /* deck side panel */
+  aside { position: fixed; top: 0; right: 0; bottom: 0; width: var(--side); display: flex; flex-direction: column; background: #100e15; border-left: 1px solid var(--line); z-index: 11; }
+  .dhead { padding: 12px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--line); }
+  .dhead .r { display: flex; gap: 6px; } .dhead .r > * { flex: 1; min-width: 0; }
+  button.b { font: 700 13px 'Noto Serif Thai', serif; padding: 8px 10px; border-radius: 10px; border: 2px solid var(--line); background: #1d1925; color: inherit; cursor: pointer; }
+  button.b.gold { background: linear-gradient(#f5dc96, #c8962e); color: #2a1d05; border-color: #fff3c4; } button.b:disabled { opacity: .4; }
+  .stats { padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 13px; color: #cfc4a8; display: flex; flex-direction: column; gap: 8px; }
+  .count { font: 800 22px 'Cinzel', serif; } .count.ok { color: var(--ok); } .count.no { color: var(--bad); }
+  .curve { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
+  .curve div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; height: 100%; font-size: 10px; color: #8d8299; }
+  .curve i { width: 100%; background: linear-gradient(#9fd0ff, #3a7bd5); border-radius: 3px 3px 0 0; min-height: 2px; }
+  .els { display: flex; gap: 8px; flex-wrap: wrap; } .els span { display: inline-flex; align-items: center; gap: 3px; } .els img { width: 16px; }
+  .list { flex: 1; overflow: auto; padding: 8px 10px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .row { flex: none; position: relative; display: flex; align-items: center; gap: 8px; height: 44px; border-radius: 10px; overflow: hidden; border: 1px solid #ffffff22; cursor: pointer; background: #14111a; }
+  .row .bg { position: absolute; inset: 0; background: center 30% / cover; opacity: .55; mask-image: linear-gradient(90deg, transparent 25%, #000 70%); -webkit-mask-image: linear-gradient(90deg, transparent 25%, #000 70%); }
+  .row > *:not(.bg) { position: relative; }
+  .row .c { flex: none; width: 34px; height: 34px; margin-left: 5px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #14203f; border: 2px solid var(--gold); font: 800 16px 'Cinzel', serif; }
+  .row .nm { flex: 1; min-width: 0; font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 3px #000; }
+  .row .x { flex: none; width: 40px; height: 100%; display: flex; align-items: center; justify-content: center; font: 800 18px 'Cinzel', serif; background: #0b0a10cc; border-left: 1px solid #ffffff22; }
+  .row .star { flex: none; font-size: 16px; color: #8d8299; padding: 0 4px; } .row .star.on { color: var(--gold); text-shadow: 0 0 6px var(--gold); }
+  .row:hover { border-color: var(--gold); cursor: grab; } .t { cursor: grab; }
+  .warn { color: var(--bad); font-size: 12px; } .hint { color: #8d8299; font-size: 12px; }
+  #msg { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 30; padding: 8px 16px; border-radius: 99px; background: #14111aee; border: 1px solid var(--line); font-size: 13px; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  #msg.show { opacity: 1; }
+  /* card details (same big card as in the game) */
+  #insp { position: fixed; z-index: 40; top: 50%; left: calc(50% - var(--side) / 2); transform: translate(-50%, -50%); display: flex; gap: 14px; align-items: center; pointer-events: none; }
+  #insp[hidden] { display: none; } #insp.sticky { pointer-events: auto; }
+  #inspBg { position: fixed; inset: 0; z-index: 39; background: #07060bb3; backdrop-filter: blur(3px); } #inspBg[hidden] { display: none; }
+  .kwbox { width: 240px; display: flex; flex-direction: column; gap: 8px; }
+  .kwc { padding: 10px 12px; border-radius: 12px; background: #14111aee; border: 2px solid color-mix(in srgb, var(--k, #3a3346) 70%, transparent); font-size: 13px; line-height: 1.5; box-shadow: 0 6px 18px #000a; animation: bcIn .25s ease-out both; }
+  .kwc.tags { --k: #b8ab8c; } .tagl { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; } .tagl span { padding: 1px 10px; border-radius: 99px; background: #231e2c; border: 1px solid #4a4256; color: #e9dfc3; font-size: 12.5px; }
+  .kwc b { display: flex; align-items: center; gap: 6px; font-size: 15px; color: color-mix(in srgb, var(--k, #e8c56a) 70%, #fff); } .kwc.warn { --k: #ff7a5a; color: #ffb09a; } .kwc.info { --k: #9fd0ff; color: #cfe6ff; }
+  .t .info { position: absolute; z-index: 4; right: 3cqw; top: 25cqw; width: 15cqw; height: 15cqw; border-radius: 50%; border: 2px solid #fff6; background: #0b0a10cc; color: #fff; font: 800 9cqw 'Cinzel', serif; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .t .info:hover { background: var(--gold); color: #1d1925; }
+  #deckToggle { display: none; }
+  /* drag & drop: drag a card onto the deck to add it, drag a deck row back onto the collection to take it out; a tap opens the card */
+  .t, .row { touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+  #ghost { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; transform-origin: 50% 50%; filter: drop-shadow(0 14px 22px #000c); transition: opacity .15s; }
+  #ghost .t { width: 112px; transform: rotate(-4deg) scale(1.04); } #ghost .row { width: 260px; transform: rotate(-2deg); }
+  .drop { position: fixed; z-index: 45; display: none; align-items: center; justify-content: center; text-align: center; padding: 16px; border-radius: 18px; pointer-events: none;
+    font: 800 18px 'Noto Serif Thai', serif; border: 3px dashed; transition: background .15s, transform .15s; }
+  .drop.on { display: flex; }
+  #dropAdd { border-color: var(--gold); color: #f5dc96; background: #e8c56a14; box-shadow: inset 0 0 40px #e8c56a22; }
+  #dropAdd.over { background: #e8c56a33; transform: scale(1.01); } #dropAdd.bad { border-color: var(--bad); color: #ffb09a; background: #ff7a5a1c; }
+  #dropDel { border-color: var(--bad); color: #ffb09a; background: #ff7a5a12; } #dropDel.over { background: #ff7a5a30; }
+  .drop b { display: block; font-size: 40px; line-height: 1; margin-bottom: 6px; }
+  .row.pop { animation: rowPop .5s ease-out; } @keyframes rowPop { 0% { transform: translateX(-24px); background: #e8c56a55; } 100% { transform: none; } }
+  .t.dragsrc { opacity: .35; } .row.dragsrc { opacity: .35; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }   /* iOS: no font blow-up in landscape */
+  /* phone held sideways: one page — small cards on the left, the deck list stays on the right */
+  @media (orientation: landscape) and (max-height: 520px) {
+    :root { --side: min(270px, 34vw); }
+    header { padding: 5px 10px; gap: 5px; } h1 { font-size: 13px; letter-spacing: 1px; }
+    input, select { font-size: 12px; padding: 4px 10px; } input[type=search] { flex: 1 1 110px; }
+    .chip { padding: 2px 5px; font-size: 11px; } .chip img { width: 15px; height: 15px; } .cost-chip { width: 24px; height: 24px; font-size: 11.5px; }
+    nav.links { font-size: 11px; gap: 8px; }
+    main { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px 6px; padding: 8px 8px 40px; }
+    .t { border-width: 2px; border-radius: 8px; }
+    .dhead { padding: 6px 8px; gap: 5px; } .dhead .r { gap: 4px; } button.b { font-size: 11.5px; padding: 4px 4px; border-radius: 8px; }
+    .stats { padding: 5px 8px; gap: 4px; font-size: 11px; } .count { font-size: 16px; } .curve { height: 46px; } .curve div { font-size: 9px; } .stats .hint { display: none; }
+    .list { padding: 6px; gap: 4px; } .row { height: 32px; gap: 5px; } .row .c { width: 24px; height: 24px; font-size: 12px; margin-left: 4px; } .row .nm { font-size: 12px; } .row .x { width: 30px; font-size: 14px; }
+    #insp { --cw: min(30vw, 78vh * .716); --rs: .65; gap: 8px; } .kwbox { width: 190px; gap: 5px; } .kwc { padding: 6px 8px; font-size: 11px; }
+  }
+  @media (max-width: 820px) {
+    :root { --side: 0px; }
+    aside { width: 100%; top: auto; height: 62vh; transform: translateY(calc(100% - 64px)); transition: transform .25s; border-left: 0; border-top: 1px solid var(--gold); border-radius: 18px 18px 0 0; }
+    aside.open { transform: none; }
+    #deckToggle { display: block; position: fixed; z-index: 12; left: 0; right: 0; bottom: 0; height: 64px; background: transparent; border: 0; }
+    aside.open + #deckToggle { display: none; }
+    main { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; padding-bottom: 90px; }
+    #insp { left: 50%; flex-direction: column; --cw: 54vw; --rs: .6; } .kwbox { width: 80vw; }
+    .dhead { cursor: pointer; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>จัดเด็ค</h1>
+  <input id="q" type="search" placeholder="ค้นหาการ์ด…">
+  <span id="els"></span>
+  <span class="costs" id="costs"></span>
+  <select id="kind"><option value="">ทุกประเภท</option><option value="char">ตัวละคร</option><option value="spell">เวทย์</option><option value="hero">★ Hero</option></select>
+  <nav class="links"><a href="play.html" id="playLink">▶ เล่นเกมด้วยเด็คนี้</a><a href="gallery.html">แกลเลอรี</a></nav>
+</header>
+<main id="grid"></main>
+<aside id="side">
+  <div class="dhead" id="dhead">
+    <div class="r"><select id="deckSel"></select></div>
+    <div class="r"><input id="deckName" placeholder="ชื่อเด็ค"></div>
+    <div class="r"><button class="b" id="bNew">+ ใหม่</button><button class="b" id="bDup">ทำสำเนา</button><button class="b" id="bDel">ลบ</button><button class="b gold" id="bSave">บันทึก</button></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="list" id="list"></div>
+</aside>
+<button id="deckToggle" aria-label="เปิดเด็ค"></button>
+<div id="msg"></div>
+<div id="ghost" hidden></div>
+<div class="drop" id="dropAdd"><div><b>＋</b><span id="dropAddTx">ลากมาวางที่นี่เพื่อใส่เด็ค</span></div></div>
+<div class="drop" id="dropDel"><div><b>−</b>ลากมาวางตรงนี้เพื่อเอาออกจากเด็ค</div></div>
+<div id="inspBg" hidden></div>
+<div id="insp" hidden><div id="bc"></div><div class="kwbox" id="kwbox"></div></div>
+
+<script src="elements.js"></script>
+<script src="cardview.js"></script>
+<script src="game/engine.js"></script>
+<script src="game/ai.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const DECK_SIZE = 40, MAX_HEROES = 3;
+const maxCopies = () => 3;     // every card (any rarity) up to 3 copies — decided rule
+let CARDS = [], BY = {}, decks = [], cur = 0, saved = '[]', elFilter = new Set(), costFilter = new Set();
+
+const msg = t => { const m = $('msg'); m.textContent = t; m.classList.add('show'); clearTimeout(msg.t); msg.t = setTimeout(() => m.classList.remove('show'), 1800); };
+const deck = () => decks[cur];
+const countOf = id => deck().cards.filter(x => x === id).length;
+const dirty = () => JSON.stringify(decks) !== saved;
+const art = c => cardArt(c);   // normal art (full art is for pack openings)
+
+function problems(d) {
+  const p = [];
+  if (d.cards.length !== DECK_SIZE) p.push(`ต้องมี ${DECK_SIZE} ใบ (ตอนนี้ ${d.cards.length})`);
+  for (const id of new Set(d.cards)) { const c = BY[id]; if (!c) p.push(`ไม่พบการ์ด ${id}`); else if (d.cards.filter(x => x === id).length > maxCopies(c)) p.push(`${c.nameEn} เกิน ${maxCopies(c)} ใบ`); }
+  if ((d.heroes || []).length > MAX_HEROES) p.push(`Hero เกิน ${MAX_HEROES} ใบ`);
+  return p;
+}
+
+function renderGrid() {
+  const q = $('q').value.trim().toLowerCase(), kind = $('kind').value;
+  const list = CARDS.filter(c => !c.extra)
+    .filter(c => !elFilter.size || elFilter.has(c.element))
+    .filter(c => costMatch(c, costFilter))
+    .filter(c => !kind || (kind === 'spell' ? LW.isSpellData(c) : kind === 'char' ? !LW.isSpellData(c) : isHero(c)))
+    .filter(c => !q || [c.id, c.nameTh, c.nameEn, c.type, ...(c.tags || [])].some(v => String(v || '').toLowerCase().includes(q)))
+    .sort((a, b) => a.cost - b.cost || a.id.localeCompare(b.id));
+  $('grid').innerHTML = list.map(c => {
+    const n = countOf(c.id), full = n >= maxCopies(c), spell = LW.isSpellData(c), el = ELEMENTS[c.element] || ELEMENTS.fire;
+    return `<div class="t${full ? ' out' : ''}" data-id="${c.id}" style="--c:${isHero(c) ? '#e8c56a' : el.color};background-image:url('../${esc(art(c))}');background-position:${focusPos(c)}" title="${esc(c.nameTh)} — ลากไปที่เด็คเพื่อใส่ · แตะเพื่อดูการ์ด">
+      ${isHero(c) ? '<span class="hero">HERO</span>' : ''}<span class="c">${c.cost}</span><img class="el" src="${el.icon}" alt="">
+      <span class="info" data-info="${c.id}" title="ดูรายละเอียด">i</span>
+      ${n ? `<span class="have">${n}/${maxCopies(c)}</span>` : ''}<span class="n">${esc(c.nameTh)}</span>
+      ${spell ? `<span class="s sp">${(SPEEDS[c.speed] || {}).th || ''} SPELL</span>` : `<span class="s p">${c.power}</span><span class="s h">${c.health}</span>`}</div>`;
+  }).join('');
+}
+function renderDeck() {
+  const d = deck();
+  $('deckSel').innerHTML = decks.map((x, i) => `<option value="${i}">${esc(x.name || 'เด็คไม่มีชื่อ')} (${x.cards.length})</option>`).join('');
+  $('deckSel').value = cur; $('deckName').value = d.name || '';
+  const uniq = [...new Set(d.cards)].map(id => BY[id]).filter(Boolean).sort((a, b) => a.cost - b.cost || a.nameTh.localeCompare(b.nameTh));
+  $('list').innerHTML = uniq.map(c => `<div class="row${c.id === lastAdded ? ' pop' : ''}" data-id="${c.id}" title="ลากออกไปทางซ้ายเพื่อเอาออก 1 ใบ · แตะเพื่อดูการ์ด"><span class="bg" style="background-image:url('../${esc(art(c))}')"></span>
+      <span class="c">${c.cost}</span><span class="nm">${esc(c.nameTh)}</span>
+      ${isHero(c) ? `<span class="star${(d.heroes || []).includes(c.id) ? ' on' : ''}" data-hero="${c.id}" title="เลือกเป็น Hero ของเด็ค">★</span>` : ''}
+      <span class="x"><span>×${countOf(c.id)}</span></span></div>`).join('') || '<div class="hint">คลิกการ์ดด้านซ้ายเพื่อใส่เด็ค</div>';
+  // stats
+  const cards = d.cards.map(id => BY[id]).filter(Boolean), curve = Array(9).fill(0);
+  cards.forEach(c => curve[Math.min(8, c.cost)]++);
+  const maxC = Math.max(1, ...curve), spells = cards.filter(c => LW.isSpellData(c)).length;
+  const els = {}; cards.forEach(c => els[c.element] = (els[c.element] || 0) + 1);
+  const pr = problems(d), extra = (d.heroes || []).map(id => BY[id] && BY[id].levelUp).filter(Boolean).map(id => BY[id]).filter(Boolean);
+  $('stats').innerHTML = `<div><span class="count ${d.cards.length === DECK_SIZE ? 'ok' : 'no'}">${d.cards.length}</span> / ${DECK_SIZE} ใบ · ตัวละคร ${cards.length - spells} · เวทย์ ${spells} · Hero ${(d.heroes || []).length}/${MAX_HEROES}</div>
+    <div class="curve">${curve.map((n, i) => `<div>${n || ''}<i style="height:${n / maxC * 100}%"></i>${i === 8 ? '8+' : i}</div>`).join('')}</div>
+    <div class="els">${Object.entries(els).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<span><img src="${(ELEMENTS[k] || {}).icon}" alt="">${n}</span>`).join('')}</div>
+    ${extra.length ? `<div class="hint">Extra deck: ${extra.map(c => esc(c.nameTh)).join(', ')}</div>` : ''}
+    ${pr.length ? `<div class="warn">${pr.map(esc).join(' · ')}</div>` : '<div style="color:var(--ok)">✓ เด็คพร้อมใช้</div>'}
+    <div class="hint">การ์ดทุกใบใส่ได้สูงสุด 3 ใบ</div>`;
+  $('bSave').textContent = dirty() ? 'บันทึก ●' : 'บันทึกแล้ว';
+}
+function render() { renderGrid(); renderDeck(); const d = deck(); if (d) $('playLink').href = 'play.html?mine=' + encodeURIComponent(d.id); }
+
+function showCard(id, sticky) {
+  const c = BY[id]; if (!c) return;
+  const spell = LW.isSpellData(c), el = ELEMENTS[c.element] || ELEMENTS.fire, hero = isHero(c);
+  const kws = (c.keywords || []).filter(k => KEYWORDS[k]).map(k => [k, KEYWORDS[k]]); if (spell && SPEEDS[c.speed]) kws.push([c.speed, SPEEDS[c.speed]]);
+  $('bc').innerHTML = CardView.fan(c, Object.values(BY));   // normal layout + linked level-up / hero spell (web/cardview.js)
+  const side = kws.map(([k, x]) => `<div class="kwc" style="--k:${x.color}"><b><span style="color:${x.color}">${kwIcon(k, 18)}</span>${x.th}</b>${esc(x.desc)}</div>`);
+  if ((c.tags || []).length) side.unshift((c.tags || []).length ? `<div class="kwc tags"><b>แท็ก</b><div class="tagl">${c.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div></div>` : '');
+  side.push(`<div class="kwc info"><b>ในเด็คนี้</b>${countOf(c.id)} / ${maxCopies(c)} ใบ · ${esc(c.rarity)}</div>`);
+  $('kwbox').innerHTML = CardView.gyroButton() + side.join('');
+  $('insp').hidden = false; $('insp').classList.toggle('sticky', !!sticky); $('inspBg').hidden = !sticky;
+}
+function hideCard() { $('insp').hidden = true; $('inspBg').hidden = true; }
+$('inspBg').onclick = hideCard; $('insp').onclick = hideCard;
+addEventListener('keydown', e => { if (e.key === 'Escape') hideCard(); });
+// ---------- drag & drop (mouse and touch) ----------
+// tile (collection) -> deck panel = add one copy · deck row -> collection = remove one copy · tap = open the card
+let drag = null, lastAdded = null;
+const zoneRect = el => el.getBoundingClientRect();
+const inside = (r, x, y) => x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+function placeZones() {
+  const a = zoneRect($('side')), g = zoneRect($('grid'));
+  const visTop = Math.max(a.top, 0), visBot = Math.min(a.bottom, innerHeight);
+  Object.assign($('dropAdd').style, { left: (a.left + 8) + 'px', top: (visTop + 8) + 'px', width: (a.width - 16) + 'px', height: Math.max(56, visBot - visTop - 16) + 'px' });
+  Object.assign($('dropDel').style, { left: (g.left + 10) + 'px', top: '80px', width: (Math.min(g.width, innerWidth - a.width) - 20) + 'px', height: (innerHeight - 100) + 'px' });
+}
+function addProblem(id) {
+  const c = BY[id], d = deck();
+  if (d.cards.length >= DECK_SIZE) return `เด็คครบ ${DECK_SIZE} ใบแล้ว`;
+  if (countOf(id) >= maxCopies(c)) return `${c.nameTh} ใส่ได้สูงสุด ${maxCopies(c)} ใบ`;
+  return '';
+}
+document.addEventListener('pointerdown', e => {
+  if (e.button > 0 || !$('inspBg').hidden) return;
+  const el = e.target.closest('#grid .t, #list .row'); if (!el || e.target.closest('[data-hero]')) return;
+  drag = { el, id: el.dataset.id, kind: el.classList.contains('t') ? 'add' : 'del', x: e.clientX, y: e.clientY, t: performance.now(), on: false, touch: e.pointerType !== 'mouse' };
+});
+document.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y, dist = Math.hypot(dx, dy);
+  if (!drag.on) {
+    // mouse: any small move starts a drag; touch: sideways move (vertical = scrolling) or hold first, then move
+    const go = drag.touch ? (dist > 12 && (Math.abs(dx) > Math.abs(dy) * 1.2 || performance.now() - drag.t > 280)) : dist > 6;
+    if (!go) { if (drag.touch && Math.abs(dy) > 14) drag = null; return; }
+    drag.on = true; drag.el.classList.add('dragsrc');
+    const gh = $('ghost'); gh.innerHTML = ''; gh.appendChild(drag.el.cloneNode(true)); gh.firstChild.classList.remove('dragsrc'); gh.hidden = false;
+    placeZones(); const z = $(drag.kind === 'add' ? 'dropAdd' : 'dropDel'); z.classList.add('on');
+    if (drag.kind === 'add') { const bad = addProblem(drag.id); $('dropAdd').classList.toggle('bad', !!bad); $('dropAddTx').textContent = bad || 'ลากมาวางที่นี่เพื่อใส่เด็ค'; if (innerWidth <= 820) $('side').classList.add('open'); }
+    hideCard();
+  }
+  e.preventDefault();
+  const gh = $('ghost'), w = gh.firstChild.offsetWidth, h = gh.firstChild.offsetHeight;
+  gh.style.transform = `translate(${e.clientX - w / 2}px, ${e.clientY - h / 2}px)`;
+  const over = inside(zoneRect($(drag.kind === 'add' ? 'dropAdd' : 'dropDel')), e.clientX, e.clientY);
+  $(drag.kind === 'add' ? 'dropAdd' : 'dropDel').classList.toggle('over', over);
+}, { passive: false });
+function endDrag(e, cancel) {
+  const d = drag; drag = null; if (!d) return;
+  if (!d.on) { if (!cancel) showCard(d.id, true); return; }                   // it was a tap: open the card
+  d.el.classList.remove('dragsrc'); $('ghost').hidden = true;
+  const zone = $(d.kind === 'add' ? 'dropAdd' : 'dropDel'), over = !cancel && inside(zoneRect(zone), e.clientX, e.clientY);
+  ['dropAdd', 'dropDel'].forEach(id => $(id).classList.remove('on', 'over', 'bad'));
+  if (!over) return;
+  const dk = deck();
+  if (d.kind === 'add') { const bad = addProblem(d.id); if (bad) return msg(bad); dk.cards.push(d.id); lastAdded = d.id; render(); setTimeout(() => { lastAdded = null; }, 600); msg(`ใส่ ${BY[d.id].nameTh} แล้ว`); }
+  else { const i = dk.cards.lastIndexOf(d.id); if (i >= 0) dk.cards.splice(i, 1); if (!dk.cards.includes(d.id)) dk.heroes = (dk.heroes || []).filter(x => x !== d.id); render(); msg(`เอา ${BY[d.id].nameTh} ออก 1 ใบ`); }
+}
+document.addEventListener('pointerup', e => endDrag(e, false));
+document.addEventListener('pointercancel', e => endDrag(e, true));
+$('grid').addEventListener('click', e => { const info = e.target.closest('[data-info]'); if (info) e.stopPropagation(); });
+$('list').addEventListener('click', e => {           // the ★ on a row still marks heroes
+  const h = e.target.closest('[data-hero]'); if (!h) return; e.stopPropagation(); const d = deck(), id = h.dataset.hero; d.heroes = d.heroes || [];
+  if (d.heroes.includes(id)) d.heroes = d.heroes.filter(x => x !== id); else if (d.heroes.length >= MAX_HEROES) return msg(`เลือก Hero ได้สูงสุด ${MAX_HEROES} ใบ`); else d.heroes.push(id);
+  render();
+});
+['q', 'kind'].forEach(id => $(id).addEventListener('input', renderGrid));
+$('deckSel').onchange = () => { cur = +$('deckSel').value; render(); };
+$('deckName').oninput = () => { deck().name = $('deckName').value; renderDeck(); };
+$('bNew').onclick = () => { decks.push({ id: 'd' + Date.now(), name: 'เด็คใหม่', cards: [], heroes: [] }); cur = decks.length - 1; render(); };
+$('bDup').onclick = () => { const d = JSON.parse(JSON.stringify(deck())); d.id = 'd' + Date.now(); d.name += ' (สำเนา)'; decks.push(d); cur = decks.length - 1; render(); };
+$('bDel').onclick = () => { if (!confirm(`ลบเด็ค “${deck().name}” ?`)) return; decks.splice(cur, 1); if (!decks.length) decks.push({ id: 'd' + Date.now(), name: 'เด็คใหม่', cards: [], heroes: [] }); cur = 0; render(); };
+$('bSave').onclick = async () => {
+  try {
+    const r = await fetch('../data/decks.json', { method: 'PUT', body: JSON.stringify(decks, null, 2) + '\n' });
+    if (!r.ok) throw new Error(await r.text());
+    saved = JSON.stringify(decks); renderDeck(); msg('บันทึกเด็คแล้ว ✓');
+  } catch (e) { msg('บันทึกไม่ได้ — เปิดผ่าน python3 serve.py'); }
+};
+addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); $('bSave').click(); } });
+addEventListener('beforeunload', e => { if (dirty()) { e.preventDefault(); e.returnValue = ''; } });
+$('deckToggle').onclick = () => $('side').classList.add('open');
+$('dhead').addEventListener('click', e => { if (innerWidth <= 820 && e.target === $('dhead')) $('side').classList.toggle('open'); });
+
+$('els').innerHTML = Object.entries(ELEMENTS).map(([k, e]) => `<button class="chip" data-el="${k}" style="--c:${e.color}" title="${e.th}"><img src="${e.icon}" alt=""></button>`).join('');
+$('costs').innerHTML = costChipsHtml();
+$('costs').onclick = e => { const b = e.target.closest('.cost-chip'); if (!b) return; const n = +b.dataset.cost; costFilter.has(n) ? costFilter.delete(n) : costFilter.add(n); b.classList.toggle('on'); renderGrid(); };
+$('els').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; elFilter.has(b.dataset.el) ? elFilter.delete(b.dataset.el) : elFilter.add(b.dataset.el); b.classList.toggle('on'); renderGrid(); };
+
+Promise.all([
+  fetch('../data/cards.json', { cache: 'no-store' }).then(r => r.json()),
+  fetch('../data/decks.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : []).catch(() => []),
+]).then(([cards, ds]) => {
+  CARDS = cards; cards.forEach(c => BY[c.id] = c);
+  decks = Array.isArray(ds) && ds.length ? ds : [
+    // first visit: start from the two prototype themed decks so there is something to edit
+    { id: 'd-konoha', name: 'โคโนฮะ / Team 7', cards: LW.buildDeck(cards, LW.THEMES.konoha), heroes: [] },
+    { id: 'd-gato', name: 'แก๊งกาโต้ / หมอก', cards: LW.buildDeck(cards, LW.THEMES.gato), heroes: [] },
+  ];
+  saved = Array.isArray(ds) && ds.length ? JSON.stringify(decks) : '[]';
+  const want = new URLSearchParams(location.search).get('deck'); const i = decks.findIndex(d => d.id === want); cur = i >= 0 ? i : 0;
+  render();
+}).catch(() => { $('grid').innerHTML = '<p>โหลด data/cards.json ไม่ได้ — เปิดผ่าน python3 serve.py</p>'; });
+</script>
+</body>
+</html>

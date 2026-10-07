@@ -33,14 +33,14 @@
     background: #1d1925; display: flex; flex-direction: column; gap: 12px; position: relative; overflow: hidden;
   }
   .row { display: flex; align-items: center; gap: 12px; }
-  .cost { width: 64px; height: 64px; flex-shrink: 0; transform: rotate(45deg); background: #0f0d14;
+  .cost { width: 78px; height: 78px; flex-shrink: 0; transform: rotate(45deg); background: #0f0d14;
     border: 3px solid var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-  .cost span { transform: rotate(-45deg); font: 800 30px 'Cinzel', serif; color: #f5dc96; }
+  .cost span { transform: rotate(-45deg); font: 800 44px 'Cinzel', serif; color: #fff4dc; text-shadow: 0 2px 0 #000, 0 0 8px #000c; }
   .names { flex: 1; padding-left: 10px; }
   .name-th { font-size: 30px; font-weight: 800; line-height: 1.15; color: #f5ecd2; }
   .name-en { font: 600 14px 'Cinzel', serif; letter-spacing: 3px; color: #b8ab8c; }
-  .element { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px;
-    border: 2px solid var(--accent); border-radius: 10px; background: #0f0d14; font-size: 12px; font-weight: 600; color: #e9dfc3; }
+  .element { flex: none; width: 78px; height: 78px; filter: drop-shadow(0 3px 4px #000a); }
+  .element img, #elementIcon { width: 100%; height: 100%; display: block; }
   .art { flex: 1; min-height: 0; border-radius: 10px; border: 2px solid #4a4256; background: #0f0d14; position: relative; overflow: hidden; }
   .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .rarity { position: absolute; left: 12px; top: 12px; padding: 4px 12px; border-radius: 999px; background: #0b0a0fcc;
@@ -56,8 +56,11 @@
   .stat small { display: block; font-size: 12px; color: #b8ab8c; }
   .stat b { display: block; font: 600 13px 'Cinzel', serif; letter-spacing: 2px; color: #e9dfc3; }
   .stat.r { text-align: right; }
-  .orb { width: 58px; height: 58px; border: 3px solid #e8c56a; display: flex; align-items: center; justify-content: center;
-    font: 800 28px 'Cinzel', serif; color: #fff4dc; }
+  .orb { width: 80px; height: 80px; border: 4px solid #e8c56a; display: flex; align-items: center; justify-content: center;
+    font: 800 46px 'Cinzel', serif; color: #fff; text-shadow: 0 2px 0 #000, 0 0 8px #000c; box-shadow: 0 4px 10px #000a; }
+  .power { background: radial-gradient(circle at 35% 30%, #e0603a, #8a2512 70%) !important; }
+  .health { background: radial-gradient(circle at 35% 30%, #3fa06e, #164a33 70%) !important; }
+  #card.fullart .stat small, #card.fullart .stat b { display: none; }
   .power { border-radius: 50%; background: #7a2416; }
   .health { border-radius: 12px; background: #1e4a3a; }
 
@@ -79,6 +82,100 @@
   #card.fullart .flavor { color: #2a2132; font-weight: 600; }
 
   /* Holographic glare follows pointer */
+  /* Spell cards: round gem cost, arched art window, double frame, SPELL banner instead of power/health */
+  #card.spell .cost { transform: none; border-radius: 50%; border-color: color-mix(in srgb, var(--accent) 60%, #fff);
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent) 60%, #fff), color-mix(in srgb, var(--accent) 65%, #000));
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 60%, transparent); }
+  #card.spell .cost span { transform: none; color: #fff; text-shadow: 0 2px 4px #000a; }
+  /* spells = ninja scroll: cut corners, wooden rollers top and bottom, round art medallion, parchment text */
+  #card.spell #tilt { border-radius: 0; box-shadow: none; filter: drop-shadow(0 30px 40px #000a) drop-shadow(0 0 30px color-mix(in srgb, var(--accent) 30%, transparent)); }
+  #card.spell .frame { border-radius: 0; clip-path: polygon(46px 0, calc(100% - 46px) 0, 100% 46px, 100% calc(100% - 46px), calc(100% - 46px) 100%, 46px 100%, 0 calc(100% - 46px), 0 46px);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 40%, #1d1925), #120f18 70%); }
+  #card.spell #tilt::before, #card.spell #tilt::after { content: ''; position: absolute; z-index: 7; left: -22px; right: -22px; height: 34px; border-radius: 17px; background: linear-gradient(#5a3a1c, #c9934f 30%, #f0c98a 45%, #a8733a 70%, #4a2e14);
+    box-shadow: 0 6px 12px #000a, inset 0 -3px 0 #0005; pointer-events: none; }
+  #card.spell #tilt::before { top: -14px; } #card.spell #tilt::after { bottom: -14px; }
+  #card.spell:not(.fullart) .art { flex: none; align-self: center; width: 74%; aspect-ratio: 1; border-radius: 50% !important; border: 6px solid var(--accent) !important;
+    box-shadow: 0 0 0 4px #0b0a10, 0 0 26px color-mix(in srgb, var(--accent) 60%, transparent); }
+  #card.spell:not(.fullart) .ability { background: linear-gradient(#f4e7c6, #e2cd9c) !important; color: #3a2a14; border: 2px solid #b8925a !important; }
+  #card.spell .inner { border: 6px double var(--accent); padding: 11px; }
+  /* full-art spell: the art fills the scroll (same cut corners), the frame becomes see-through */
+  #card.spell.fullart .frame { background: transparent; }
+  #card.spell .fullart-img { border-radius: 0; clip-path: polygon(46px 0, calc(100% - 46px) 0, 100% 46px, 100% calc(100% - 46px), calc(100% - 46px) 100%, 46px 100%, 0 calc(100% - 46px), 0 46px); }
+  #card.spell:not(.fullart) .inner { background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 24%, #1d1925), #17131f 72%);
+    box-shadow: inset 0 0 50px color-mix(in srgb, var(--accent) 24%, transparent); }
+  #card.spell .art { border-radius: 150px 150px 10px 10px / 90px 90px 10px 10px; border: 3px solid var(--accent); }
+  #card.spell .rarity { top: auto; bottom: 14px; left: 50%; transform: translateX(-50%); }
+  #card.spell .typebar { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 50%, #000), color-mix(in srgb, var(--accent) 16%, #14111a));
+    border-color: var(--accent); color: #fff; }
+  #card.spell:not(.fullart) .ability { background: linear-gradient(#eaecf8, #d3d8ee); border: 2px solid color-mix(in srgb, var(--accent) 55%, #fff); }
+  .spellmark { display: none; height: 58px; flex: none; align-items: center; justify-content: center; font: 800 22px 'Cinzel', serif; letter-spacing: 8px; color: #fff;
+    border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); text-shadow: 0 2px 6px #000;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 65%, #000) 18%, color-mix(in srgb, var(--accent) 65%, #000) 82%, transparent); }
+  #card.spell .spellmark { display: flex; }
+  /* Hero cards: gold frame, HERO ribbon, gold name, slow shine sweep */
+  .heromark { display: none; position: absolute; top: 3px; left: 50%; transform: translateX(-50%); z-index: 6; padding: 3px 34px 2px;
+    font: 800 13px 'Cinzel', serif; letter-spacing: 6px; color: #2a1d05; text-shadow: 0 1px 0 #fff8; white-space: nowrap;
+    background: linear-gradient(#fff3c4, #e8c56a 55%, #b8862e); clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%, 12px 50%);
+    filter: drop-shadow(0 2px 3px #000a); }
+  #card.ribbon .heromark { display: block; }
+  #card.extra:not(.hero) .heromark { background: linear-gradient(#f4f6fb, #b9c0d3 55%, #7f889f); }
+  /* LoR-style: linked level-up form / hero spell peek out behind the card (click to open) */
+  #stage { position: relative; }
+  #card { z-index: 2; }
+  #relfan { position: absolute; z-index: 1; left: 50%; top: 4%; display: flex; align-items: flex-start; --cw: calc(var(--card-w) * var(--s, 1)); --rs: .8; }
+  #relfan .cvrel { cursor: pointer; } #relfan .cvrel:first-child { margin-left: 0; }
+  #relfan .cvrel:hover { transform: rotate(2deg) translate(6%, -2%); }
+  #relfan .cvtag { font-size: calc(13px + 6px * var(--s, 1)); }
+  body.has-rel #stage { margin-right: calc(var(--card-w) * var(--s, 1) * var(--relw, 0)); }
+  .lvlinks { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .lvlinks button { border-color: #e8c56a88; color: #f5dc96; font-size: 14px; padding: 8px 16px; }
+  body.embed .lvlinks { display: none; }
+  #card.hero:not(.fullart) .frame { background: linear-gradient(145deg, #fff3c4 0%, #c8962e 28%, #f5dc96 50%, #8a6420 78%, #e8c56a 100%); }
+  #card.hero.fullart .frame { box-shadow: inset 0 0 0 6px #e8c56a, inset 0 0 0 8px #7a5a1a; }
+  #card.hero .inner { border-color: #e8c56a; }
+  #card.hero #tilt { box-shadow: 0 30px 60px #000a, 0 0 46px #e8c56a66; }
+  #card.hero .cost { background: linear-gradient(135deg, #f5dc96, #b8862e); border-color: #fff3c4; }
+  #card.hero .cost span { color: #2a1d05; }
+  #card.hero .name-th { background: linear-gradient(#fff8dc, #e8c56a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .heroshine { display: none; position: absolute; inset: 0; border-radius: 28px; pointer-events: none; mix-blend-mode: overlay; z-index: 4;
+    background: linear-gradient(115deg, transparent 38%, #fffc 48%, #ffe9a0cc 52%, transparent 62%); background-size: 260% 100%; animation: heroSweep 4.5s ease-in-out infinite; }
+  #card.hero .heroshine { display: block; }
+  @keyframes heroSweep { 0% { background-position: 130% 0; } 55%, 100% { background-position: -130% 0; } }
+  @media (prefers-reduced-motion: reduce) { .heroshine { animation: none; } }
+  .lvcond { padding: 6px 12px; border-radius: 8px; background: #2a2230; color: #f5dc96; font-size: 15px; line-height: 1.5; border: 1px solid #c8962e; }
+  .lvcond b { color: #e8c56a; }
+  #card.fullart .lvcond { background: #14111ae6; color: #f5dc96; font-weight: 600; -webkit-text-stroke: 0; text-shadow: none; }
+  #card.fullart .ability .lvcond b { display: inline; padding: 0; margin: 0; background: none; color: #e8c56a; }
+  .tagrow { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .tagrow .tag { padding: 2px 12px; border-radius: 999px; font-size: 13px; background: #231e2c; border: 1px solid #4a4256; color: #cfc4a8; }
+  body.embed .tagrow { display: none; }
+  .kws { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .kws:empty { display: none; }
+  .kw, .spd { display: inline-block; padding: 1px 12px; border-radius: 999px; font: 700 14px 'Noto Serif Thai', serif; line-height: 1.6;
+    color: #fff; background: color-mix(in srgb, var(--k) 70%, #000); border: 1px solid var(--k); -webkit-text-stroke: 0; text-shadow: none; }
+  .spd { color: #14111a; background: var(--k); }
+  /* keyword / speed pills: centered just above the type bar, overlapping the bottom of the art */
+  .kwbar { justify-content: center; gap: 12px; margin: -64px 0 -4px; position: relative; z-index: 3; }
+  .kwbar .kw, .kwbar .spd { display: inline-flex; align-items: center; gap: 10px; font-size: 28px; line-height: 1.25; padding: 4px 24px 4px 4px; border-width: 3px; box-shadow: 0 3px 10px #000c; }
+  .kwi { width: 48px; height: 48px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--k) 75%, #fff), color-mix(in srgb, var(--k) 55%, #000)); border: 2px solid #fff3; box-shadow: inset 0 0 0 1px #0006; }
+  .kwi svg { width: 30px; height: 30px; filter: drop-shadow(0 1px 1px #000a); }
+  .spd .kwi { background: #1d1925; color: var(--k); }
+  #card.spell .rarity { left: 14px; bottom: 14px; transform: none; }
+  .detail { display: flex; align-items: center; justify-content: center; gap: 22px; max-width: 100%; }
+  #kwrow { display: none; }                 /* detail view: no pills on top of the card art */
+  .kwhelp { width: 270px; display: flex; flex-direction: column; gap: 12px; }
+  .kwhelp:empty { display: none; }
+  .kwcard { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; text-align: left;
+    background: #14111ae6; border: 2px solid color-mix(in srgb, var(--k) 70%, transparent); box-shadow: 0 6px 18px #000a; animation: kwIn .35s ease-out both; }
+  .kwcard .kwi { width: 46px; height: 46px; }
+  .kwcard .kwi svg { width: 28px; height: 28px; }
+  .kwcard b { display: block; font-size: 18px; color: color-mix(in srgb, var(--k) 70%, #fff); line-height: 1.3; }
+  .kwcard span.d { display: block; font-size: 14px; color: #d8cfbb; line-height: 1.5; margin-top: 2px; }
+  @keyframes kwIn { from { opacity: 0; transform: translateX(-12px); } }
+  @media (max-width: 759px) { .detail { flex-direction: column; gap: 12px; } .kwhelp { width: min(100%, 420px); } }
+  body.embed:not(.lb) .detail { flex-direction: column; gap: 8px; }
+  body.embed:not(.lb) .kwhelp { width: 100%; }
   [hidden] { display: none !important; }
   .glare { position: absolute; inset: 0; border-radius: 28px; pointer-events: none; mix-blend-mode: color-dodge; opacity: 0;
     transition: opacity .25s;
@@ -94,6 +191,13 @@
   select { font: 600 15px 'Noto Serif Thai', serif; padding: 10px 14px; border-radius: 999px; background: #1d1925; color: #f1ead8; border: 2px solid #4a4256; max-width: 55vw; }
   body.embed { min-height: 0; padding: 8px; gap: 10px; background: transparent; justify-content: flex-start; }
   body.embed #list, body.embed .hint { display: none; }
+  /* lightbox mode: centered card on a transparent page, click empty space to close */
+  body.lb { min-height: 100vh; justify-content: center; padding: 12px; cursor: zoom-out; }
+  body.lb #stage, body.lb .controls, body.lb .lvlinks, body.lb .tagrow, body.lb .kwhelp { cursor: auto; }
+  body.lb .lvlinks, body.lb .tagrow { display: flex; }
+  body.lb .controls a.btn { display: none; }
+  .controls, .lvlinks, .tagrow { transition: opacity .25s; }
+  body.lb.opening .controls, body.lb.opening .lvlinks, body.lb.opening .tagrow { opacity: 0; }
   /* card list: sidebar on wide screens, horizontal strip on narrow ones */
   #list { order: 5; width: 100%; max-width: 100vw; }
   #list h2 { margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 1px; color: #b8ab8c; }
@@ -119,7 +223,9 @@
 </head>
 <body>
   <nav id="list" aria-label="รายการการ์ด"><h2>การ์ดทั้งหมด <span id="count"></span></h2><div id="tiles"></div></nav>
+  <div class="detail" id="detail">
   <div id="stage">
+    <div id="relfan"></div>
     <div id="card">
       <div id="tilt">
         <img class="fullart-img" id="fullartImg" alt="">
@@ -129,77 +235,127 @@
             <div class="names"><div class="name-th" id="nameTh"></div><div class="name-en" id="nameEn"></div></div>
             <div class="element">
               <span id="elementIcon"></span>
-              <span id="elementName"></span>
             </div>
           </div>
           <div class="art"><img id="artImg" alt=""><div class="rarity" id="rarity"></div></div>
+          <div class="kws kwbar" id="kwrow"></div>
           <div class="typebar"><span id="type"></span><span class="code" id="code"></span></div>
           <div class="ability" id="ability"></div>
           <div class="stats">
             <div class="stat"><div class="orb power" id="power"></div><div><small>พลังโจมตี</small><b>POWER</b></div></div>
             <div class="stat r"><div><small>พลังชีวิต</small><b>HEALTH</b></div><div class="orb health" id="health"></div></div>
           </div>
+          <div class="spellmark">✦ SPELL ✦</div>
         </div></div>
         <div class="glare"></div>
+        <div class="heroshine"></div>
+        <div class="heromark" id="heromark">★ HERO ★</div>
       </div>
     </div>
+  </div>
+  <div class="kwhelp" id="kwhelp"></div>
   </div>
   <div class="controls">
     <button id="btnNormal" class="on">Normal</button>
     <button id="btnFull">Full art</button>
     <a class="btn" href="gallery.html" style="font:600 15px 'Noto Serif Thai',serif;padding:10px 20px;border-radius:999px;border:2px solid #4a4256;color:#f1ead8;text-decoration:none;background:#1d1925">แกลเลอรี</a>
   </div>
+  <div class="lvlinks" id="lvlinks"></div>
+  <div class="tagrow" id="tagrow"></div>
   <div class="hint">ลาก/เอียงเมาส์บนการ์ดเพื่อดูเอฟเฟกต์ · เพิ่มการ์ดได้ที่ data/cards.json</div>
 
 <script src="elements.js"></script>
+<script src="cardview.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const card = $('card');
   let CARDS = [];
   const EMBED = new URLSearchParams(location.search).has('embed');
+  const LB = new URLSearchParams(location.search).has('lb');          // lightbox mode: embedded in gallery.html, full-window transparent page
   if (EMBED) document.body.classList.add('embed');
+  if (LB) document.body.classList.add('lb');
 
+  const spdPill = c => { const s = cardSpeed(c); return s ? `<span class="spd" style="--k:${SPEEDS[s].color}" title="${SPEEDS[s].desc}"><span class="kwi">${kwIcon(s)}</span>${SPEEDS[s].th}</span>` : ''; };
   function render(c) {
     const el = ELEMENTS[c.element] || ELEMENTS.fire;
     document.documentElement.style.setProperty('--accent', el.color);
-    $('elementIcon').innerHTML = `<img src="${el.icon}" width="36" height="36" alt="">`;
-    $('elementName').textContent = el.th;
+    $('elementIcon').innerHTML = `<img src="${el.icon}" alt="${el.th}" title="${el.th}">`;
     $('cost').textContent = c.cost;
     $('nameTh').textContent = c.nameTh;
     $('nameEn').textContent = c.nameEn;
     $('rarity').textContent = c.rarity;
     $('type').textContent = c.type;
     $('code').textContent = `${c.set} · ${c.id.split('-')[1]}`;
+    card.classList.toggle('spell', isSpell(c));
+    card.classList.toggle('hero', isHero(c));
+    card.classList.toggle('extra', isExtra(c));
+    card.classList.toggle('ribbon', !!ribbonText(c));
+    $('heromark').textContent = ribbonText(c);
+    // spell speed pill in the type bar; keyword / speed explanations under the card
+    $('kwhelp').innerHTML = [...cardKeywords(c).map(k => [k, KEYWORDS[k]]), ...(cardSpeed(c) ? [[cardSpeed(c), SPEEDS[cardSpeed(c)]]] : [])]
+      .map(([key, k], i) => `<div class="kwcard" style="--k:${k.color};animation-delay:${i * 60}ms"><span class="kwi">${kwIcon(key)}</span><div><b>${k.th}</b><span class="d">${k.desc}</span></div></div>`).join('');
+    document.body.classList.toggle('has-kw', !!$('kwhelp').innerHTML); fit();
+    $('tagrow').innerHTML = (c.tags || []).map(t => `<span class="tag">${t.replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch]))}</span>`).join('');
+    // level-up links: hero -> evolved form, evolved form -> base hero(es)
+    const to = c.levelUp && CARDS.find(x => x.id === c.levelUp), from = CARDS.filter(x => x.levelUp === c.id);
+    $('lvlinks').innerHTML = (to ? `<button data-go="${to.id}">⬆ Level up → ${to.nameEn}</button>` : '')
+      + from.map(x => `<button data-go="${x.id}">⬇ ร่างก่อน Level up: ${x.nameEn}</button>`).join('');
+    const rel = CardView.related(c, CARDS);   // fan behind the card
+    $('relfan').innerHTML = rel.map((r, i) => `<div class="cvrel" data-go="${r.card.id}" style="--i:${i}" title="เปิดการ์ดใบนี้"><span class="cvtag ${r.cls}">${r.label}</span>${CardView.html(r.card)}</div>`).join('');
+    document.body.classList.toggle('has-rel', rel.length > 0);
+    document.documentElement.style.setProperty('--relw', rel.length ? (.33 + .36 * (rel.length - 1)).toFixed(2) : 0);
+    document.querySelector('.stats').hidden = isSpell(c);   // spells have no power/health
     $('power').textContent = c.power;
     $('health').textContent = c.health;
-    $('ability').hidden = !c.ability.some(t => t.trim());   // no effect -> no effect box (art grows to fill)
-    $('ability').innerHTML = c.ability.map(t => `<div>${t}</div>`).join('') + (c.flavor ? `<div class="flavor">${c.flavor}</div>` : '');
+    const cond = isHero(c) ? (c.levelUpCondition || '').trim() : '';
+    const kws = cardKeywords(c), spd = cardSpeed(c);
+    $('kwrow').innerHTML = kws.map(k => `<span class="kw" style="--k:${KEYWORDS[k].color}" title="${KEYWORDS[k].desc}"><span class="kwi">${kwIcon(k)}</span>${KEYWORDS[k].th}</span>`).join('') + spdPill(c);
+    $('ability').hidden = !(c.ability.some(t => t.trim()) || cond);   // no effect -> no effect box (art grows to fill)
+    $('ability').innerHTML = c.ability.map(t => `<div>${t}</div>`).join('')
+      + (cond ? `<div class="lvcond"><b>⬆ Level up:</b> ${cond.replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch]))}</div>` : '')
+      + (c.flavor ? `<div class="flavor">${c.flavor}</div>` : '');
     // art paths in cards.json are relative to the repo root; this page lives in web/
-    $('artImg').src = '../' + c.art.normal;
-    const hasFull = !!c.art.fullart;
-    $('fullartImg').src = hasFull ? '../' + c.art.fullart : '';
-    $('btnFull').disabled = !hasFull;
-    if (!hasFull) setMode(false);
+    $('artImg').src = '../' + c.art.normal; $('artImg').style.objectPosition = $('fullartImg').style.objectPosition = focusPos(c);
+    const lvForm = isLevelForm(c), hasFull = !!c.art.fullart || lvForm;   // a hero's level-up form exists only as full art
+    $('fullartImg').src = hasFull ? '../' + (lvForm ? fullArtOf(c) : c.art.fullart) : '';
+    $('btnFull').disabled = !hasFull; $('btnNormal').disabled = lvForm;
+    if (!hasFull) setMode(false); else if (lvForm) setMode(true);
     document.querySelectorAll('.tile').forEach(t => t.classList.toggle('on', t.dataset.id === c.id));
     if (!EMBED) history.replaceState(null, '', '?id=' + c.id);
   }
 
-  if (!EMBED) fetch('../data/cards.json').then(r => r.json()).then(list => {
+  if (!EMBED || LB) fetch('../data/cards.json').then(r => r.json()).then(list => {
     CARDS = list;
     $('count').textContent = `(${list.length})`;
     $('tiles').innerHTML = list.map(c => { const el = ELEMENTS[c.element] || ELEMENTS.fire;
       return `<button class="tile" data-id="${c.id}" style="--tc:${el.color}"><img src="../${c.art.normal}" alt="">
-        <span class="meta"><b>${c.nameTh}</b><small><i></i>${c.id} · ${c.rarity}</small></span></button>`; }).join('');
+        <span class="meta"><b>${c.nameTh}</b><small><i></i>${c.id} · ${c.rarity}${isHero(c) ? ' · ★ HERO' : ''}${isExtra(c) ? ' · EXTRA' : ''}</small></span></button>`; }).join('');
     const want = new URLSearchParams(location.search).get('id');
     const first = list.find(c => c.id === want) || list[0];
-    render(first);
+    if (!LB) render(first);
+    else parent.postMessage({ type: 'ready' }, location.origin);
   }).catch(() => { $('nameTh').textContent = 'โหลด data/cards.json ไม่ได้'; });
-  addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.nameTh !== undefined) render(e.data); });
+  addEventListener('message', e => {
+    if (e.origin !== location.origin || !e.data) return;
+    if (e.data.type === 'show') {                       // from gallery.html: show card by id, start in full art if it has one
+      const c = CARDS.find(x => x.id === e.data.id); if (!c) return;
+      render(c); setMode(!!c.art.fullart);
+      let sent = false; const done = () => { if (!sent) { sent = true; parent.postMessage({ type: 'shown' }, location.origin); } };
+      requestAnimationFrame(() => requestAnimationFrame(done)); setTimeout(done, 100);   // timeout covers tabs where rAF is paused
+    } else if (e.data.nameTh !== undefined) render(e.data);
+  });
+  if (LB) {
+    document.addEventListener('click', e => { if (!e.target.closest('#stage,#relfan,.controls,.lvlinks,.tagrow,.kwhelp')) parent.postMessage({ type: 'close' }, location.origin); });
+    document.addEventListener('keydown', e => { if (['Escape', 'ArrowLeft', 'ArrowRight'].includes(e.key)) parent.postMessage({ type: 'key', key: e.key }, location.origin); });
+  }
+  $('relfan').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) { e.stopPropagation(); render(CARDS.find(c => c.id === b.dataset.go)); } });
+  $('lvlinks').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) render(CARDS.find(c => c.id === b.dataset.go)); });
   $('tiles').addEventListener('click', e => { const t = e.target.closest('.tile'); if (t) render(CARDS.find(c => c.id === t.dataset.id)); });
 
   // Fit 630x880 card to the viewport
   function fit() {
-    const s = Math.min(1, (document.documentElement.clientWidth - (!EMBED && innerWidth >= 900 ? 294 : 32)) / 630, (innerHeight - (EMBED ? 70 : 130)) / 880);
+    const side = document.body.classList.contains('has-kw') && innerWidth >= 760 && !(EMBED && !LB) ? 292 : 0;   // keyword panel beside the card
+    const s = Math.min(1, (document.documentElement.clientWidth - side - (!EMBED && innerWidth >= 900 ? 294 : 32)) / 630, (innerHeight - (LB ? 200 : EMBED ? 70 : 130)) / 880);
     document.documentElement.style.setProperty('--s', Math.max(s, 0.2));
   }
   addEventListener('resize', fit); addEventListener('load', fit); fit();

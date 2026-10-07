@@ -1,6 +1,26 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "web", "runtimeExecutable": "python3", "runtimeArgs": ["serve.py", "8080"], "port": 8080 }
+    {
+      "name": "web",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "serve.py",
+        "8080"
+      ],
+      "port": 8080
+    },
+    {
+      "name": "web-https",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "serve.py",
+        "8443",
+        "--lan",
+        "--https"
+      ],
+      "port": 8443,
+      "url": "https://localhost:8443"
+    }
   ]
 }

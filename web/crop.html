@@ -24,15 +24,35 @@
   button:disabled { opacity: .4; cursor: default; }
   label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #b8ab8c; }
   label.inline { flex-direction: row; align-items: center; gap: 8px; }
-  input[type=text], input[type=number] { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: #0f0d14; color: #f1ead8; width: 100%; }
+  .tfield { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #b8ab8c; }
+  .typeSeg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .typeSeg button { border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; text-align: left; }
+  .typeSeg b { font-size: 16px; color: #f1ead8; } .typeSeg small { font-size: 12px; color: #9d927a; }
+  .typeSeg button.on[data-type=Character] { border-color: var(--gold); background: #2a2210; } .typeSeg button.on[data-type=Character] b { color: var(--gold); }
+  .typeSeg button.on[data-type=Spell] { border-color: #b07cff; background: #22163a; } .typeSeg button.on[data-type=Spell] b { color: #d6b8ff; }
+  input[type=text], input[type=number], input[type=search], #eForm select { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: #0f0d14; color: #f1ead8; width: 100%; }
   input[type=range] { width: 100%; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   #fname { font: 13px ui-monospace, monospace; color: var(--gold); word-break: break-all; }
   #info, .hint { font-size: 13px; color: #8d8299; }
   #drop { border: 2px dashed var(--line); border-radius: 10px; padding: 18px; text-align: center; color: #b8ab8c; cursor: pointer; }
+  #bPaste { width: 100%; }
   #drop.over { border-color: var(--gold); color: var(--gold); }
   .warn { color: #ff9b7a; }
+  .tagbox { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border: 1px solid var(--line); border-radius: 10px; background: #0f0d14; min-height: 44px; }
+  .tagbox:focus-within { border-color: var(--gold); }
+  .tagbox input { flex: 1 1 140px; min-width: 120px; border: 0; background: none; padding: 6px 4px; outline: none; }
+  .tagchip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 4px 2px 12px; border-radius: 999px; background: #231e2c; border: 1px solid var(--gold); color: #f5dc96; font-size: 13px; }
+  .tagchip button { padding: 0 7px; border: 0; background: none; color: inherit; font-size: 15px; line-height: 1.4; border-radius: 50%; cursor: pointer; }
+  .tagchip button:hover { background: #ffffff22; }
+  .libchip { display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid var(--line); background: #14111a; font-size: 13px; overflow: hidden; }
+  .libchip.used { border-color: #6fcf97; }
+  .libchip .add { padding: 3px 4px 3px 12px; border: 0; background: none; color: #f1ead8; border-radius: 0; cursor: pointer; }
+  .libchip.used .add { color: #6fcf97; }
+  .libchip small { color: #8d8299; padding-right: 6px; }
+  .libchip .del { padding: 3px 9px; border: 0; border-left: 1px solid var(--line); background: none; color: #ff9b7a; border-radius: 0; cursor: pointer; }
+  .libchip .del:hover { background: #ff9b7a22; }
   [hidden] { display: none !important; }
   .top { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: #100e15; position: sticky; top: 0; z-index: 5; flex-wrap: wrap; }
   .top b { color: var(--gold); letter-spacing: 1px; }
@@ -42,7 +62,7 @@
   .top a:hover { color: var(--gold); }
 
   /* ----- card editor ----- */
-  .ed { display: grid; grid-template-columns: 220px minmax(0, 1fr) 340px; gap: 16px; padding: 16px; max-width: 1280px; margin: 0 auto; align-items: start; }
+  .ed { display: grid; grid-template-columns: 280px minmax(0, 1fr) 340px; gap: 16px; padding: 16px; max-width: 1280px; margin: 0 auto; align-items: start; }
   .ed-list { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 64px; max-height: calc(100vh - 80px); }
   .ed-list .items { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
   .item { text-align: left; border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; border-width: 1px; }
@@ -50,7 +70,18 @@
   .item .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .item small { display: block; color: #8d8299; font-size: 12px; }
   .item .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .item .bad { margin-left: auto; color: #ff9b7a; }
+  .item .bad { color: #ff9b7a; }
+  .item .nm { flex: 1; min-width: 0; }
+  .lthumb { margin-left: auto; flex: none; position: relative; width: 48px; aspect-ratio: 630 / 880; border-radius: 6px; border: 2px solid var(--c, #4a4256);
+    background: #0f0d14 center / cover; box-shadow: 0 3px 8px #0009; }
+  .lthumb.hero { border-color: #e8c56a; box-shadow: 0 0 0 1px #7a5a1a, 0 3px 8px #0009, 0 0 8px #e8c56a66; }
+  .lthumb.sp { border-style: double; border-width: 4px; }
+  .lthumb b { position: absolute; left: -6px; top: -6px; min-width: 18px; height: 18px; padding: 0 3px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: #14203f; border: 1.5px solid #e8c56a; font: 800 11px 'Cinzel', serif; color: #fff4dc; }
+  .lsearch { position: relative; }
+  .lsearch input { width: 100%; border-radius: 999px; padding-left: 14px; }
+  #eCount { font-size: 12px; color: #8d8299; padding: 0 4px; }
+  .lempty { color: #8d8299; font-size: 13px; padding: 14px 6px; text-align: center; }
   .ed-form { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   .ed-form fieldset { gap: 12px; }
   .f { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
@@ -65,9 +96,22 @@
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { display: flex; align-items: center; gap: 6px; padding: 6px 14px; }
   .chip img { display: block; }
+  .chip i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .chip.on { background: #231e2c; }
   .ab { display: grid; grid-template-columns: 150px 1fr auto; gap: 8px; align-items: start; }
+  .ab { position: relative; }
   .ab button { padding: 6px 10px; border-radius: 10px; }
+  .abtools { display: flex; flex-direction: column; gap: 4px; }
+  .abtools button { padding: 2px 10px; font-size: 13px; line-height: 1.6; }
+  .abtools button:disabled { opacity: .25; }
+  .abno { position: absolute; left: -10px; top: -8px; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: #1d1925;
+    font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .ab.flash > input, .ab.flash > textarea { animation: abFlash .6s ease-out; }
+  @keyframes abFlash { from { border-color: var(--gold); box-shadow: 0 0 0 3px #e8c56a55; } }
+  .focus { display: flex; flex-direction: column; gap: 6px; } .flabel { font-size: 13px; color: #b8ab8c; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .flabel button { padding: 3px 10px; font-size: 12px; }
+  .fpic { position: relative; align-self: flex-start; max-width: 100%; cursor: crosshair; touch-action: none; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: #0f0d14; }
+  .fpic img { display: block; max-width: 100%; max-height: 300px; user-select: none; -webkit-user-select: none; }
+  .fframe { position: absolute; border: 3px solid var(--gold); border-radius: 6px; box-shadow: 0 0 0 9999px #000a; pointer-events: none; }
   .art-row { display: grid; grid-template-columns: 1fr 64px; gap: 10px; align-items: end; }
   .thumb { width: 64px; height: 64px; border-radius: 8px; border: 1px solid var(--line); background: #0f0d14 center/cover; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #8d8299; text-align: center; }
   .thumb.ok { border-color: #6fcf97; }
@@ -82,7 +126,7 @@
     .ed { grid-template-columns: 1fr; }
     .ed-list { position: static; max-height: none; }
     .ed-list .items { flex-direction: row; overflow-x: auto; }
-    .item { flex: none; }
+    .item { flex: none; min-width: 210px; }
     .ed-prev { position: static; order: -1; }
     .ed-prev iframe { height: 520px; }
     .ab { grid-template-columns: 1fr auto; } .ab .abn { grid-column: 1 / -1; }
@@ -92,14 +136,16 @@
 <body>
 <header class="top"><b>LOSTWORLD TCG</b>
   <nav><button data-tab="art" class="on">ปรับรูป</button><button data-tab="cards">แก้ไขการ์ด</button></nav>
-  <a href="gallery.html" target="_blank">แกลเลอรี ↗</a> <a href="index.html" target="_blank">Preview ↗</a></header>
+  <a href="play.html" target="_blank">▶ เล่นเกม ↗</a> <a href="review.html" target="_blank">ตรวจ effect ↗</a> <a href="gallery.html" target="_blank">แกลเลอรี ↗</a> <a href="index.html" target="_blank">Preview ↗</a></header>
 <div class="app" id="tab-art">
   <div id="wrap"><canvas id="cv"></canvas></div>
 
   <div class="panel">
     <h1>ปรับรูปให้พอดีการ์ด</h1>
 
-    <div id="drop">คลิกหรือลากรูปมาวางที่นี่<input id="file" type="file" accept="image/*" hidden></div>
+    <div id="drop">คลิก ลาก หรือ <b>วาง (Ctrl/⌘ + V)</b> รูปที่นี่<input id="file" type="file" accept="image/*" hidden></div>
+    <button id="bPaste" type="button" title="วางรูปที่คัดลอกไว้ (Copy Image) จากคลิปบอร์ด">📋 วางรูปจากคลิปบอร์ด</button>
+    <div class="hint" id="pasteMsg"></div>
 
     <fieldset>
       <legend>ประเภทงานภาพ</legend>
@@ -141,6 +187,8 @@
   <div class="ed">
     <aside class="ed-list">
       <button id="eAdd" class="primary">+ เพิ่มการ์ดใหม่</button>
+      <div class="lsearch"><input id="eSearch" type="search" placeholder="ค้นหา ชื่อ / รหัส / แท็ก / ธาตุ…" aria-label="ค้นหาการ์ด" autocomplete="off"></div>
+      <div id="eCount"></div>
       <div class="items" id="eItems"></div>
     </aside>
 
@@ -155,7 +203,24 @@
           <label>ชื่อไทย <input id="k-nameTh" type="text"><span class="err" id="e-nameTh"></span></label>
           <label>ชื่ออังกฤษ <input id="k-nameEn" type="text"><span class="err" id="e-nameEn"></span></label>
         </div>
-        <label>ประเภท <input id="k-type" type="text" placeholder="มอนสเตอร์ · นินจา / จักระ"></label>
+        <div class="tfield"><span>ประเภทการ์ด</span><input type="hidden" id="k-type"><div class="typeSeg" id="typeSeg"><button type="button" data-type="Character"><b>⚔ Character</b><small>ตัวละคร · ลงสนาม มีพลังโจมตี | พลังชีวิต</small></button><button type="button" data-type="Spell"><b>✦ Spell</b><small>เวทย์ · ใช้แล้วหมดไป มีความเร็ว</small></button></div></div>
+        <label class="inline"><input id="k-hero" type="checkbox"> ★ Hero (ตัวเอก — กรอบทอง ป้าย HERO) <span class="hint" id="heroHint"></span></label>
+        <div class="f w2">
+          <label>การ์ด Level up ของใบนี้ (ร่างวิวัฒน์) <select id="k-levelUp"></select></label>
+          <label class="inline" style="align-self:end"><input id="k-extra" type="checkbox"> Extra deck (การ์ดใบนี้ไม่อยู่ในเด็คหลัก)</label>
+        </div>
+        <label>Spell ประจำ Hero <select id="k-heroSpell"></select>
+          <span class="hint">แบบ LoR: เมื่อ Hero ใบนี้ (หรือร่าง Level up) อยู่บนสนามแล้ว ใบซ้ำที่อยู่บนมือ/จั่วมาจะกลายเป็น spell นี้ — spell จะอยู่ในเด็คหรือไม่ก็ได้</span></label>
+        <label>เงื่อนไขในการ Level up <textarea id="k-levelUpCondition" rows="2" placeholder="เช่น ใช้ spell ครบ 3 ใบ / สังหารมอนสเตอร์ศัตรู 2 ตัว / พลังชีวิตของคุณเหลือน้อยกว่า 10"></textarea></label>
+        <div class="hint" id="lvInfo"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>แท็ก</legend>
+        <div class="tagbox" id="eTagBox"><span id="eTagChips" style="display:contents"></span><input id="eTagIn" type="text" list="eTagList" placeholder="พิมพ์แท็ก แล้วกด Enter" autocomplete="off"></div>
+        <datalist id="eTagList"></datalist>
+        <div class="hint">แท็กที่เคยเพิ่มจะถูกจำไว้ — คลิกชื่อเพื่อใส่ให้การ์ดนี้ · กด 🗑 เพื่อลบแท็กนั้นทิ้งจากทุกการ์ด</div>
+        <div class="chips" id="eTagLib"></div>
       </fieldset>
 
       <fieldset>
@@ -174,6 +239,13 @@
       </fieldset>
 
       <fieldset>
+        <legend>Keyword / ความเร็วเวทย์</legend>
+        <div class="chips" id="eKws"></div>
+        <div class="seg" id="eSpeed"></div>
+        <div class="hint" id="kwHint"></div>
+      </fieldset>
+
+      <fieldset>
         <legend>ความสามารถ</legend>
         <div id="eAbilities" style="display:flex;flex-direction:column;gap:10px"></div>
         <button id="eAddAb">+ เพิ่มความสามารถ</button>
@@ -184,11 +256,16 @@
         <legend>ภาพ</legend>
         <div class="f w2">
           <label>โฟลเดอร์เรื่อง <input id="eFolder" type="text" placeholder="naruto"></label>
-          <div style="display:flex;align-items:end"><button id="eAuto" style="width:100%">เติม path ภาพให้อัตโนมัติ</button></div>
+          <label>ชื่อไฟล์ภาพ (ใช้ร่วมกัน Normal / Full art) <input id="eStem" type="text" placeholder="nr-051-naruto"></label>
         </div>
+        <div class="hint" id="stemHint"></div>
         <div class="art-row"><label>Normal <input id="k-art-normal" type="text" placeholder="assets/characters/..."></label><div class="thumb" id="tNormal"></div></div>
         <div class="art-row"><label>Full art (ไม่บังคับ) <input id="k-art-fullart" type="text" placeholder="assets/characters/..."></label><div class="thumb" id="tFull"></div></div>
-        <div class="hint">ไฟล์ภาพต้องอยู่ในโฟลเดอร์โปรเจกต์ — ปรับขนาดที่แท็บ “ปรับรูป” แล้วย้ายไฟล์ไปไว้ใน assets/characters/&lt;เรื่อง&gt;/</div>
+        <div class="focus">
+          <div class="flabel">จุดโฟกัสของรูป <span class="hint">— คลิกหรือลากบนรูปตรงหน้าตัวละคร · กรอบทอง = ส่วนที่การ์ดแบบ full art จะเห็น</span> <button type="button" id="fReset">กลางรูป</button></div>
+          <div class="fpic" id="fPic"><img id="fImg" alt="" draggable="false"><div class="fframe" id="fFrame"></div></div>
+        </div>
+        <div class="hint">ตั้งชื่อไฟล์เป็น <b>&lt;ชื่อไฟล์ภาพ&gt;-normal.webp</b> และ <b>-fullart.webp</b> ในโฟลเดอร์ assets/characters/&lt;เรื่อง&gt;/ — ถ้าไม่มีไฟล์ Full art ระบบจะไม่ใส่ Full art ให้เอง</div>
       </fieldset>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -321,6 +398,30 @@
   ['dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); $('drop').classList.remove('over'); }));
   document.addEventListener('drop', e => load(e.dataTransfer.files[0]));
 
+  ['series', 'num'].forEach(id => $(id).addEventListener('input', () => { $(id).dataset.touched = '1'; }));
+
+  // ----- paste an image from the clipboard (Ctrl/Cmd+V, or the button) -----
+  const pasteMsg = (t, bad) => { $('pasteMsg').textContent = t; $('pasteMsg').className = 'hint' + (bad ? ' warn' : ''); };
+  document.addEventListener('paste', e => {
+    if ($('tab-art').hidden) return;                         // only on the art tab
+    const items = [...(e.clipboardData ? e.clipboardData.items : [])];
+    const imgItem = items.find(i => i.kind === 'file' && i.type.startsWith('image/'));
+    if (!imgItem) return;
+    const typing = /^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName || '') && items.some(i => i.type === 'text/plain');
+    if (typing) return;                                      // let normal text paste work in the fields
+    e.preventDefault(); load(imgItem.getAsFile()); pasteMsg('วางรูปจากคลิปบอร์ดแล้ว ✓');
+  });
+  $('bPaste').onclick = async () => {
+    if (!navigator.clipboard || !navigator.clipboard.read) return pasteMsg('เบราว์เซอร์นี้ไม่รองรับปุ่มนี้ — กด Ctrl/⌘ + V แทน', true);
+    try {
+      for (const item of await navigator.clipboard.read()) {
+        const type = item.types.find(t => t.startsWith('image/'));
+        if (type) { load(new File([await item.getType(type)], 'clipboard', { type })); return pasteMsg('วางรูปจากคลิปบอร์ดแล้ว ✓'); }
+      }
+      pasteMsg('ในคลิปบอร์ดไม่มีรูป — คัดลอกรูป (Copy Image) ก่อน', true);
+    } catch (err) { pasteMsg('อ่านคลิปบอร์ดไม่ได้ (ไม่ได้อนุญาต) — กด Ctrl/⌘ + V แทน', true); }
+  };
+
   // ----- controls -----
   function setMode(m) {
     mode = m; $('mNormal').classList.toggle('on', m === 'normal'); $('mFull').classList.toggle('on', m === 'full');
@@ -389,33 +490,68 @@
   const ELS = Object.fromEntries(Object.entries(ELEMENTS).map(([k, e]) => [k, [e.th, e.color, e.icon]]));
   const RARITY = ['COMMON', 'RARE', 'EPIC', 'LEGEND'];
   const NUM = ['cost', 'power', 'health'];
-  const TEXT = ['id', 'set', 'nameTh', 'nameEn', 'type', 'flavor'];
+  const TEXT = ['id', 'set', 'nameTh', 'nameEn', 'type', 'flavor', 'levelUpCondition'];
   let cards = [], sel = 0, savedJson = '[]', loaded = false;
+  let tagLib = [], savedTags = '[]';            // tagLib = every tag ever added (saved in data/tags.json)
 
   const slugify = v => (v || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   const cur = () => cards[sel];
   const clean = c => {            // what actually goes into cards.json
     const out = { ...c, art: { ...c.art }, ability: c.ability.filter(a => a.trim()) };
+    Object.keys(out).forEach(k => { if (k.startsWith('_')) delete out[k]; });
+    if (c._fullAuto && artOk[out.art.fullart] === false) delete out.art.fullart;   // auto-filled full art path but no such file
+    if (isSpell(c)) { delete out.keywords; if (!SPEEDS[out.speed]) delete out.speed; }
+    else { delete out.speed; if (!(out.keywords || []).length) delete out.keywords; }
     if (!out.art.fullart) delete out.art.fullart;
     if (!out.flavor) delete out.flavor;
+    if (!out.hero) delete out.hero;
+    if (!out.extra) delete out.extra;
+    if (!out.levelUp) delete out.levelUp;
+    if (!out.heroSpell || !out.hero) delete out.heroSpell;
+    if (!Array.isArray(out.artFocus) || (out.artFocus[0] === .5 && out.artFocus[1] === .5)) delete out.artFocus;
+    if (!(out.tags || []).length) delete out.tags;
+    if (!(out.levelUpCondition || '').trim()) delete out.levelUpCondition;
     return out;
   };
+  const normCard = c => ({ flavor: '', ...c, type: /spell|คาถา/i.test(c.type || '') ? 'Spell' : 'Character',   // only 2 card types
+    ability: c.ability || [], art: { normal: '', fullart: '', ...c.art } });
   const serialize = () => JSON.stringify(cards.map(clean), null, 2) + '\n';
-  const isDirty = () => loaded && serialize() !== savedJson;
+  const isDirty = () => loaded && (serialize() !== savedJson || tagsJson() !== savedTags);
+  const tagsJson = () => JSON.stringify(tagLib, null, 2) + '\n';
 
-  function nextId() {
-    const last = (cards[cards.length - 1] || {}).id || 'xx-000';
-    const m = last.match(/^(.*?)(\d+)$/);
-    return m ? m[1] + String(+m[2] + 1).padStart(m[2].length, '0') : last + '-001';
+  function nextId() {                       // highest number in use (same prefix as the last card) + 1
+    const ids = cards.map(c => (c.id || '').match(/^(.*?)(\d+)$/)).filter(Boolean);
+    if (!ids.length) return 'xx-001';
+    const [, prefix, num] = ids[ids.length - 1];
+    const max = Math.max(...ids.filter(m => m[1] === prefix).map(m => +m[2]));
+    return prefix + String(max + 1).padStart(num.length, '0');
   }
-  const blank = () => ({ id: nextId(), set: (cards[cards.length - 1] || {}).set || 'SET-01', cost: 1, power: 1, health: 1,
-    nameTh: '', nameEn: '', element: 'fire', rarity: 'COMMON', type: 'มอนสเตอร์', ability: [], flavor: '', art: { normal: '', fullart: '' } });
+  // ----- image paths: one shared file name (stem) for both versions: <stem>-normal.webp / <stem>-fullart.webp -----
+  const ART_RE = /^assets\/characters\/([^/]+)\/(.+)-(normal|fullart)\.([a-z0-9]+)$/i;
+  const artPath = (folder, stem, kind, ext) => `assets/characters/${folder}/${stem}-${kind}.${ext || 'webp'}`;
+  const autoStem = c => `${c.id}-${c._stemName || slugify((c.nameEn || '').trim().split(/\s+/)[0]) || 'card'}`;
+  const lastFolder = () => { for (let i = cards.length - 1; i >= 0; i--) { const m = (cards[i].art.normal || '').match(ART_RE); if (m) return m[1]; } return ''; };
+  const artOk = {};                          // path -> true / false, filled in by the thumbnails
+  function syncArt(c, folder, stem) {       // rewrite both paths from folder + stem (full art follows normal)
+    if (!folder || !stem) return;
+    const ext = ((c.art.normal || '').match(/\.([a-z0-9]+)$/i) || [, 'webp'])[1];
+    c.art.normal = artPath(folder, stem, 'normal', ext); c.art.fullart = artPath(folder, stem, 'fullart', ext); c._fullAuto = true;
+    g('k-art-normal').value = c.art.normal; g('k-art-fullart').value = c.art.fullart;
+  }
+  const blank = () => {
+    const c = { id: nextId(), set: (cards[cards.length - 1] || {}).set || 'SET-01', cost: 1, power: 1, health: 1,
+      nameTh: '', nameEn: '', element: 'fire', rarity: 'COMMON', type: 'Character', ability: [], flavor: '', art: { normal: '', fullart: '' }, _auto: true };
+    const f = lastFolder(); if (f) { c.art.normal = artPath(f, autoStem(c), 'normal'); c.art.fullart = artPath(f, autoStem(c), 'fullart'); c._fullAuto = true; }
+    return c;
+  };
 
   // ----- validation -----
   function problems(c, i) {
     const p = {};
     if (!/^[a-z0-9]+-\d{3}$/.test(c.id)) p.id = 'ใช้รูปแบบ ตัวพิมพ์เล็ก-เลข3หลัก เช่น nr-002';
     else if (cards.some((o, j) => j !== i && o.id === c.id)) p.id = 'id นี้ซ้ำกับการ์ดอื่น';
+    if (c.levelUp === c.id) p.levelUp = 'ชี้ตัวเองไม่ได้';
+    else if (c.levelUp && !cards.some(o => o.id === c.levelUp)) p.levelUp = 'ไม่พบการ์ด ' + c.levelUp;
     if (!c.nameTh.trim()) p.nameTh = 'ใส่ชื่อไทย';
     if (!c.nameEn.trim()) p.nameEn = 'ใส่ชื่ออังกฤษ';
     return p;
@@ -423,11 +559,17 @@
 
   // ----- list -----
   function renderList() {
-    g('eItems').innerHTML = cards.map((c, i) => {
-      const bad = Object.keys(problems(c, i)).length;
-      return `<button class="item${i === sel ? ' on' : ''}" data-i="${i}"><span class="dot" style="background:${(ELS[c.element] || ELS.fire)[1]}"></span>
-        <span class="nm">${esc(c.nameEn || c.nameTh || '(ยังไม่มีชื่อ)')}<small>${esc(c.id)}</small></span>${bad ? '<span class="bad" title="มีช่องที่ต้องแก้">●</span>' : ''}</button>`;
-    }).join('');
+    const q = g('eSearch').value.trim().toLowerCase();
+    const match = c => !q || [c.id, c.nameTh, c.nameEn, c.type, (ELS[c.element] || [])[0], c.element, c.rarity, c.hero ? 'hero' : '', c.extra ? 'extra' : '', ...(c.tags || []), ...cardKeywords(c).map(k => KEYWORDS[k].th), cardSpeed(c) ? SPEEDS[cardSpeed(c)].th : '']
+      .some(v => String(v || '').toLowerCase().includes(q));
+    const rows = cards.map((c, i) => ({ c, i })).filter(({ c }) => match(c));
+    g('eCount').textContent = q ? `พบ ${rows.length} จาก ${cards.length} ใบ` : `ทั้งหมด ${cards.length} ใบ`;
+    g('eItems').innerHTML = rows.map(({ c, i }) => {
+      const bad = Object.keys(problems(c, i)).length, col = (ELS[c.element] || ELS.fire)[1], art = c.art.fullart || c.art.normal;
+      return `<button class="item${i === sel ? ' on' : ''}" data-i="${i}"><span class="dot" style="background:${col}"></span>
+        <span class="nm">${esc(c.nameEn || c.nameTh || '(ยังไม่มีชื่อ)')}<small>${esc(c.id)}${c.hero ? ' · ★ HERO' : ''}${c.extra ? ' · EXTRA' : ''}</small></span>${bad ? '<span class="bad" title="มีช่องที่ต้องแก้">●</span>' : ''}
+        <span class="lthumb${c.hero && !isSpell(c) ? ' hero' : ''}${isSpell(c) ? ' sp' : ''}" style="--c:${col};${art ? `background-image:url('../${esc(art)}')` : ''}"><b>${c.cost}</b></span></button>`;
+    }).join('') || '<div class="lempty">ไม่พบการ์ดที่ตรงกับคำค้น</div>';
   }
   const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
@@ -435,45 +577,168 @@
   function fillForm() {
     const c = cur(); if (!c) return;
     TEXT.forEach(k => g('k-' + k).value = c[k] ?? '');
+    g('k-hero').checked = !!c.hero; g('k-extra').checked = !!c.extra;
     NUM.forEach(k => g('k-' + k).value = c[k]);
     g('k-art-normal').value = c.art.normal || ''; g('k-art-fullart').value = c.art.fullart || '';
-    const m = (c.art.normal || c.art.fullart || '').match(/assets\/characters\/([^/]+)\//);
-    g('eFolder').value = m ? m[1] : '';
+    const m = (c.art.normal || c.art.fullart || '').match(ART_RE), m2 = (c.art.normal || c.art.fullart || '').match(/assets\/characters\/([^/]+)\//);
+    g('eFolder').value = m ? m[1] : m2 ? m2[1] : ''; g('eStem').value = m ? m[2] : '';
     g('eElements').innerHTML = Object.entries(ELS).map(([k, [th, col, icon]]) =>
       `<button class="chip${c.element === k ? ' on' : ''}" data-el="${k}" style="${c.element === k ? 'border-color:' + col : ''}"><img src="${icon}" width="20" height="20" alt="">${th}</button>`).join('');
     g('eRarity').innerHTML = RARITY.map(r => `<button class="${c.rarity === r ? 'on' : ''}" data-r="${r}">${r}</button>`).join('');
-    renderAbilities(); refresh();
+    renderAbilities(); renderTags(); renderKw(); renderFocus(); refresh();
+    const on = g('eItems').querySelector('.item.on'); if (on) on.scrollIntoView({ block: 'nearest' });
   }
   function parseAb(s) { const m = s.match(/^<b>(.*?):?<\/b>\s*(.*)$/s); return m ? { n: m[1].replace(/:$/, ''), t: m[2] } : { n: '', t: s }; }
   const buildAb = (n, t) => n.trim() ? `<b>${n.trim()}:</b> ${t}` : t;
   function renderAbilities() {
     g('eAbilities').innerHTML = cur().ability.map((s, i) => { const a = parseAb(s);
-      return `<div class="ab" data-i="${i}"><input class="abn" type="text" placeholder="ชื่อ (เช่น เมื่อลงสนาม)" value="${esc(a.n)}"><textarea placeholder="คำอธิบาย">${esc(a.t)}</textarea><button data-rm="${i}" title="ลบ">✕</button></div>`; }).join('')
+      return `<div class="ab" data-i="${i}"><input class="abn" type="text" placeholder="ชื่อ (เช่น เมื่อลงสนาม)" value="${esc(a.n)}"><textarea placeholder="คำอธิบาย">${esc(a.t)}</textarea><div class="abtools">`
+        + `<button type="button" data-mv="${i}:-1" title="เลื่อนขึ้น" ${i === 0 ? 'disabled' : ''}>▲</button>`
+        + `<button type="button" data-mv="${i}:1" title="เลื่อนลง" ${i === cur().ability.length - 1 ? 'disabled' : ''}>▼</button>`
+        + `<button type="button" data-rm="${i}" title="ลบ">✕</button></div><span class="abno">${i + 1}</span></div>`; }).join('')
       || '<div class="hint">ยังไม่มีความสามารถ</div>';
   }
   function refresh() {   // after any change: errors, list, thumbs, preview, save state
     const c = cur(), p = problems(c, sel);
     ['id', 'nameTh', 'nameEn'].forEach(k => { g('e-' + k).textContent = p[k] || ''; g('k-' + k).classList.toggle('bad', !!p[k]); });
+    const sel2 = g('k-levelUp'), opts = cards.filter((o, j) => j !== sel).sort((a, b) => (!!b.extra - !!a.extra) || a.id.localeCompare(b.id));
+    sel2.innerHTML = '<option value="">— ไม่มี —</option>' + opts.map(o => `<option value="${esc(o.id)}">${esc(o.id)} · ${esc(o.nameEn || o.nameTh)}${o.extra ? ' · EXTRA' : ''}</option>`).join('');
+    if (c.levelUp && !opts.some(o => o.id === c.levelUp)) sel2.insertAdjacentHTML('beforeend', `<option value="${esc(c.levelUp)}">${esc(c.levelUp)} (ไม่พบ)</option>`);
+    sel2.value = c.levelUp || ''; sel2.disabled = !c.hero; g('k-levelUpCondition').disabled = !c.hero;
+    const sel3 = g('k-heroSpell'), spells = cards.filter(o => isSpell(o)).sort((a, b) => a.id.localeCompare(b.id));
+    sel3.innerHTML = '<option value="">— ไม่มี —</option>' + spells.map(o => `<option value="${esc(o.id)}">${esc(o.id)} · ${esc(o.nameTh || o.nameEn)}${o.extra ? ' · EXTRA' : ''}</option>`).join('');
+    if (c.heroSpell && !spells.some(o => o.id === c.heroSpell)) sel3.insertAdjacentHTML('beforeend', `<option value="${esc(c.heroSpell)}">${esc(c.heroSpell)} (ไม่พบ)</option>`);
+    sel3.value = c.heroSpell || ''; sel3.disabled = !c.hero;
+    const notes = [], tgt = cards.find(o => o.id === c.levelUp), from = cards.filter(o => o.levelUp === c.id);
+    if (p.levelUp) notes.push('⚠ ' + p.levelUp);
+    else if (tgt && !tgt.extra) notes.push('⚠ ' + tgt.id + ' ยังไม่ได้ติ๊ก Extra deck — ร่าง Level up ควรอยู่ใน Extra deck');
+    if (c.levelUp && !c.hero) notes.push('⚠ มี Level up แต่ใบนี้ไม่ใช่ Hero');
+    if (c.hero && c.levelUp && !(c.levelUpCondition || '').trim()) notes.push('ℹ ยังไม่ได้ใส่เงื่อนไข Level up');
+    if (c.hero && !c.levelUp && (c.levelUpCondition || '').trim()) notes.push('ℹ มีเงื่อนไข Level up แต่ยังไม่ได้เลือกการ์ดร่าง Level up');
+    if (c.hero && c.extra) notes.push('ℹ ร่าง Level up ของ Hero ใช้รูป Full art อย่างเดียว — ตอนปรับรูปให้เลือก "Full art"');
+    if (from.length) notes.push('ร่าง Level up ของ: ' + from.map(o => o.id).join(', ') + (c.extra ? '' : ' (แต่ใบนี้ยังไม่ได้ติ๊ก Extra deck)'));
+    g('lvInfo').textContent = notes.join('  ·  ');
+    const lvForm = from.some(o => o.hero);      // the level-up form of a hero is a hero too
+    if (lvForm && !c.hero) c.hero = true;
+    g('k-hero').checked = !!c.hero; g('k-hero').disabled = isSpell(c) || lvForm;
+    g('heroHint').textContent = isSpell(c) ? '(spell เป็น Hero ไม่ได้)' : lvForm ? '(ร่าง Level up ของ Hero — เป็น Hero เสมอ)' : '';
+    const spell = isSpell(c);      // spells have no power/health
+    ['power', 'health'].forEach(k => { const l = g('k-' + k).closest('label'); l.style.opacity = spell ? .35 : 1; l.querySelectorAll('input,button').forEach(x => x.disabled = spell); });
+    g('stemHint').textContent = c._auto ? 'การ์ดใหม่: ชื่อไฟล์ภาพจะเปลี่ยนตามรหัสการ์ดและชื่ออังกฤษอัตโนมัติ (แก้ช่องนี้เองเพื่อหยุด)' : '';
     renderList(); thumbs(); preview(); status();
   }
   function thumb(el, path) {
     if (!path) { el.className = 'thumb'; el.style.backgroundImage = ''; el.textContent = 'ไม่มี'; return; }
     const im = new Image();
-    im.onload = () => { if (el.dataset.p === path) { el.className = 'thumb ok'; el.textContent = ''; el.style.backgroundImage = `url("../${path}")`; } };
-    im.onerror = () => { if (el.dataset.p === path) { el.className = 'thumb miss'; el.style.backgroundImage = ''; el.textContent = 'ไม่พบไฟล์'; } };
+    const known = artOk[path];
+    im.onload = () => { artOk[path] = true; if (el.dataset.p === path) { el.className = 'thumb ok'; el.textContent = ''; el.style.backgroundImage = `url("../${path}")`; } if (known !== true) { preview(); status(); } };
+    im.onerror = () => { artOk[path] = false; if (el.dataset.p === path) { el.className = 'thumb miss'; el.style.backgroundImage = ''; el.textContent = 'ไม่พบไฟล์'; } if (known !== false) { preview(); status(); } };
     el.dataset.p = path; im.src = '../' + path;
   }
   const thumbs = () => { thumb(g('tNormal'), cur().art.normal); thumb(g('tFull'), cur().art.fullart); };
   const preview = () => { const f = g('ePrev'); if (f.contentWindow && cur()) f.contentWindow.postMessage(clean(cur()), location.origin); };
   g('ePrev').addEventListener('load', preview);
 
+  // ----- tags -----
+  const normTag = v => v.trim().replace(/\s+/g, ' ');
+  const sameTag = (a, b) => a.toLowerCase() === b.toLowerCase();
+  const hasTag = (list, t) => (list || []).some(x => sameTag(x, t));
+  function renderTags() {
+    const c = cur(); if (!c) return;
+    g('eTagChips').innerHTML = (c.tags || []).map(t => `<span class="tagchip">${esc(t)}<button type="button" data-tagrm="${esc(t)}" title="เอาออกจากการ์ดนี้">×</button></span>`).join('');
+    g('eTagList').innerHTML = tagLib.map(t => `<option value="${esc(t)}">`).join('');
+    const count = t => cards.filter(o => hasTag(o.tags, t)).length;
+    g('eTagLib').innerHTML = tagLib.length ? [...tagLib].sort((a, b) => a.localeCompare(b)).map(t =>
+      `<span class="libchip${hasTag(c.tags, t) ? ' used' : ''}"><button type="button" class="add" data-tagadd="${esc(t)}" title="ใส่ให้การ์ดนี้">${esc(t)}</button><small>${count(t)}</small><button type="button" class="del" data-tagdel="${esc(t)}" title="ลบแท็กนี้ทิ้งจากทุกการ์ด">🗑</button></span>`).join('')
+      : '<span class="hint">ยังไม่มีแท็ก</span>';
+  }
+  function addTag(raw) {
+    const t = normTag(raw), c = cur(); if (!t) return;
+    const canon = tagLib.find(x => sameTag(x, t)) || t;
+    if (!hasTag(tagLib, t)) tagLib.push(t);
+    c.tags = c.tags || [];
+    if (!hasTag(c.tags, t)) c.tags.push(canon);
+    renderTags(); refresh();
+  }
+  function removeTag(t) { const c = cur(); c.tags = (c.tags || []).filter(x => !sameTag(x, t)); renderTags(); refresh(); }
+  function deleteTag(t) {
+    const n = cards.filter(o => hasTag(o.tags, t)).length;
+    if (!confirm(n ? `ลบแท็ก “${t}” ทิ้ง?\nจะถูกเอาออกจากการ์ด ${n} ใบ (ยังไม่หายจากไฟล์จนกว่าจะกดบันทึก)` : `ลบแท็ก “${t}” ออกจากรายการที่จำไว้?`)) return;
+    cards.forEach(o => { o.tags = (o.tags || []).filter(x => !sameTag(x, t)); });
+    tagLib = tagLib.filter(x => !sameTag(x, t)); renderTags(); refresh();
+  }
+  const tagIn = g('eTagIn');
+  tagIn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagIn.value); tagIn.value = ''; }
+    else if (e.key === 'Backspace' && !tagIn.value && (cur().tags || []).length) removeTag(cur().tags[cur().tags.length - 1]);
+  });
+  tagIn.addEventListener('change', () => { if (tagIn.value.trim()) { addTag(tagIn.value); tagIn.value = ''; } });   // datalist pick / blur on mobile
+  g('eTagBox').addEventListener('click', e => { const b = e.target.closest('[data-tagrm]'); if (b) removeTag(b.dataset.tagrm); else tagIn.focus(); });
+  g('eTagLib').addEventListener('click', e => {
+    const a = e.target.closest('[data-tagadd]'), d = e.target.closest('[data-tagdel]');
+    if (a) { const c = cur(), t = a.dataset.tagadd; hasTag(c.tags, t) ? removeTag(t) : addTag(t); }
+    else if (d) deleteTag(d.dataset.tagdel);
+  });
+
+  // ----- keywords (characters) / speed (spells) -----
+  function renderKw() {
+    const c = cur(), spell = isSpell(c), kws = c.keywords || [];
+    g('typeSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.type === (spell ? 'Spell' : 'Character')));
+    g('eKws').hidden = spell; g('eSpeed').hidden = !spell;
+    g('eKws').innerHTML = Object.entries(KEYWORDS).map(([k, v]) => `<button type="button" class="chip${kws.includes(k) ? ' on' : ''}" data-kw="${k}" title="${v.desc}" style="${kws.includes(k) ? 'border-color:' + v.color : ''}"><span style="color:${v.color};display:flex">${kwIcon(k, 18)}</span>${v.th}</button>`).join('');
+    g('eSpeed').innerHTML = `<button type="button" class="${!SPEEDS[c.speed] ? 'on' : ''}" data-speed="">ไม่ระบุ</button>` + Object.entries(SPEEDS).map(([k, v]) => `<button type="button" class="${c.speed === k ? 'on' : ''}" data-speed="${k}" title="${v.desc}"><span style="color:${v.color};vertical-align:-3px">${kwIcon(k, 16)}</span> ${v.th}</button>`).join('');
+    const list = spell ? (SPEEDS[c.speed] ? [SPEEDS[c.speed]] : []) : kws.map(k => KEYWORDS[k]).filter(Boolean);
+    g('kwHint').innerHTML = list.length ? list.map(v => `<b>${v.th}</b> — ${v.desc}`).join('<br>') : (spell ? 'เลือกความเร็วของเวทย์' : 'คลิกเพื่อเพิ่ม keyword ให้ตัวละคร');
+  }
+
   // ----- events -----
   g('eForm').addEventListener('input', e => {
     const t = e.target, c = cur();
-    if (t.id.startsWith('k-art-')) c.art[t.id.slice(6)] = t.value.trim();
+    if (t.id === 'eFolder' || t.id === 'eStem') { if (t.id === 'eStem') c._auto = false; syncArt(c, slugify(g('eFolder').value), slugify(g('eStem').value)); }
+    else if (t.id === 'k-art-normal') {           // typing a normal path: full art mirrors it and folder/stem follow
+      c.art.normal = t.value.trim(); const m = c.art.normal.match(ART_RE);
+      if (m) { g('eFolder').value = m[1]; g('eStem').value = m[2]; c.art.fullart = artPath(m[1], m[2], 'fullart', m[4]); c._fullAuto = true; g('k-art-fullart').value = c.art.fullart; }
+    }
+    else if (t.id === 'k-art-fullart') { c.art.fullart = t.value.trim(); c._fullAuto = false; }
+    else if (t.id === 'k-hero') c.hero = t.checked;
+    else if (t.id === 'k-levelUp') { c.levelUp = t.value; const tg = cards.find(o => o.id === t.value); if (tg) { tg.hero = true; tg.extra = true; } }   // level-up form: hero + extra deck
+    else if (t.id === 'k-extra') c.extra = t.checked;
+    else if (t.id.startsWith('k-art-')) c.art[t.id.slice(6)] = t.value.trim();
     else if (t.id.startsWith('k-')) { const k = t.id.slice(2); c[k] = NUM.includes(k) ? Math.max(0, parseInt(t.value || '0', 10) || 0) : t.value; }
     else if (t.closest('.ab')) { const row = t.closest('.ab'); c.ability[+row.dataset.i] = buildAb(row.querySelector('input').value, row.querySelector('textarea').value); }
+    if (t.id === 'k-nameEn') delete c._stemName;
+    if ((t.id === 'k-id' || t.id === 'k-nameEn') && c._auto) { g('eStem').value = autoStem(c); syncArt(c, slugify(g('eFolder').value) || lastFolder(), autoStem(c)); }
+    if (t.id === 'k-type') renderKw();
+    if (t.id.startsWith('k-art-') || t.id === 'eStem' || t.id === 'eFolder') renderFocus();
     refresh();
+  });
+  // ----- art focus: which part of the art the card shows when it is cropped (field artFocus = [x, y], 0..1) -----
+  const CARD_R = 630 / 880;
+  function focusFrame() {      // gold frame = the card-shaped part of the art that stays visible
+    const c = cur(), im = g('fImg'); if (!c || !im.naturalWidth) { g('fFrame').hidden = true; return; }
+    const [fx, fy] = artFocus(c), ir = im.naturalWidth / im.naturalHeight, W = im.clientWidth, H = im.clientHeight;
+    const fw = ir > CARD_R ? CARD_R / ir : 1, fh = ir > CARD_R ? 1 : ir / CARD_R;
+    Object.assign(g('fFrame').style, { left: (fx * (1 - fw) * W) + 'px', top: (fy * (1 - fh) * H) + 'px', width: (fw * W) + 'px', height: (fh * H) + 'px' }); g('fFrame').hidden = false;
+  }
+  function renderFocus() { const c = cur(); const src = c && cardArt(c); const im = g('fImg'); if (!src) { im.removeAttribute('src'); g('fFrame').hidden = true; return; } const u = '../' + src; if (im.getAttribute('src') !== u) im.src = u; else focusFrame(); }
+  g('fImg').addEventListener('load', focusFrame); addEventListener('resize', focusFrame);
+  function setFocusAt(ev) {    // the clicked point becomes the centre of the frame (as far as the art allows)
+    const c = cur(), im = g('fImg'); if (!c || !im.naturalWidth) return;
+    const r = im.getBoundingClientRect(), px = (ev.clientX - r.left) / r.width, py = (ev.clientY - r.top) / r.height;
+    const ir = im.naturalWidth / im.naturalHeight, fw = ir > CARD_R ? CARD_R / ir : 1, fh = ir > CARD_R ? 1 : ir / CARD_R;
+    const conv = (p, f) => f >= 1 ? .5 : Math.max(0, Math.min(1, (p - f / 2) / (1 - f)));
+    c.artFocus = [Math.round(conv(px, fw) * 100) / 100, Math.round(conv(py, fh) * 100) / 100];
+    focusFrame(); refresh();
+  }
+  let fDown = false;
+  g('fPic').addEventListener('pointerdown', e => { fDown = true; g('fPic').setPointerCapture(e.pointerId); setFocusAt(e); });
+  g('fPic').addEventListener('pointermove', e => { if (fDown) setFocusAt(e); });
+  g('fPic').addEventListener('pointerup', () => { fDown = false; });
+  g('fReset').addEventListener('click', e => { e.stopPropagation(); const c = cur(); if (c) { delete c.artFocus; focusFrame(); refresh(); } });
+  g('typeSeg').addEventListener('click', e => {    // card type: pick Character or Spell
+    const b = e.target.closest('[data-type]'); if (!b) return; e.stopPropagation();
+    const t = g('k-type'); if (t.value === b.dataset.type) return;
+    t.value = b.dataset.type; t.dispatchEvent(new Event('input', { bubbles: true }));
   });
   g('eForm').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return; const c = cur();
@@ -481,16 +746,32 @@
     else if (b.dataset.el) { c.element = b.dataset.el; fillForm(); }
     else if (b.dataset.r) { c.rarity = b.dataset.r; fillForm(); }
     else if (b.dataset.rm !== undefined) { c.ability.splice(+b.dataset.rm, 1); renderAbilities(); refresh(); }
+    else if (b.dataset.mv) {                      // reorder abilities: the card shows them top to bottom in this order
+      const [i, d] = b.dataset.mv.split(':').map(Number), j = i + d;
+      if (j < 0 || j >= c.ability.length) return;
+      [c.ability[i], c.ability[j]] = [c.ability[j], c.ability[i]];
+      renderAbilities(); refresh();
+      const moved = g('eAbilities').querySelector(`.ab[data-i="${j}"]`);
+      if (moved) { moved.classList.add('flash'); moved.querySelector(`[data-mv="${j}:${d}"]`)?.focus(); }
+    }
+    else if (b.dataset.kw) { const k = b.dataset.kw, list = c.keywords || []; c.keywords = list.includes(k) ? list.filter(x => x !== k) : [...list, k]; renderKw(); refresh(); }
+    else if (b.dataset.speed !== undefined) { c.speed = b.dataset.speed; renderKw(); refresh(); }
   });
   g('eAddAb').onclick = () => { cur().ability.push(''); renderAbilities(); refresh(); };
-  g('eAuto').onclick = () => {
-    const c = cur(), f = slugify(g('eFolder').value); if (!f) { g('eFolder').focus(); return; }
-    const base = `assets/characters/${f}/${c.id}-${slugify(c.nameEn.trim().split(/\s+/)[0]) || 'name'}`;
-    c.art.normal = base + '-normal.webp'; c.art.fullart = base + '-fullart.webp'; fillForm();
-  };
+  g('eSearch').addEventListener('input', renderList);
+  g('eSearch').addEventListener('keydown', e => {
+    if (e.key === 'Escape') { g('eSearch').value = ''; renderList(); }
+    else if (e.key === 'Enter') { const b = g('eItems').querySelector('.item'); if (b) { sel = +b.dataset.i; fillForm(); } }
+  });
   g('eItems').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) { sel = +b.dataset.i; fillForm(); } });
   g('eAdd').onclick = () => { cards.push(blank()); sel = cards.length - 1; fillForm(); g('k-nameTh').focus(); };
-  g('eDup').onclick = () => { const c = JSON.parse(JSON.stringify(cur())); c.id = nextId(); cards.push(c); sel = cards.length - 1; fillForm(); };
+  g('eDup').onclick = () => {
+    const src = cur(), c = JSON.parse(JSON.stringify(src)); c.id = nextId(); c._auto = true;
+    const m = (c.art.normal || '').match(ART_RE), f = m ? m[1] : lastFolder();
+    if (m && m[2].startsWith(src.id + '-')) c._stemName = m[2].slice(src.id.length + 1);   // keep e.g. "zabusa" from nr-018-zabusa
+    if (f) { c.art.normal = artPath(f, autoStem(c), 'normal', m && m[4]); c.art.fullart = artPath(f, autoStem(c), 'fullart', m && m[4]); c._fullAuto = true; }
+    cards.push(c); sel = cards.length - 1; fillForm();
+  };
   g('eDel').onclick = () => {
     if (!confirm(`ลบการ์ด ${cur().id} ?\n(ยังไม่หายจากไฟล์จนกว่าจะกดบันทึก)`)) return;
     cards.splice(sel, 1); if (!cards.length) cards.push(blank()); sel = Math.min(sel, cards.length - 1); fillForm();
@@ -509,9 +790,21 @@
   g('eSave').onclick = async () => {
     const body = serialize();
     try {
+      // someone else (another tab, or an edit on disk) changed cards.json since this page loaded? don't overwrite silently
+      const disk = await fetch('../data/cards.json', { cache: 'no-store' }).then(r => r.json()).catch(() => null);
+      if (disk && JSON.stringify(disk.map(normCard).map(clean), null, 2) + '\n' !== savedJson
+          && !confirm('ไฟล์ cards.json ถูกแก้จากที่อื่นหลังจากเปิดหน้านี้ (เช่นอีกแท็บ)\nถ้าบันทึกตอนนี้ การแก้จากที่อื่นจะหายไป\n\nกด "ยกเลิก" แล้วโหลดหน้าใหม่ (แนะนำ) หรือ "ตกลง" เพื่อบันทึกทับ')) {
+        msg('ยังไม่ได้บันทึก — มีการแก้ไฟล์จากที่อื่น โหลดหน้าใหม่ก่อน (การแก้ในหน้านี้จะหาย ควรจดไว้ก่อน)', 'bad'); return;
+      }
       const r = await fetch('../data/cards.json', { method: 'PUT', body });
       if (!r.ok) throw new Error(await r.text());
-      savedJson = body; status(); msg('บันทึกแล้ว ✓ (สำรองไฟล์เดิมไว้ที่ data/cards.json.bak)', 'ok');
+      savedJson = body;
+      if (tagsJson() !== savedTags) {
+        const r2 = await fetch('../data/tags.json', { method: 'PUT', body: tagsJson() });
+        if (!r2.ok) throw new Error(await r2.text());
+        savedTags = tagsJson();
+      }
+      status(); msg('บันทึกแล้ว ✓ (สำรองไฟล์เดิมไว้ที่ data/*.json.bak)', 'ok');
     } catch (err) {
       msg('บันทึกตรงไม่ได้ — เปิดเว็บด้วย python3 serve.py หรือกด “ดาวน์โหลด JSON” แทน', 'bad');
     }
@@ -519,16 +812,28 @@
   g('eDl').onclick = () => {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([serialize()], { type: 'application/json' }));
     a.download = 'cards.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    if (tagLib.length) setTimeout(() => {
+      const b = document.createElement('a'); b.href = URL.createObjectURL(new Blob([tagsJson()], { type: 'application/json' }));
+      b.download = 'tags.json'; b.click(); setTimeout(() => URL.revokeObjectURL(b.href), 2000);
+    }, 400);
   };
   addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 's' && !g('tab-cards').hidden) { e.preventDefault(); if (!g('eSave').disabled) g('eSave').click(); } });
   addEventListener('beforeunload', e => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
 
   // ----- load + tabs -----
-  fetch('../data/cards.json').then(r => r.json()).then(list => {
-    cards = list.map(c => ({ flavor: '', ...c, ability: c.ability || [], art: { normal: '', fullart: '', ...c.art } }));
+  fetch('../data/tags.json').then(r => r.ok ? r.json() : []).catch(() => []).then(saved => {
+    tagLib = Array.isArray(saved) ? saved.filter(t => typeof t === 'string') : [];
+    return fetch('../data/cards.json');
+  }).then(r => r.json()).then(list => {
+    list.forEach(c => (c.tags || []).forEach(t => { if (!hasTag(tagLib, t)) tagLib.push(t); }));   // library always includes tags already on cards
+    cards = list.map(normCard);
     if (!cards.length) cards.push(blank());
     loaded = true;
+    savedTags = tagsJson();
     savedJson = serialize();       // compare in normalised form so untouched files are not "dirty"
+    // art tab: default series / number = next free card id (until the user types there)
+    const nx = nextId().match(/^(.*?)-?(\d+)$/), sEl = document.getElementById('series'), nEl = document.getElementById('num');
+    if (nx && !sEl.dataset.touched && !nEl.dataset.touched) { sEl.value = nx[1]; nEl.value = +nx[2]; if (typeof updateInfo === 'function') updateInfo(); }
     fillForm();
   }).catch(() => msg('โหลด data/cards.json ไม่ได้ — เปิดเว็บผ่านเซิร์ฟเวอร์ (python3 serve.py)', 'bad'));
 

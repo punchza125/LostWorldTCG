@@ -9,16 +9,21 @@
     "nameTh": "นารูโตะ อุซึมากิ",
     "nameEn": "NARUTO UZUMAKI",
     "element": "wind",
-    "rarity": "EPIC",
-    "type": "มอนสเตอร์ · นินจา / จักระ",
+    "rarity": "COMMON",
+    "type": "Character",
     "ability": [
       "<b>เมื่อลงสนาม:</b> สร้างความเสียหาย 2 แต้มให้มอนสเตอร์ศัตรู 1 ใบ",
-      "<b>จักระปั่นป่วน:</b> ถ้าพลังชีวิตของคุณเหลือน้อยกว่า 10 การ์ดใบนี้ได้รับพลังโจมตี +2"
+      "<b>จักระปั่นป่วน:</b> ถ้าพลังชีวิตของคุณเหลือน้อยกว่า 10 การ์ดใบนี้ได้รับ +2|0"
     ],
     "art": {
       "normal": "assets/characters/naruto/nr-001-naruto-normal.webp",
       "fullart": "assets/characters/naruto/nr-001-naruto-fullart.webp"
-    }
+    },
+    "tags": [
+      "Team 7",
+      "Konoha",
+      "Rasengan-User"
+    ]
   },
   {
     "id": "nr-003",
@@ -30,14 +35,18 @@
     "nameEn": "Sakura Haruno",
     "element": "light",
     "rarity": "COMMON",
-    "type": "Ninja",
+    "type": "Character",
     "ability": [
-      "<b>เมื่อลงสนาม:</b> + 1 Health พันธมิตรทั้งหมดในสนาม"
+      "<b>เมื่อลงสนาม:</b> + 1 Health พันธมิตรทั้งหมดในสนามถาวร"
     ],
     "art": {
       "normal": "assets/characters/naruto/nr-003-sakura-normal.webp",
       "fullart": "assets/characters/naruto/nr-003-sakura-fullart.webp"
-    }
+    },
+    "tags": [
+      "Team 7",
+      "Konoha"
+    ]
   },
   {
     "flavor": "...",
@@ -50,14 +59,20 @@
     "nameEn": "Sasuke Uchiha",
     "element": "fire",
     "rarity": "RARE",
-    "type": "Ninja",
+    "type": "Character",
     "ability": [
       "<b>ลงสนาม:</b> อัญเชิญการ์ด \"คาถาบอลเพลิงไฟยักษ์\" ขึ้นมือ 1 ใบ\n"
     ],
     "art": {
       "normal": "assets/characters/naruto/nr-002-sasuke-normal.webp",
       "fullart": "assets/characters/naruto/nr-002-sasuke-fullart.webp"
-    }
+    },
+    "tags": [
+      "Team 7",
+      "Uchiha",
+      "Chidori-User",
+      "Sharingan-User"
+    ]
   },
   {
     "flavor": "...",
@@ -74,27 +89,45 @@
     "ability": [],
     "art": {
       "normal": "assets/characters/naruto/nr-004-konohamaru-normal.webp"
-    }
+    },
+    "tags": [
+      "Konoha"
+    ],
+    "artFocus": [
+      0.14,
+      0.5
+    ]
   },
   {
     "flavor": "พอดีไปส่งคุณยายข้ามถนนมาน่ะ",
     "id": "nr-005",
     "set": "SET-01",
-    "cost": 6,
+    "cost": 7,
     "power": 7,
-    "health": 5,
+    "health": 6,
     "nameTh": "คาคาชิ ฮาตาเคะ",
     "nameEn": "KAKASHI HATAKE",
     "element": "dark",
     "rarity": "EPIC",
     "type": "Character",
     "ability": [
-      "<b>ลงสนาม:</b> เลือกใช้ effect ลงสนามของการ์ดใบไหนก็ได้ในสนามของฝั่งตรงข้าม 1 ใบ"
+      "<b>ลงสนาม:</b> เลือกใช้ effect ลงสนามของการ์ดใบไหนก็ได้ในสนาม 1 ใบ, ตัวละคร tag \"Chunin\"  ฝั่งเราได้รับ +1|+1 ถาวร"
     ],
     "art": {
       "normal": "assets/characters/naruto/nr-005-kakashi-normal.webp",
       "fullart": "assets/characters/naruto/nr-005-kakashi-fullart.webp"
-    }
+    },
+    "tags": [
+      "Team 7",
+      "Konoha",
+      "Jonin",
+      "Chidori-User",
+      "Sharingan-User"
+    ],
+    "artFocus": [
+      0.66,
+      0.5
+    ]
   },
   {
     "flavor": "ติดกับฉันล่ะ",
@@ -109,31 +142,43 @@
     "rarity": "COMMON",
     "type": "Character",
     "ability": [
-      "<b>Death:</b> สุ่ม Character \"โคโนฮะ\" ขึ้นมือ 1 ใบ"
+      "<b>Death:</b> สุ่ม Character \"โคโนฮะ\" จากในเด็คขึ้นมือ 1 ใบ"
     ],
     "art": {
       "normal": "assets/characters/naruto/nr-006-iruka-normal.webp"
-    }
+    },
+    "tags": [
+      "Konoha"
+    ]
   },
   {
     "id": "nr-007",
     "set": "SET-01",
     "cost": 8,
     "power": 2,
-    "health": 6,
+    "health": 7,
     "nameTh": "อิทาจิ อูจิฮะ",
     "nameEn": "Itachi Uchiha",
     "element": "fire",
     "rarity": "LEGEND",
     "type": "Character",
     "ability": [
-      "<b>Every turn:</b> Character ทุกตัวของฝ่ายตรงข้าม Health - 1",
+      "<b>Every turn:</b> Character ทุกตัวของฝ่ายตรงข้าม 0|-2",
       "<b>ลงสนาม:</b> อัญเชิญการ์ด \"คาถาบอลเพลิงไฟยักษ์\" ขึ้นมือ 1 ใบ\n"
     ],
     "art": {
       "normal": "assets/characters/naruto/nr-007-itachi-normal.webp",
       "fullart": "assets/characters/naruto/nr-007-itachi-fullart.webp"
-    }
+    },
+    "tags": [
+      "Akatsuki",
+      "Uchiha",
+      "Sharingan-User"
+    ],
+    "artFocus": [
+      0.58,
+      0.5
+    ]
   },
   {
     "id": "nr-008",
@@ -147,10 +192,1848 @@
     "rarity": "COMMON",
     "type": "Spell",
     "ability": [
-      "<b>ใช้:</b> สร้างความเสียหาย -3 Health ต่อการ์ด character 1 ใบ"
+      "<b>ใช้:</b> สร้างความเสียหาย -3 Health ต่อการ์ด character 1 ใบของฝ่ายตรงข้าม"
     ],
     "art": {
       "normal": "assets/characters/naruto/nr-008-rasengan-normal.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.38,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-009",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 3,
+    "health": 1,
+    "nameTh": "อันบุ-01",
+    "nameEn": "Anbu",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-009-anbu-normal.webp"
+    },
+    "tags": [
+      "Jonin",
+      "Anbu"
+    ]
+  },
+  {
+    "id": "nr-010",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 0,
+    "health": 0,
+    "nameTh": "สอบข้อเขียนจูนิน",
+    "nameEn": "Chunin-Exam",
+    "element": "water",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>ใช้งาน:</b> เลือก Character ในสนามของเราขึ้นมือ 1 ใบ จากนั้นเลือกของฝ่ายตรงข้ามขึ้นมือ 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-010-exam01-normal.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0.84,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-011",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 0,
+    "health": 0,
+    "nameTh": "คาถาสลับร่าง",
+    "nameEn": "Substitution Jutsu",
+    "element": "earth",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>ใช้งาน:</b> ทำการเลือก Character ฝั่งเรา 1 ใบขึ้นมือและการ์ดใบนั้นค่าร่าย = 0 จนกว่าจะลงสนามอีกครั้ง"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-011-subtitute-normal.webp"
+    },
+    "speed": "burst"
+  },
+  {
+    "id": "nr-012",
+    "set": "SET-01",
+    "cost": 8,
+    "power": 0,
+    "health": 0,
+    "nameTh": "คิริน",
+    "nameEn": "Kirin",
+    "element": "lightning",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> Character ของฝ่ายตรงข้ามทั้งหมดได้รับความเสียหาย 3"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-012-kirin-normal.webp",
+      "fullart": "assets/characters/naruto/nr-012-kirin-fullart.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0.22,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-013",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 0,
+    "health": 0,
+    "nameTh": "อักขระสาบ",
+    "nameEn": "อักขระสาบ",
+    "element": "dark",
+    "rarity": "RARE",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> เลือก 1 Character ฝั่งเรา +3/-1",
+      "<b>Condition:</b> Character \"Curse mark\" ไม่ได้รับความเสียหายจากการ์ดใบนี้"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-013-cursemark-normal.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.77,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-014",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 0,
+    "health": 3,
+    "nameTh": "ชิกามารุ นารา",
+    "nameEn": "Shikamaru Nara",
+    "element": "earth",
+    "rarity": "RARE",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> Stun 1 Character ฝ่ายตรงแบบสุ่ม",
+      "<b>Condition:</b> หากการ์ดใบนี้ยังอยู่บนสนามตัวละครที่ถูก Stun โดยการ์ดใบนี้จะไม่สามารถหายจากการ Stun ได้, หากศัตรูที่ถูก stun โดยการ์ดใบนี้ถูกสังหารให้ทำงาน Effect ลงสนามอีกครั้ง"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-014-shikamaru-normal.webp",
+      "fullart": "assets/characters/naruto/nr-014-shikamaru-fullart.webp"
+    },
+    "tags": [
+      "Konoha",
+      "Team 10",
+      "Ino-Shika-Cho",
+      "Genin"
+    ],
+    "artFocus": [
+      0.52,
+      0.5
+    ],
+    "keywords": [
+      "barrier"
+    ]
+  },
+  {
+    "id": "nr-015",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 0,
+    "health": 0,
+    "nameTh": "ภารกิจของ Team 7",
+    "nameEn": "Team 7 Mission",
+    "element": "water",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> Tag \"Team 7\" บนสนามได้รับ +2|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-015-team7-normal.webp",
+      "fullart": "assets/characters/naruto/nr-015-team7-fullart.webp"
+    },
+    "speed": "slow"
+  },
+  {
+    "id": "nr-016",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 3,
+    "health": 8,
+    "nameTh": "กามะบุนตะ",
+    "nameEn": "Gamabunta",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-016-Gamabunta-normal.webp",
+      "fullart": "assets/characters/naruto/nr-016-Gamabunta-fullart.webp"
+    },
+    "artFocus": [
+      0.43,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-017",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 0,
+    "health": 0,
+    "nameTh": "เนตรวงแหวน",
+    "nameEn": "Sharingan",
+    "element": "light",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> เลือก Character 1 ใบของเรา Character นั้น Power = 0 ภายใน turn นี้ Draw 2 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-017-sharingan-normal.webp",
+      "fullart": "assets/characters/naruto/nr-017-sharingan-fullart.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0.56,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-018",
+    "set": "SET-01",
+    "cost": 7,
+    "power": 5,
+    "health": 6,
+    "nameTh": "ซาบูสะ โมโมชิ",
+    "nameEn": "𝙕𝙖𝙗𝙪𝙯𝙖 𝙈𝙤𝙢𝙤𝙘𝙝𝙞 ",
+    "element": "water",
+    "rarity": "EPIC",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> เลือก 2 character ของฝั่งตรงข้าม Health - 2",
+      "<b>Attack:</b> +0|+2"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-018-zabusa-normal.webp",
+      "fullart": "assets/characters/naruto/nr-018-zabusa-fullart.webp"
+    },
+    "tags": [
+      "Mizukuni"
+    ],
+    "artFocus": [
+      0.63,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-019",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 7,
+    "health": 4,
+    "nameTh": "โจจิ อาคิมิจิ",
+    "nameEn": "Choji Akimiji",
+    "element": "earth",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-019-choji-normal.webp"
+    },
+    "tags": [
+      "Ino-Shika-Cho",
+      "Konoha",
+      "Team 10",
+      "Genin"
+    ],
+    "artFocus": [
+      0.56,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-020",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 1,
+    "health": 1,
+    "nameTh": "คาถาบอลเพลิงไฟยักษ์",
+    "nameEn": "Fire Ball Jutsu",
+    "element": "fire",
+    "rarity": "RARE",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> เลือก 1 Character ฝั่งตรงข้าม 0|-3\n",
+      "<b>Condition:</b> หากในสนามฝั่งเรามี Tag \"Uchiha\" การ์ดใบนี้ค่าร่าย -2"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-020-fireballjutsu-normal.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-021",
+    "set": "SET-01",
+    "cost": 10,
+    "power": 4,
+    "health": 3,
+    "nameTh": "ฮิรุเซ็น ซารุโทบิ",
+    "nameEn": "Hiruzen Sarutobi",
+    "element": "wind",
+    "rarity": "LEGEND",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> อัญเชิญการ์ด \"เอ็นมะ\" การ์ด \"คาถาปิดผนึกศากอสูร\" ลงสู่สนาม, Character \"โคโนฮะ\" ในสนาม +2|+2 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-021-hiruzen-normal.webp",
+      "fullart": "assets/characters/naruto/nr-021-hiruzen-fullart.webp"
+    },
+    "tags": [
+      "Hokage",
+      "Kage",
+      "Konoha",
+      "Sarutobi"
+    ]
+  },
+  {
+    "id": "nr-022",
+    "set": "SET-01",
+    "cost": 0,
+    "power": 6,
+    "health": 4,
+    "nameTh": "เอ็นมะ",
+    "nameEn": "Enma",
+    "element": "earth",
+    "rarity": "RARE",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-022-enma-normal.webp"
+    },
+    "extra": true,
+    "artFocus": [
+      0.45,
+      0.5
+    ],
+    "tags": [
+      "Konoha",
+      "Summon-Character"
+    ]
+  },
+  {
+    "id": "nr-023",
+    "set": "SET-01",
+    "cost": 10,
+    "power": 0,
+    "health": 10,
+    "nameTh": "คาถาปิดผนึกซากอสูร",
+    "nameEn": "Dead Demon Consuming Seal",
+    "element": "dark",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> เลือก Character ในสนามของฝั่งตรงข้าม 1 ใบ ไม่สามารถโจมตีได้ จนกว่าการ์ดใบนี้จะไม่อยู่บนสนาม"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-023-curseseal-normal.webp"
+    },
+    "artFocus": [
+      0.51,
+      0.5
+    ],
+    "tags": [
+      "Summon-Character"
+    ]
+  },
+  {
+    "id": "nr-024",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 1,
+    "health": 1,
+    "nameTh": "เอบิสึ",
+    "nameEn": "Ebisu",
+    "element": "lightning",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> การ์ด Character ใบถัดไปที่จั่วได้ +1|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-024-ebisu-normal.webp"
     }
+  },
+  {
+    "id": "nr-025",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 1,
+    "health": 3,
+    "nameTh": "เท็น เท็น",
+    "nameEn": "Ten Ten",
+    "element": "light",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> จั่วการ์ด \"คุไน ยันต์ระเบิด\" ขึ้นมือ 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-025-tenten-normal.webp"
+    },
+    "tags": [
+      "Konoha"
+    ],
+    "artFocus": [
+      0.31,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-026",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 2,
+    "health": 2,
+    "nameTh": "บิซูเกะ",
+    "nameEn": "bisuke",
+    "element": "earth",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> การ์ด Tag \"Team 7\" ฝั่งเราได้รับ +1|+1 ถาวร , หากในสนามมี \"คาคาชิ ฮาตาเคะ\" การ์ดใบนี้ได้รับ 0|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-026-bisuke-normal.webp"
+    },
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "artFocus": [
+      0.12,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-027",
+    "set": "SET-01",
+    "cost": 7,
+    "power": 0,
+    "health": 8,
+    "nameTh": "บูล",
+    "nameEn": "Big bark Bull",
+    "element": "dark",
+    "rarity": "RARE",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากในสนามมี \"คาคาชิ ฮาตาเคะ\" การ์ดใบนี้ได้รับ +2|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-027-bull-normal.webp"
+    },
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "keywords": [
+      "tough"
+    ],
+    "artFocus": [
+      0.43,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-028",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 3,
+    "health": 2,
+    "nameTh": "นารูโตะ อูสึมากิ",
+    "nameEn": "NARUTO UZUMAKI",
+    "element": "wind",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากบนมือไม่มีการ์ด \"คาถาแยกเงาพันร่าง\" จั่วการ์ด \"คาถาแยกเงาพันร่าง\" ขึ้นมือ 1 ใบ จากในเด็ค, การ์ด \"นารูโตะ อุสึมากิ\" ใบอื่นๆ ในสนาม +1|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-028-naruto-normal.webp",
+      "fullart": "assets/characters/naruto/nr-028-naruto-fullart.webp"
+    },
+    "tags": [
+      "Team 7",
+      "Konoha",
+      "Genin"
+    ]
+  },
+  {
+    "id": "nr-029",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 2,
+    "health": 2,
+    "nameTh": "ซากุระ ฮารุโนะ",
+    "nameEn": "Sakura Haruno",
+    "element": "light",
+    "rarity": "RARE",
+    "type": "Character",
+    "ability": [
+      "<b>Every turn:</b> เลือก Character 1 ใบของคุณในสนาม +1|+1",
+      "<b>ลงสนาม:</b> Tag \"Team 7\" ฝั่งเรา 0|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-029-sakura-normal.webp",
+      "fullart": "assets/characters/naruto/nr-029-sakura-fullart.webp"
+    },
+    "tags": [
+      "Team 7",
+      "Konoha",
+      "Genin"
+    ],
+    "artFocus": [
+      0.21,
+      0.5
+    ],
+    "keywords": [
+      "regenerate"
+    ]
+  },
+  {
+    "id": "nr-030",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 4,
+    "health": 5,
+    "nameTh": "ซาซึเกะ อูจิฮะ",
+    "nameEn": "Sasuke Uchiha",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Every turn:</b> เลือก Character ฝั่งเรา 0|-1 ถาวร  เพื่อเพิ่มการ์ดใบนี้ +1|0 ถาวร",
+      "<b>เมื่อลงสนาม:</b> สร้างการ์ด \"คาถาลูกบอลเพลิงไฟยักษ์\" ขึ้นมือ 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-030-sasuke-normal.webp",
+      "fullart": "assets/characters/naruto/nr-030-sasuke-fullart.webp"
+    },
+    "tags": [
+      "Team 7",
+      "Konoha",
+      "Uchiha",
+      "Genin",
+      "Sharingan-User"
+    ],
+    "artFocus": [
+      0.72,
+      0.5
+    ],
+    "keywords": [
+      "quickstrike"
+    ]
+  },
+  {
+    "id": "nr-031",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 1,
+    "health": 1,
+    "nameTh": "ราเม็ง อิจิราคุ",
+    "nameEn": "Ramen Ichiraku",
+    "element": "wind",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>acitve:</b> เลือก 1 Character ฝั่งเรา 0|+2 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-031-ichirakuramen-normal.webp"
+    },
+    "speed": "fast"
+  },
+  {
+    "flavor": "ราเมงร้อนๆ",
+    "id": "nr-032",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 1,
+    "health": 1,
+    "nameTh": "เทอุจิ",
+    "nameEn": "Teuchi",
+    "element": "light",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Death:</b> จั่วการ์ด \"Ramen Ichiraku\" ขึ้นมือ 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-032-teuchi-normal.webp"
+    },
+    "tags": [
+      "Konoha"
+    ]
+  },
+  {
+    "id": "nr-033",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 1,
+    "health": 1,
+    "nameTh": "คาถาแยกเงา",
+    "nameEn": "shadow clone jutsu",
+    "element": "wind",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> Copy การ์ด Character ค่าร่ายไม่เกิน 5 ในสนามของเราเพิ่มอีก 1 ใบลงสู่สนาม"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-033-shadowclone-normal.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.4,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-034",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 1,
+    "health": 1,
+    "nameTh": "คาถาคุกน้ำ",
+    "nameEn": "water prison jutsu",
+    "element": "water",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> stun 1 Character"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-033-waterprison-normal.webp",
+      "fullart": "assets/characters/naruto/nr-033-waterprison-fullart.webp"
+    },
+    "speed": "slow"
+  },
+  {
+    "id": "nr-035",
+    "set": "SET-01",
+    "cost": 8,
+    "power": 1,
+    "health": 1,
+    "nameTh": "พันปักษา",
+    "nameEn": "Chidori",
+    "element": "lightning",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> เลือกการ์ด 1 ใบของฝ่ายตรงข้าม ทำความเสียหาย - 4",
+      "<b>Condition:</b> หากในสนามของเรามี tag \"Chidori user\" การ์ดใบนี้ค่าร่ายลดลง - 1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-035-chidori-normal.webp",
+      "fullart": "assets/characters/naruto/nr-035-chidori-fullart.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.1,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-036",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 1,
+    "health": 1,
+    "nameTh": "ประชุมหน่วยลับ",
+    "nameEn": "Anbu-Meeting",
+    "element": "dark",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> การ์ด tag \"Jonin\" ทุกใบในสนามได้รับ +2|+2 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-036-anbumeeting-normal.webp"
+    },
+    "speed": "slow"
+  },
+  {
+    "id": "nr-037",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 1,
+    "health": 1,
+    "nameTh": "คาถาลวงตา",
+    "nameEn": "Genjutsu",
+    "element": "dark",
+    "rarity": "RARE",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> เลือกการ์ด 1 ใบ power = 0 ใน turn นี้"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-037-genjutsu-normal.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.37,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-038",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 1,
+    "health": 1,
+    "nameTh": "อะจึ๋ยสวรรค์รำไร",
+    "nameEn": "Icha Icha Paradise",
+    "element": "light",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> หากฝ่ายตรงข้ามมี character ค่าร่ายมากกว่า 5 เกิน 2 ใบ ทำการเลือก character 1 ใบของฝ่ายตรงข้ามเพื่อ stun"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-038-ichaichaparadise-normal.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0.3,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-039",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 6,
+    "health": 5,
+    "nameTh": "ฮาคุ",
+    "nameEn": "Haku",
+    "element": "ice",
+    "rarity": "EPIC",
+    "type": "Character",
+    "ability": [
+      "<b>every turn:</b> เมื่อมี character บนสนามของฝ่ายตรงข้ามมีสถานะ stun character นั้น Health - 1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-039-haku-normal.webp",
+      "fullart": "assets/characters/naruto/nr-039-haku-fullart.webp"
+    },
+    "tags": [
+      "Mizukuni"
+    ]
+  },
+  {
+    "id": "nr-040",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 1,
+    "health": 1,
+    "nameTh": "กระจกเงาปีศาจสะท้อนน้ำแข็ง",
+    "nameEn": "Demonic Mirroring Ice Crystals ",
+    "element": "ice",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> Character ทุกตัวที่โดน stun Health - 3"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-040-hakujt-normal.webp",
+      "fullart": "assets/characters/naruto/nr-040-hakujt-fullart.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0.38,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-041",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 1,
+    "health": 1,
+    "nameTh": "เข็ม",
+    "nameEn": "Needle",
+    "element": "ice",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> เลือก Character 1 ใบ ของฝั่งตรงข้าม 0|-1 ถาวร และติดสถานะ stun 1 turn"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-041-needle-normal.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0.72,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-042",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 4,
+    "health": 4,
+    "nameTh": "โคเท็ตสึ",
+    "nameEn": "Kotetsu",
+    "element": "water",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Condition:</b> เมื่อมี \"อิสึโมะ\" อยู่ในสนามการ์ดใบนี้ +2|0"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-042-kotetsu-normal.webp"
+    },
+    "tags": [
+      "Jonin",
+      "Konoha"
+    ],
+    "artFocus": [
+      0.67,
+      0.5
+    ],
+    "keywords": [
+      "tough"
+    ]
+  },
+  {
+    "id": "nr-043",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 4,
+    "health": 2,
+    "nameTh": "อิสึโมะ",
+    "nameEn": "Izumo",
+    "element": "earth",
+    "rarity": "RARE",
+    "type": "Character",
+    "ability": [
+      "<b>condition:</b> เมื่อมี \"โคเท็ตสึ\" อยู่ในสนามการ์ดใบนี้ 0|+2"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-043-izumo-normal.webp"
+    },
+    "tags": [
+      "Jonin",
+      "Konoha"
+    ],
+    "artFocus": [
+      0.47,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-044",
+    "set": "SET-01",
+    "cost": 10,
+    "power": 10,
+    "health": 10,
+    "nameTh": "อิสึโมะ & โคเท็ตสึ",
+    "nameEn": "Izumo & Kotetsu",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Condition:</b> เมื่อมี \"อิสึโมะ\" และ \"โคเท็ตสึ\" อยู่ในสนาม การ์ดใบนี้ค่าร่ายเป็น 0 ,",
+      "<b>ลงสนาม:</b> ทำลาย \"อิสึโมะ\" และ \"โคเท็ตสึ\" ออกจากสนามของเราอย่างละ 1 ใบ , การ์ด tag \"Konoha\" ทุกใบบนสนามฝั่งเรายกเว้นใบนี้ ได้รับ +1|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-044-ik-normal.webp",
+      "fullart": "assets/characters/naruto/nr-044-izumokotetsu-fullart.webp"
+    },
+    "tags": [
+      "Jonin",
+      "Konoha"
+    ],
+    "artFocus": [
+      0.53,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-045",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 2,
+    "health": 2,
+    "nameTh": "อิโนะ ยามานากะ",
+    "nameEn": "Ino Yamanaka",
+    "element": "ice",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> Draw การ์ด 1 ใบ, การ์ดที่อยู่ใน Tag \"Chunin\" บนสนามฝ่ายเรา ได้รับ +1|+1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-045-Ino-normal.webp"
+    },
+    "tags": [
+      "Team 10",
+      "Konoha",
+      "Ino-Shika-Cho",
+      "Yamanaka",
+      "Genin"
+    ]
+  },
+  {
+    "id": "nr-046",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 5,
+    "health": 5,
+    "nameTh": "เก็นมะ",
+    "nameEn": "Genma",
+    "element": "lightning",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> Character ทุกใบในเด็ค Power + 1 Health + 1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-046-genma-normal.webp",
+      "fullart": "assets/characters/naruto/nr-046-genma-fullart.webp"
+    },
+    "tags": [
+      "Jonin",
+      "Konoha"
+    ],
+    "artFocus": [
+      0.59,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-047",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 1,
+    "health": 1,
+    "nameTh": "การยับยั้งของเหล่าโจนิน",
+    "nameEn": "The restraint of the Jōnin",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "เลือกทำลายการ์ด tag \"Konoha\" 1 ใบ จากนั้นทำลายการ์ด 1 ใบของฝั่งตรงข้าม"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-047-stopit-normal.webp",
+      "fullart": "assets/characters/naruto/nr-047-stopit-fullart.webp"
+    },
+    "speed": "slow"
+  },
+  {
+    "id": "nr-048",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 1,
+    "health": 1,
+    "nameTh": "ทดสอบแย่งกระดิ่ง",
+    "nameEn": "bell test",
+    "element": "wind",
+    "rarity": "RARE",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> จั่วการ์ด 1 ใบ",
+      "<b>condition:</b> หากในสนามมี \"Team 7\" 2 ตัวขึ้นไป จั่วการ์ดอีก 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-048-belltest-normal.webp",
+      "fullart": "assets/characters/naruto/nr-048-belltest-fullart.webp"
+    },
+    "speed": "burst"
+  },
+  {
+    "id": "nr-049",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 1,
+    "health": 1,
+    "nameTh": "ทาสึนะ",
+    "nameEn": "Tazuna",
+    "element": "ice",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> เลือก Character 1 ตัวของเราในสนาม +0|+1 ถาวร ",
+      "<b>Condition:</b> หากตัวละครทราเลือกนั้นอยู่ใน Tag \"Team 7\" +1|+1 ถาวร แทน"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-049-tazuna-normal.webp"
+    },
+    "tags": [
+      "Mizukuni"
+    ],
+    "artFocus": [
+      0.55,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-050",
+    "set": "SET-01",
+    "cost": 7,
+    "power": 1,
+    "health": 1,
+    "nameTh": "คาถาน้ำระเบิดมังกรวารี",
+    "nameEn": "Water Dragon Bullet",
+    "element": "water",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>active:</b> เลือกทำลายการ์ด Character 1 ใบของฝ่ายตรงข้าม",
+      "<b>Condition:</b> หากมีตัวละครที่อยู่ใน Tag \"Water Style\" อยู่ในสนามการ์ดใบนี้ค่าร่ายเท่ากับ 5"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-050-dragonbullet-normal.webp",
+      "fullart": "assets/characters/naruto/nr-050-dragonbullet-fullart.webp"
+    },
+    "speed": "slow"
+  },
+  {
+    "id": "nr-051",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 0,
+    "health": 4,
+    "nameTh": "กาโต้",
+    "nameEn": "Gato",
+    "element": "dark",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "เมื่อการ์ดใบนี้รอดจากการได้รับความเสียหายครั้งแรก อัญเชิญ Character ที่อยู่ใน Tag \"Gato Gang\" 1 ใบจากใน Deck",
+      "<b>ถูกสังหาร:</b> นำ Character ที่อยู่ใน Tag \"Gato Gang\" ขึ้นมือ 1 ใบจากใน Deck",
+      "<b>ลงสนาม:</b> Character ที่อยู่ใน Tag \"Gato Gang\" ทุกใบในสนามได้รับ +1|+1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-051-gato-normal.webp",
+      "fullart": "assets/characters/naruto/nr-051-gato-fullart.webp"
+    },
+    "tags": [
+      "Gato Gang"
+    ],
+    "artFocus": [
+      0.37,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-052",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 2,
+    "health": 4,
+    "nameTh": "มิสึกิ",
+    "nameEn": "Mizuki",
+    "element": "dark",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>รอดชีวิตจากความเสียหาย:</b>  จั่วการ์ด spell ใบบนสุดจากในเด็ค"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-052-mizuki-normal.webp"
+    },
+    "tags": [
+      "Konoha"
+    ],
+    "keywords": [
+      "challenger"
+    ]
+  },
+  {
+    "id": "nr-053",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 4,
+    "health": 3,
+    "nameTh": "วาลาจิ",
+    "nameEn": "Waraji",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-053-waraji-normal.webp"
+    },
+    "tags": [
+      "Gato Gang"
+    ],
+    "keywords": [
+      "fearsome"
+    ]
+  },
+  {
+    "id": "nr-054",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 1,
+    "health": 2,
+    "nameTh": "โซริ",
+    "nameEn": "Zori",
+    "element": "water",
+    "rarity": "RARE",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> สุ่มการ์ด Character ธาตุน้ำ 1 ใบบนมือค่าร่าย -1",
+      "<b>Condition:</b> เมื่อมีตัวละคร \"Gato Gang\" อยู่ในสนามฝั่งเราการ์ดใบนี้ +2|+1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-054-zori-normal.webp"
+    },
+    "tags": [
+      "Gato Gang"
+    ],
+    "artFocus": [
+      0.82,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-055",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 3,
+    "health": 4,
+    "nameTh": "เมอิสึ",
+    "nameEn": "Meizu",
+    "element": "water",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากบนมือของคุณไม่มี \"Gouzu\" และ \"Meizu\" จั่ว \"Gouzu\" จากในเด็ค 1 ใบ, Character ที่อยู่ในแท็ก \"Gato Gang\" บนสนามได้รับ +0|+2 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-055-meizu-normal.webp"
+    },
+    "tags": [
+      "Gato Gang"
+    ],
+    "keywords": [
+      "challenger"
+    ],
+    "artFocus": [
+      0.08,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-056",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 4,
+    "health": 3,
+    "nameTh": "โกยุสึ",
+    "nameEn": "Gouzu",
+    "element": "water",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากบนมือของคุณไม่มี \"Meizu\" และ \"Gouzu\" จั่ว \"Meizu\" จากในเด็ค 1 ใบ, Character ที่อยู่ในแท็ก \"Gato Gang\" บนสนามได้รับ +2|+0 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-056-gouzu-normal.webp"
+    },
+    "tags": [
+      "Gato Gang"
+    ],
+    "keywords": [
+      "challenger"
+    ],
+    "artFocus": [
+      0.92,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-057",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 1,
+    "health": 1,
+    "nameTh": "สมุนของกาโต้",
+    "nameEn": "Gato henchmen ",
+    "element": "dark",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-057-gato-normal.webp"
+    },
+    "tags": [
+      "Gato Gang"
+    ]
+  },
+  {
+    "id": "nr-058",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 1,
+    "health": 1,
+    "nameTh": "มือสกปรก",
+    "nameEn": "Dirty Hand",
+    "element": "earth",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "เลือกทำลาย Character บนสนามของเรา 2 ใบ จากนั้นเลือก Character บนสนามของเราอีก 1 ใบ ได้รับ keyword \"เกราะหนา\"",
+      "<b>condition:</b> หากบนสนามมี Character ที่อยู่ tag \"Gato Gang\" เลือกทำลายเพียง 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-058-dirty-normal.webp",
+      "fullart": "assets/characters/naruto/nr-058-dirty-fullart.webp"
+    },
+    "speed": "burst",
+    "artFocus": [
+      0.43,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-059",
+    "set": "SET-01",
+    "cost": 8,
+    "power": 7,
+    "health": 5,
+    "nameTh": "เมอิสึ & โกยุสึ",
+    "nameEn": "Meizu & Gouzu",
+    "element": "water",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "ทำลาย Character ธาตุน้ำฝั่งเรา 1 ใบ เพื่อเล่นการ์ดใบนี้",
+      "<b>ลงสนาม:</b> \"เมอิสึ\" หรือ \"โกยุสึ\" ในสนามฝั่งเราได้รับ +1|+1",
+      "<b>Condition:</b> เมื่อในสนามมี Character ธาตุน้ำ ให้สุ่มจั่วการ์ดธาตุน้ำจากในเด็คขึ้นมือ 1 ใบและสับเด็ค"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-059-meizu-normal.webp"
+    },
+    "tags": [
+      "Gato Gang",
+      "Mizukuni"
+    ],
+    "keywords": [
+      "challenger"
+    ],
+    "artFocus": [
+      0.51,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-060",
+    "set": "SET-01",
+    "cost": 3,
+    "power": 1,
+    "health": 1,
+    "nameTh": "ฮีโร่ผู้โง่เขลา",
+    "nameEn": "The Foolish Hero",
+    "element": "water",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> เลือก Character  บนสนามของเรา 1 ใบ -2|0  จากนั้นเลือก Character 1 ใบของฝ่ายตรงข้ามขึ้นมือ",
+      "<b>Condition:</b> หาก Character ที่เลือกอยู่ใน Tag \"Gato Gang\" ไม่ต้อง -2|0"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-060-Foolish-normal.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.14,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-061",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 1,
+    "health": 2,
+    "nameTh": "อินาริ",
+    "nameEn": "Inari",
+    "element": "ice",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Death:</b> สุ่มจั่วการ์ด Tag \"Genin\"จากในเด็ค ขึ้นมือ 1 ใบ",
+      "<b>Condition:</b> หากในสนามฝั่งเรามี \"นารูโตะ อุสึมากิ\" การ์ดใบนี้ได้รับ +2|+1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-061-inari-normal.webp"
+    }
+  },
+  {
+    "id": "nr-062",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 4,
+    "health": 4,
+    "nameTh": "ปักคุง",
+    "nameEn": "Pakkun",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากในสนามฝั่งเรามี \"คาคาชิ ฮาตาเคะ\" การ์ดใบนี้ได้รับ +2|+2 ถาวร , จั่วการ์ด tag \"Team 7\" 1 ใบจากในเด็ค"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-062-pakkun-normal.webp"
+    },
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "keywords": [
+      "quickstrike"
+    ]
+  },
+  {
+    "id": "nr-063",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 3,
+    "health": 5,
+    "nameTh": "ยุรูชิ",
+    "nameEn": "Urushi",
+    "element": "wind",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> ได้รับมานา + 1, ตัวละคร Tag \"Team 7\" ฝั่งเราได้รับ +2|+2 ถาวร, ตัวละคร Tag \"Ninken\" ได้รับ +1|+1 ถาวร",
+      "<b>Death:</b> ได้รับมานา + 2"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-063-urushi-normal.webp"
+    },
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "artFocus": [
+      1,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-064",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 5,
+    "health": 3,
+    "nameTh": "ชิบะ",
+    "nameEn": "Shiba",
+    "element": "light",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากในสนามฝั่งเรามีตัวละครชื่อ \"คาคาชิ ฮาตาเคะ\" การ์ดใบนี้ได้รับ +0|+2 ถาวร",
+      "<b>Condition:</b> หากในสนามฝั่งเรามีตัวละคร \"Jonin\" หรือ \"Team 7\" การ์ดใบนี้ค่าร่าย -1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-064-shiba-normal.webp"
+    },
+    "keywords": [
+      "quickstrike"
+    ],
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "artFocus": [
+      0.83,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-065",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 2,
+    "health": 2,
+    "nameTh": "อากิโนะ",
+    "nameEn": "Akino",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากในสนามฝั่งเรามี Character \"Ninken\" การ์ดใบนี้ได้รับ +2|+0 ถาวร , มอบ ท้าดวล ให้กับ Character \"Ninken\" ใบอื่นๆ 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-065-akino-normal.webp"
+    },
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "artFocus": [
+      1,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-066",
+    "set": "SET-01",
+    "cost": 1,
+    "power": 1,
+    "health": 1,
+    "nameTh": "อุย",
+    "nameEn": "Uhei",
+    "element": "water",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> หากในสนามฝั่งเรามีตัวละครชื่อ \"คาคาชิ ฮาตาเคะ\" การ์ดใบนี้ได้รับ +1|+1 ถาวร",
+      "<b>Death:</b> สุ่มจั่วการ์ด spell 1 ใบจากในเด็ค การ์ดใบนั้นค่าร่าย -1 ถาวร"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-066-uhei-normal.webp"
+    },
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "artFocus": [
+      0.9,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-067",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 5,
+    "health": 4,
+    "nameTh": "กูรูโกะ",
+    "nameEn": "guruko",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> มอบ เกราะหนา ให้กับ Character ในสนามฝั่งเรา 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-067-guruko-normal.webp"
+    },
+    "tags": [
+      "Ninken",
+      "Summon-Character"
+    ],
+    "artFocus": [
+      0.7,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-068",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 4,
+    "health": 6,
+    "nameTh": "คาคาชิ ฮาตาเคะ",
+    "nameEn": "Kakashi Hatake",
+    "element": "lightning",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> ตัวละคร \"Team 7\" ในสนามฝั่งเราได้รับ +2|+2",
+      "<b>Condition:</b> ตัวละคร \"Ninken\" ทุกใบบนมือค่าร่าย -1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-068-kakashi-normal.webp",
+      "fullart": "assets/characters/naruto/nr-068-kakashi-fullart.webp"
+    },
+    "hero": true,
+    "tags": [
+      "Konoha",
+      "Team 7",
+      "Jonin",
+      "Chidori-User"
+    ],
+    "levelUpCondition": "อัญเชิญ Ninken ลงสู่สนาม 4/4 ครั้ง",
+    "levelUp": "nr-069",
+    "heroSpell": "nr-035"
+  },
+  {
+    "id": "nr-069",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 6,
+    "health": 7,
+    "nameTh": "คาคาชิ ฮาตาเคะ",
+    "nameEn": "Kakashi Hatake",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>เมื่อสังหาร:</b> การ์ด \"พันปักษา\" บนมือค่าร่าย -1 ถาวร",
+      "<b>Condition:</b> ตัวละคร Tag \"Ninken\" ทุกใบบนมือค่าร่าย -1, ทุกครั้งที่อัญเชิญ Tag \"Ninken\" ลงสนาม เลือก stun 1 Character ฝ่ายตรงข้าม 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-069-kakashi-normal.webp",
+      "fullart": "assets/characters/naruto/nr-069-kakashi-fullart.webp"
+    },
+    "hero": true,
+    "tags": [
+      "Konoha",
+      "Team 7",
+      "Jonin",
+      "Chidori-User"
+    ],
+    "keywords": [
+      "fearsome",
+      "challenger"
+    ],
+    "extra": true
+  },
+  {
+    "id": "nr-070",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 1,
+    "health": 1,
+    "nameTh": "หมาไม่มีเจ้าของ",
+    "nameEn": "Dogs finding owner",
+    "element": "wind",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> tag \"Ninken\" ในสนามของเราได้รับ 0|+3 ",
+      "<b>Condition:</b> หากในสนามฝั่งเรามี tag \"Ninken\" มากกว่า 1 ใบ จั่วการ์ด \"คาคาชิ ฮาตาเคะ\" จากในเด็คขึ้นมือ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-070-dogs-normal.webp"
+    },
+    "speed": "burst",
+    "artFocus": [
+      0.07,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-071",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 6,
+    "health": 5,
+    "nameTh": "ฮายาเตะ",
+    "nameEn": "Hayate",
+    "element": "light",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Condition:</b> การ์ด tag \"Genin\" ทุกใบในสนามได้รับ +2|+2",
+      "<b>Death:</b> การ์ด tag \"Jonin\" ทุกใบบนมือค่าร่าย -1, การ์ด spell ทุกใบบนมือค่าร่าย -1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-071-hayate-normal.webp"
+    },
+    "tags": [
+      "Jonin",
+      "Konoha"
+    ],
+    "keywords": [
+      "tough"
+    ],
+    "artFocus": [
+      0.86,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-072",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 5,
+    "health": 6,
+    "nameTh": "งูในป่าต้องห้าม",
+    "nameEn": "Snake in the forest",
+    "element": "dark",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [],
+    "art": {
+      "normal": "assets/characters/naruto/nr-072-snake-normal.webp"
+    },
+    "tags": [
+      "Summon-Character"
+    ],
+    "keywords": [
+      "regenerate"
+    ],
+    "artFocus": [
+      0.16,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-073",
+    "set": "SET-01",
+    "cost": 7,
+    "power": 6,
+    "health": 6,
+    "nameTh": "อันโกะ มิตาราชิ",
+    "nameEn": "Anko Mitarashi",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> เลือก Character tag \"Konoha\" 1 ใบ ได้รับ เกราะคาถา,\nสร้างการ์ด \"อักขระสาบ\" 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-073-anko-normal.webp"
+    },
+    "tags": [
+      "Jonin",
+      "Konoha",
+      "Curse mark"
+    ],
+    "keywords": [
+      "fearsome"
+    ],
+    "artFocus": [
+      0.55,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-074",
+    "set": "SET-01",
+    "cost": 8,
+    "power": 9,
+    "health": 6,
+    "nameTh": "อาสึมะ ซารุโทบิ",
+    "nameEn": "Asuma Sarutobi",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Character",
+    "ability": [
+      "<b>Condition:</b> หากในสนามฝั่งเรามี Tag \"Team 10\" การ์ดใบนี้ค่าร่าย -1",
+      "<b>ลงสนาม:</b> จั่วการ์ด spell 1 ใบแบบสุ่ม จากในเด็ค, การ์ดใบนั้นค่าร่าย -1 , มอบ เกราะคาถา ให้กับ \"Team 10\" หรือ \"Jonin\" ในสนามฝั่งเรา 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-074-asuma-normal.webp"
+    },
+    "keywords": [
+      "barrier"
+    ],
+    "tags": [
+      "Sarutobi",
+      "Team 10",
+      "Jonin",
+      "Konoha"
+    ],
+    "artFocus": [
+      0.56,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-075",
+    "set": "SET-01",
+    "cost": 7,
+    "power": 1,
+    "health": 1,
+    "nameTh": "ทีม 10 รวมตัว",
+    "nameEn": "Team 10",
+    "element": "earth",
+    "rarity": "EPIC",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> เลือก Character \"Ino-Shika-Cho\" ที่มีค่าร่ายน้อยกว่า 7 จากในเด็ค 1 ใบลงสนาม",
+      "<b>Condition:</b> หลังใช้งานการ์ดใบนี้หากในสนามของคุณมี \"ชิการมารุ นารา\", \"อิโนะ ยามานากะ\", \"โจจิ อาคิมิจิ\", อัญเชิญ \n\"อาสึมะ ซารุโทบิ\" ลงสูสนามจากบนมือหรือในเด็ค"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-075-team10-normal.webp"
+    },
+    "speed": "slow",
+    "artFocus": [
+      0.2,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-076",
+    "set": "SET-01",
+    "cost": 4,
+    "power": 1,
+    "health": 1,
+    "nameTh": "เล่นหมากรุก",
+    "nameEn": "Chess",
+    "element": "water",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> เลือก 1 Character ในสนามของคุณ +2|+2",
+      "<b>Condition:</b> หากตัวที่เลือกเป็น Tag \"Team 10\" +2|+2 ถาวร และได้รับมานา +1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-076-chess-normal.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.92,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-077",
+    "set": "SET-01",
+    "cost": 2,
+    "power": 1,
+    "health": 1,
+    "nameTh": "คาถาจิตย้ายร่าง",
+    "nameEn": "Mind Body Switch Technique",
+    "element": "ice",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> เลือก 1 Character ฝ่ายตรงข้ามเพื่อ Stun",
+      "<b>Condition:</b> หากในสนามฝั่งเรามีตัวละคร Tag \"Yamanaka\" การ์ดใบนี้ค่าร่ายเป็น 0"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-077-mind-normal.webp"
+    },
+    "artFocus": [
+      0.49,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-078",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 1,
+    "health": 1,
+    "nameTh": "คาถารถถังมนุษย์",
+    "nameEn": "Human Bullet Tank",
+    "element": "earth",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> ทำความเสียหาย 4 ถาวรให้กับ Character ฝ่ายตรงข้าม 1 ใบ",
+      "<b>Condition:</b> หากในสนามฝั่งเรามี \"โจจิ อิคิมิจิ\" และการ์ดใบเลือกมีสถานะ stun ให้ทำลายการ์ดใบนั้น"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-078-human-normal.webp"
+    },
+    "speed": "fast",
+    "artFocus": [
+      0.54,
+      0.5
+    ]
+  },
+  {
+    "id": "nr-079",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 6,
+    "health": 7,
+    "nameTh": "นารูโตะ อุสึมากิ",
+    "nameEn": "Naruto Uzumaki",
+    "element": "fire",
+    "rarity": "EPIC",
+    "type": "Character",
+    "ability": [
+      "<b>ลงสนาม:</b> สร้างการ์ด \"คาถาแยกเงา\" ขึ้นมือ 1 ใบ , สุ่ม Keyword ยกเว้น ร่างแยก ให้กับตัวละคร tag \"Team 7\" ของเรา 1 ใบถาวร\n",
+      "<b>เมื่อสังหาร:</b> สร้างการ์ด \"คาถาแยกเงา\" ขึ้นมือ 1 ใบ"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-079-naruto-normal.webp",
+      "fullart": "assets/characters/naruto/nr-079-naruto-fullart.webp"
+    },
+    "hero": true,
+    "levelUpCondition": "ตัวละครฝ่ายเรา tag \"Genin\" ตาย 5 ครั้ง",
+    "artFocus": [
+      0.52,
+      0.5
+    ],
+    "levelUp": "nr-080",
+    "heroSpell": "nr-081",
+    "tags": [
+      "Genin",
+      "Team 7",
+      "Konoha"
+    ]
+  },
+  {
+    "id": "nr-080",
+    "set": "SET-01",
+    "cost": 6,
+    "power": 8,
+    "health": 7,
+    "nameTh": "นารูโตะ อุสึมากิ (อาภรณ์สัตว์หาง)",
+    "nameEn": "Naruto Uzumaki (Bijuu Cloak)",
+    "element": "fire",
+    "rarity": "EPIC",
+    "type": "Character",
+    "ability": [
+      "<b>โจมตี:</b> การ์ด Character ฝ่ายตรงข้าม -1|-1 ถาวร",
+      "<b>Every turn:</b> ฝั่งตรงข้าม มานา-1, ฝั่งเรา มานา+1"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-080-naruto-normal.webp",
+      "fullart": "assets/characters/naruto/nr-080-naruto-fullart.webp"
+    },
+    "keywords": [
+      "regenerate"
+    ],
+    "hero": true,
+    "extra": true,
+    "heroSpell": "nr-081"
+  },
+  {
+    "id": "nr-081",
+    "set": "SET-01",
+    "cost": 5,
+    "power": 1,
+    "health": 1,
+    "nameTh": "หมัดแห่งโทสะ",
+    "nameEn": "Fist of Fury",
+    "element": "fire",
+    "rarity": "COMMON",
+    "type": "Spell",
+    "ability": [
+      "<b>Active:</b> ศัตรูได้รับความเสียหาย 4",
+      "<b>Condition:</b> หากมี Character ฝั่งเราถูกสังหาร การ์ดใบนี้จะสร้างความเสียหาย 5 แทน"
+    ],
+    "art": {
+      "normal": "assets/characters/naruto/nr-081-naruto-normal.webp",
+      "fullart": "assets/characters/naruto/nr-081-naruto-fullart.webp"
+    },
+    "extra": true,
+    "speed": "fast",
+    "artFocus": [
+      0.82,
+      0.5
+    ]
   }
 ]

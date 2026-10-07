@@ -25,11 +25,12 @@
   a.mini { position: relative; display: block; aspect-ratio: 630 / 880; border-radius: 12px; text-decoration: none; color: inherit;
     border: 3px solid var(--c); background: #0f0d14; box-shadow: 0 8px 18px #0008; transition: transform .15s, box-shadow .15s; overflow: hidden; }
   a.mini:hover, a.mini:focus-visible { transform: translateY(-6px) scale(1.03); box-shadow: 0 14px 28px #000a, 0 0 22px color-mix(in srgb, var(--c) 45%, transparent); outline: none; }
-  .mini img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .mini > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .mini::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 55%, #0b0a0fee 92%); pointer-events: none; }
   .cost { position: absolute; left: 6px; top: 6px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     background: #14203f; border: 2px solid #e8c56a; font: 800 17px 'Cinzel', serif; color: #fff4dc; }
-  .el { position: absolute; right: 6px; top: 6px; z-index: 2; width: 30px; height: 30px; border-radius: 8px; background: #0b0a0fcc; border: 2px solid var(--c); display: flex; align-items: center; justify-content: center; padding: 2px; }
+  .el { position: absolute; right: 6px; top: 6px; z-index: 2; width: 34px; height: 34px; filter: drop-shadow(0 2px 3px #000a); }
+  .el img { width: 100%; height: 100%; display: block; }
   .nm { position: absolute; left: 8px; right: 8px; bottom: 34px; z-index: 2; text-align: center; font-weight: 800; font-size: 15px; line-height: 1.2; text-shadow: 0 2px 6px #000; }
   .nm small { display: block; font: 600 9px 'Cinzel', serif; letter-spacing: 2px; color: #cfc4a8; margin-top: 2px; }
   .st { position: absolute; bottom: 4px; z-index: 2; min-width: 34px; height: 28px; padding: 0 8px; display: flex; align-items: center; justify-content: center;
@@ -48,7 +49,8 @@
   .fc-names { flex: 1; padding-left: 10px; min-width: 0; }
   .fc-th { font-size: 30px; font-weight: 800; line-height: 1.15; color: #f5ecd2; }
   .fc-en { font: 600 14px 'Cinzel', serif; letter-spacing: 3px; color: #b8ab8c; }
-  .fc-el { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border: 2px solid var(--a); border-radius: 10px; background: #0f0d14; font-size: 12px; font-weight: 600; color: #e9dfc3; }
+  .fc-el { width: 72px; height: 72px; flex: none; filter: drop-shadow(0 3px 4px #000a); }
+  .fc-el img { width: 100%; height: 100%; display: block; }
   .fc-art { flex: 1; min-height: 0; border-radius: 10px; border: 2px solid #4a4256; background: #0f0d14 center/cover; position: relative; }
   .fc-rar { position: absolute; left: 12px; top: 12px; padding: 4px 12px; border-radius: 999px; background: #0b0a0fcc; border: 1px solid var(--a); font: 600 12px 'Cinzel', serif; letter-spacing: 2px; color: #f5dc96; }
   .fc-type { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; border-radius: 8px; background: #2a2433; border: 1px solid #4a4256; font-size: 15px; font-weight: 600; color: #e9dfc3; }
@@ -57,6 +59,109 @@
   .fc-fl { margin-top: auto; font-size: 14px; font-style: italic; color: #5e5266; }
   .fc-stats { display: flex; justify-content: space-between; padding: 0 4px; }
   .fc-orb { width: 58px; height: 58px; border: 3px solid #e8c56a; display: flex; align-items: center; justify-content: center; font: 800 28px 'Cinzel', serif; color: #fff4dc; }
+  /* spell variants */
+  a.mini.sp:not(.full) { border-style: double; border-width: 6px; }
+  .mini.sp .rar { margin-bottom: 30px; }
+  .spmark { position: absolute; left: 0; right: 0; bottom: 6px; z-index: 2; text-align: center; font: 800 13px 'Cinzel', serif; letter-spacing: 5px; color: #fff; text-shadow: 0 2px 5px #000; }
+  .fc.sp { background: none; padding: 20px 18px; }
+  .fc.sp::before, .fc.sp::after { content: ''; position: absolute; z-index: 3; left: -4px; right: -4px; height: 34px; border-radius: 17px; background: linear-gradient(#5a3a1c, #c9934f 30%, #f0c98a 45%, #a8733a 70%, #4a2e14); box-shadow: 0 6px 12px #000a; }
+  .fc.sp::before { top: 4px; } .fc.sp::after { bottom: 4px; }
+  .fc.sp .fc-in { clip-path: polygon(46px 0, calc(100% - 46px) 0, 100% 46px, 100% calc(100% - 46px), calc(100% - 46px) 100%, 46px 100%, 0 calc(100% - 46px), 0 46px); border-radius: 0; }
+  .fc.sp .fc-art { flex: none !important; align-self: center; width: 72%; aspect-ratio: 1; border-radius: 50% !important; box-shadow: 0 0 0 4px #0b0a10, 0 0 24px color-mix(in srgb, var(--a) 60%, transparent); }
+  .fc.sp .fc-ab { background: linear-gradient(#f4e7c6, #e2cd9c) !important; color: #3a2a14; }
+  .fc.sp .fc-in { border: 6px double var(--a); padding: 11px; background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--a) 24%, #1d1925), #17131f 72%); box-shadow: inset 0 0 50px color-mix(in srgb, var(--a) 24%, transparent); }
+  .fc.sp .fc-cost { transform: none; border-radius: 50%; background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--a) 60%, #fff), color-mix(in srgb, var(--a) 65%, #000)); }
+  .fc.sp .fc-cost span { transform: none; color: #fff; }
+  .fc.sp .fc-art { border-radius: 150px 150px 10px 10px / 90px 90px 10px 10px; border: 3px solid var(--a); }
+  .fc.sp .fc-rar { top: auto; bottom: 14px; left: 50%; transform: translateX(-50%); }
+  .fc.sp .fc-type { background: linear-gradient(90deg, color-mix(in srgb, var(--a) 50%, #000), color-mix(in srgb, var(--a) 16%, #14111a)); border-color: var(--a); color: #fff; }
+  .fc-lv { padding: 6px 12px; border-radius: 8px; background: #2a2230; color: #f5dc96; font-size: 15px; line-height: 1.5; border: 1px solid #c8962e; }
+  .fc-lv b { color: #e8c56a; }
+  .fc.sp .fc-ab { background: linear-gradient(#eaecf8, #d3d8ee); }
+  .fc-spell { height: 58px; flex: none; display: flex; align-items: center; justify-content: center; font: 800 22px 'Cinzel', serif; letter-spacing: 8px; color: #fff; border-top: 2px solid var(--a); border-bottom: 2px solid var(--a);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--a) 65%, #000) 18%, color-mix(in srgb, var(--a) 65%, #000) 82%, transparent); }
+  /* small normal-face card pinned bottom-left of full-art tiles */
+  .nthumb { position: absolute; left: 6px; bottom: 6px; z-index: 3; width: 26%; aspect-ratio: 630 / 880; border-radius: 5px; overflow: hidden;
+    border: 2px solid #f1ead8; box-shadow: 0 4px 10px #000c; transform-origin: bottom left; transition: transform .15s; }
+  .mini:hover .nthumb { transform: scale(1.12); }
+  /* make room for the thumbnail: name / SPELL label / power badge / rarity dot sit to its right */
+  .mini:not(.full) .nm, .mini:not(.full) .spmark { left: calc(26% + 14px); }
+  .mini:not(.full) .st.p { left: calc(26% + 14px); }
+  .mini:not(.full) .rar { left: 63%; }
+  .nthumb .fc { transform: scale(var(--k2, .06)); }
+  /* hero variants */
+  a.mini.hero { border-color: #e8c56a; box-shadow: 0 8px 18px #0008, 0 0 20px #e8c56a66; }
+  .hmark { position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 4; padding: 1px 16px; font: 800 9px 'Cinzel', serif; letter-spacing: 4px; color: #2a1d05; white-space: nowrap;
+    background: linear-gradient(#fff3c4, #e8c56a 55%, #b8862e); clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 50%, 100% 100%, 0 100%, 6px 50%); }
+  .mini.hero::before { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; mix-blend-mode: overlay;
+    background: linear-gradient(115deg, transparent 38%, #fffc 48%, #ffe9a0cc 52%, transparent 62%); background-size: 260% 100%; animation: sweep 4.5s ease-in-out infinite; }
+  @keyframes sweep { 0% { background-position: 130% 0; } 55%, 100% { background-position: -130% 0; } }
+  @media (prefers-reduced-motion: reduce) { .mini.hero::before { animation: none; } }
+  .fc.hero { background: linear-gradient(145deg, #fff3c4 0%, #c8962e 28%, #f5dc96 50%, #8a6420 78%, #e8c56a 100%); }
+  .fc.hero .fc-in { border-color: #e8c56a; }
+  .fc.hero .fc-cost { background: linear-gradient(135deg, #f5dc96, #b8862e); border-color: #fff3c4; }
+  .fc.hero .fc-cost span { color: #2a1d05; }
+  .fc.hero .fc-th { background: linear-gradient(#fff8dc, #e8c56a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .mini.extra:not(.hero) .hmark, .fc.extra:not(.hero) .fc-hm { background: linear-gradient(#f4f6fb, #b9c0d3 55%, #7f889f); }
+  .lvbadge { position: absolute; right: 6px; top: 44px; z-index: 3; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: #0b0a0fcc; border: 2px solid #e8c56a; color: #f5dc96; font: 800 14px system-ui; }
+  .fc-hm { position: absolute; top: 3px; left: 50%; transform: translateX(-50%); padding: 3px 34px 2px; font: 800 13px 'Cinzel', serif; letter-spacing: 6px; color: #2a1d05; white-space: nowrap;
+    background: linear-gradient(#fff3c4, #e8c56a 55%, #b8862e); clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%, 12px 50%); }
+  /* Three.js ambient background + lightbox */
+  #bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  main.grid { position: relative; z-index: 1; }
+  #lb { position: fixed; inset: 0; z-index: 50; visibility: hidden; opacity: 0; background: rgba(7, 6, 12, .5);
+    backdrop-filter: blur(14px) saturate(1.15); -webkit-backdrop-filter: blur(14px) saturate(1.15); transition: opacity .3s, visibility 0s .3s; }
+  #lb.open { visibility: visible; opacity: 1; transition: opacity .3s; }
+  #fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  #lb iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; }
+  @media (prefers-reduced-motion: reduce) { #lb { transition: none; } }
+  .fc-spd { margin-left: 8px; padding: 0 10px; border-radius: 999px; font-size: 12px; color: #14111a; background: var(--k); }
+  .fc-kws { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fc-kw { padding: 1px 12px; border-radius: 999px; font-weight: 700; font-size: 14px; color: #fff; background: color-mix(in srgb, var(--k) 70%, #000); border: 1px solid var(--k); }
+  .mkws { position: absolute; left: 0; right: 0; bottom: 70px; z-index: 2; display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; padding: 0 6px; }
+  .mini:not(.full) .mkws { left: calc(26% + 14px); }
+  .mkws i { font-style: normal; font-size: 10px; font-weight: 700; padding: 0 7px; border-radius: 999px; color: #fff; background: color-mix(in srgb, var(--k) 70%, #000); border: 1px solid var(--k); }
+
+  /* ===== readable numbers (phone): compact full-art tile, sizes scale with the tile width (cqw) ===== */
+  a.mini { container-type: inline-size; }
+  .mini::after { background: linear-gradient(transparent 48%, #0b0a0fd9 78%, #0b0a0f 97%); }
+  .mini .cost { left: 3cqw; top: 3cqw; width: 21cqw; height: 21cqw; font-size: 12.5cqw; border-width: max(2px, 1.2cqw); text-shadow: 0 1px 0 #000, 0 0 6px #000; box-shadow: 0 2px 6px #000a; }
+  .mini .el { right: 3cqw; top: 3cqw; width: 19cqw; height: 19cqw; }
+  .mini .nm, .mini:not(.full) .nm { left: 4cqw; right: 4cqw; bottom: 31cqw; font-size: 8.5cqw; }
+  .mini .nm small { font-size: 4.3cqw; letter-spacing: .8cqw; }
+  .mkws, .mini:not(.full) .mkws { position: absolute; left: 4cqw; right: 4cqw; bottom: 22cqw; z-index: 2; display: flex; justify-content: center; flex-wrap: wrap; gap: 1.5cqw; }
+  .mkws .mkw { font-style: normal; font-weight: 700; font-size: 4.8cqw; line-height: 1.5; padding: 0 3cqw; border-radius: 999px; color: #fff; white-space: nowrap;
+    background: color-mix(in srgb, var(--k) 70%, #000); border: max(1px, .5cqw) solid var(--k); box-shadow: 0 1px 4px #000a; }
+  .mini .st, .mini:not(.full) .st.p { bottom: 3cqw; min-width: 20cqw; height: 18cqw; padding: 0 2.5cqw; font-size: 12.5cqw; border-width: max(2px, 1cqw);
+    color: #fff; text-shadow: 0 1px 0 #000, 0 0 6px #000; box-shadow: 0 2px 6px #000a; }
+  .mini .st.p, .mini:not(.full) .st.p { left: 3cqw; background: radial-gradient(circle at 35% 30%, #e0603a, #8a2512 70%); }
+  .mini .st.h { right: 3cqw; background: radial-gradient(circle at 35% 30%, #3fa06e, #164a33 70%); }
+  .mini .rar, .mini:not(.full) .rar, .mini.sp .rar { left: 50%; bottom: 7cqw; margin: 0; width: 4cqw; height: 4cqw; }
+  .mini .spmark, .mini:not(.full) .spmark { left: 0; right: 0; bottom: 12cqw; font-size: 5cqw; letter-spacing: 1.6cqw; }
+  .mini.sp .rar { bottom: 6cqw; }
+  .nthumb { left: 3cqw; top: 27cqw; bottom: auto; width: 22cqw; transform-origin: top left; }
+  .lvbadge { top: 25cqw; right: 3cqw; width: 12cqw; height: 12cqw; font-size: 7cqw; }
+  .hmark { font-size: 4.5cqw; padding: .3cqw 8cqw; letter-spacing: 1.5cqw; }
+  /* normal card face (used for cards without full art and for the thumbnails): bigger numbers too */
+  .fc-cost { width: 78px; height: 78px; }
+  .fc-cost span { font-size: 44px; color: #fff4dc; text-shadow: 0 2px 0 #000, 0 0 8px #000c; }
+  .fc-el { width: 78px; height: 78px; }
+  .fc-orb { width: 80px; height: 80px; border-width: 4px; font-size: 46px; color: #fff; text-shadow: 0 2px 0 #000, 0 0 8px #000c; box-shadow: 0 4px 10px #000a; }
+  .fc-p { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #e0603a, #8a2512 70%); }
+  .fc-h { border-radius: 14px; background: radial-gradient(circle at 35% 30%, #3fa06e, #164a33 70%); }
+  .fc-kws { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: -34px 0 -4px; position: relative; z-index: 3; }
+  .fc.sp .fc-rar { left: 14px; bottom: 14px; transform: none; }
+  .fc-kw { font-style: normal; padding: 1px 14px; border-radius: 999px; font-weight: 700; font-size: 15px; line-height: 1.55; box-shadow: 0 2px 6px #000a; color: #fff; background: color-mix(in srgb, var(--k) 70%, #000); border: 1px solid var(--k); }
+  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; padding: 16px 10px 40px; } }
+  /* keyword / speed badges as icons only (like the in-game board view); full names are in the lightbox */
+  .mkws .mkw, .fc-kws .fc-kw { display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 50%; color: #fff; font-size: 0;
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--k) 75%, #fff), color-mix(in srgb, var(--k) 55%, #000)); border: max(1px, .6cqw) solid #fff6; box-shadow: 0 2px 6px #000b; }
+  .mkws .mkw { width: 12.5cqw; height: 12.5cqw; }
+  .mkws .mkw svg { width: 8cqw; height: 8cqw; filter: drop-shadow(0 1px 1px #000a); }
+  .fc-kws { gap: 14px; margin-top: -78px; }
+  .fc-kws .fc-kw { width: 74px; height: 74px; border-width: 4px; }
+  .fc-kws .fc-kw svg { width: 46px; height: 46px; filter: drop-shadow(0 1px 1px #000a); }
   .empty { grid-column: 1 / -1; text-align: center; color: #8d8299; padding: 60px 0; }
   nav.links { display: flex; gap: 12px; font-size: 13px; }
   nav.links a { color: #b8ab8c; text-decoration: none; } nav.links a:hover { color: #e8c56a; }
@@ -67,56 +172,314 @@
   <h1>GALLERY</h1>
   <input id="q" type="search" placeholder="ค้นหาชื่อ / รหัส" aria-label="ค้นหา">
   <div class="chips" id="els"></div>
+  <div class="costs" id="costs"><span class="lbl">ค่าร่าย</span></div>
+  <div class="chips" id="kinds"><button class="chip on" data-kind="" style="--c:#e8c56a">ทั้งหมด</button><button class="chip" data-kind="char" style="--c:#e8c56a">⚔ Character</button><button class="chip" data-kind="spell" style="--c:#b07cff">✦ Spell</button></div>
+  <button class="chip" id="heroOnly" style="--c:#e8c56a">★ Hero</button>
+  <button class="chip" id="extraOnly" style="--c:#b9c0d3">Extra deck</button>
+  <select id="kwSel" aria-label="keyword"><option value="">ทุก keyword</option></select>
+  <select id="tagSel" aria-label="แท็ก"><option value="">ทุกแท็ก</option></select>
   <select id="rar" aria-label="ความหายาก"><option value="">ทุกระดับ</option><option>COMMON</option><option>RARE</option><option>EPIC</option><option>LEGEND</option></select>
   <select id="sort" aria-label="เรียงลำดับ"><option value="id">เรียงตามรหัส</option><option value="cost">ค่าร่าย</option><option value="power">พลังโจมตี</option><option value="health">พลังชีวิต</option></select>
   <span class="count" id="count"></span>
-  <nav class="links"><a href="index.html">Preview</a><a href="crop.html#cards">แก้ไขการ์ด</a></nav>
+  <nav class="links"><a href="play.html">▶ เล่นเกม</a><a href="deck.html">จัดเด็ค</a><a href="index.html">Preview</a><a href="crop.html#cards">แก้ไขการ์ด</a></nav>
 </header>
+<canvas id="bg"></canvas>
 <main class="grid" id="grid"></main>
+<div id="lb" aria-hidden="true"><canvas id="fx"></canvas><iframe id="lbFrame" title="การ์ด" src="index.html?embed=1&lb=1"></iframe></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" async></script>
 <script src="elements.js"></script>
 <script>
   const RC = { COMMON: '#b8ab8c', RARE: '#4aa3df', EPIC: '#9b6bd6', LEGEND: '#e8c56a' };
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  let cards = [], elFilter = new Set();
+  let cards = [], elFilter = new Set(), costFilter = new Set();
 
   $('els').innerHTML = Object.entries(ELEMENTS).map(([k, e]) => `<button class="chip" data-el="${k}" style="--c:${e.color}"><img src="${e.icon}" alt="">${e.th}</button>`).join('');
   $('els').onclick = e => { const b = e.target.closest('.chip'); if (!b) return;
     elFilter.has(b.dataset.el) ? elFilter.delete(b.dataset.el) : elFilter.add(b.dataset.el); b.classList.toggle('on'); draw(); };
-  ['q', 'rar', 'sort'].forEach(id => $(id).addEventListener('input', draw));
+  let kind = '';   // '' | 'char' | 'spell'
+  $('kinds').onclick = e => { const b = e.target.closest('[data-kind]'); if (!b) return; kind = b.dataset.kind; $('kinds').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b)); draw(); };
+  $('costs').insertAdjacentHTML('beforeend', costChipsHtml());
+  $('costs').onclick = e => { const b = e.target.closest('.cost-chip'); if (!b) return; const n = +b.dataset.cost; costFilter.has(n) ? costFilter.delete(n) : costFilter.add(n); b.classList.toggle('on'); draw(); };
+  $('heroOnly').onclick = () => { $('heroOnly').classList.toggle('on'); draw(); };
+  $('extraOnly').onclick = () => { $('extraOnly').classList.toggle('on'); draw(); };
+  $('kwSel').innerHTML = '<option value="">ทุก keyword</option>' + Object.entries(KEYWORDS).map(([k, v]) => `<option value="kw:${k}">${v.th}</option>`).join('')
+    + Object.entries(SPEEDS).map(([k, v]) => `<option value="sp:${k}">เวทย์${v.th}</option>`).join('');
+  ['q', 'rar', 'sort', 'tagSel', 'kwSel'].forEach(id => $(id).addEventListener('input', draw));
 
+  // whole card face (normal layout) drawn at 630x880; CSS scales it with --k / --k2
+  const pills = (c, cls) => {
+    const list = cardKeywords(c).map(k => [k, KEYWORDS[k]]).concat(cardSpeed(c) ? [[cardSpeed(c), SPEEDS[cardSpeed(c)]]] : []);
+    return list.length ? `<span class="${cls}s">${list.map(([key, k]) => `<i class="${cls}" style="--k:${k.color}" title="${k.th}: ${k.desc}">${kwIcon(key)}</i>`).join('')}</span>` : '';
+  };
+  function face(c, col, icon) {
+    return `<div class="fc${isSpell(c) ? ' sp' : ''}${isHero(c) ? ' hero' : ''}${isExtra(c) ? ' extra' : ''}" style="--a:${col}">${ribbonText(c) ? `<div class="fc-hm">${ribbonText(c)}</div>` : ''}<div class="fc-in">
+        <div class="fc-row"><div class="fc-cost"><span>${c.cost}</span></div>
+          <div class="fc-names"><div class="fc-th">${esc(c.nameTh)}</div><div class="fc-en">${esc(c.nameEn)}</div></div>
+          <div class="fc-el"><img src="${icon}" alt=""></div></div>
+        <div class="fc-art" style="background-image:url('../${esc(c.art.normal)}')"><span class="fc-rar">${esc(c.rarity)}</span></div>
+        ${pills(c, 'fc-kw')}
+        <div class="fc-type"><span>${esc(c.type)}</span><em>${esc(c.set)} · ${esc(c.id.split('-')[1] || '')}</em></div>
+        ${c.ability.some(t => t.trim()) || (isHero(c) && c.levelUpCondition) ? `<div class="fc-ab">${c.ability.map(t => `<div>${t}</div>`).join('')}${isHero(c) && c.levelUpCondition ? `<div class="fc-lv"><b>⬆ Level up:</b> ${esc(c.levelUpCondition)}</div>` : ''}${c.flavor ? `<div class="fc-fl">${esc(c.flavor)}</div>` : ''}</div>` : ''}
+        ${isSpell(c) ? '<div class="fc-spell">✦ SPELL ✦</div>' : `<div class="fc-stats"><div class="fc-orb fc-p">${c.power}</div><div class="fc-orb fc-h">${c.health}</div></div>`}</div></div>`;
+  }
   function draw() {
     const q = $('q').value.trim().toLowerCase(), r = $('rar').value, s = $('sort').value;
-    const list = cards.filter(c => (!elFilter.size || elFilter.has(c.element)) && (!r || c.rarity === r)
-      && (!q || [c.id, c.nameTh, c.nameEn].some(v => v.toLowerCase().includes(q))))
+    const list = cards.filter(c => costMatch(c, costFilter) && (!kind || (kind === 'spell') === isSpell(c)) && (!elFilter.size || elFilter.has(c.element)) && (!r || c.rarity === r) && (!$('heroOnly').classList.contains('on') || isHero(c)) && (!$('extraOnly').classList.contains('on') || isExtra(c)) && (!$('tagSel').value || (c.tags || []).includes($('tagSel').value))
+      && (!$('kwSel').value || ($('kwSel').value.startsWith('kw:') ? cardKeywords(c).includes($('kwSel').value.slice(3)) : cardSpeed(c) === $('kwSel').value.slice(3)))
+      && (!q || [c.id, c.nameTh, c.nameEn, ...(c.tags || []), ...cardKeywords(c).map(k => KEYWORDS[k].th), cardSpeed(c) ? SPEEDS[cardSpeed(c)].th : ''].some(v => v.toLowerCase().includes(q))))
       .sort((a, b) => s === 'id' ? a.id.localeCompare(b.id) : (a[s] - b[s]) || a.id.localeCompare(b.id));
     $('count').textContent = `${list.length} / ${cards.length} ใบ`;
     $('grid').innerHTML = list.map(c => { const { th, color: col, icon } = ELEMENTS[c.element] || ELEMENTS.fire;
       const href = `index.html?id=${encodeURIComponent(c.id)}`, tip = `${esc(c.id)} · ${esc(c.rarity)}`;
-      if (!c.art.fullart) return `<a class="mini full" href="${href}" title="${tip}" style="--a:${col}"><div class="fc"><div class="fc-in">
-        <div class="fc-row"><div class="fc-cost"><span>${c.cost}</span></div>
-          <div class="fc-names"><div class="fc-th">${esc(c.nameTh)}</div><div class="fc-en">${esc(c.nameEn)}</div></div>
-          <div class="fc-el"><img src="${icon}" width="36" height="36" alt="">${th}</div></div>
-        <div class="fc-art" style="background-image:url('../${esc(c.art.normal)}')"><span class="fc-rar">${esc(c.rarity)}</span></div>
-        <div class="fc-type"><span>${esc(c.type)}</span><em>${esc(c.set)} · ${esc(c.id.split('-')[1] || '')}</em></div>
-        ${c.ability.some(t => t.trim()) ? `<div class="fc-ab">${c.ability.map(t => `<div>${t}</div>`).join('')}${c.flavor ? `<div class="fc-fl">${esc(c.flavor)}</div>` : ''}</div>` : ''}
-        <div class="fc-stats"><div class="fc-orb" style="background:#7a2416;border-radius:50%">${c.power}</div><div class="fc-orb" style="background:#1e4a3a;border-radius:12px">${c.health}</div></div>
-      </div></div></a>`;
-      return `<a class="mini" href="${href}" style="--c:${col};--rc:${RC[c.rarity] || '#888'}" title="${tip}">
-        <img src="../${esc(c.art.fullart)}" alt="" loading="lazy">
+      if (!c.art.fullart) return `<a class="mini full${isSpell(c) ? ' sp' : ''}${isHero(c) ? ' hero' : ''}${isExtra(c) ? ' extra' : ''}" data-id="${esc(c.id)}" href="${href}" title="${tip}" style="--a:${col}">${face(c, col, icon)}${c.levelUp ? '<span class="lvbadge" title="มีร่าง Level up">⬆</span>' : ''}</a>`;
+      return `<a class="mini${isSpell(c) ? ' sp' : ''}${isHero(c) ? ' hero' : ''}${isExtra(c) ? ' extra' : ''}" data-id="${esc(c.id)}" href="${href}" style="--c:${col};--rc:${RC[c.rarity] || '#888'}" title="${tip}">
+        <img src="../${esc(c.art.fullart)}" alt="" loading="lazy" style="object-position:${focusPos(c)}">
         <span class="cost">${c.cost}</span>
-        <span class="el"><img src="${icon}" width="24" height="24" alt=""></span>
+        <span class="el"><img src="${icon}" alt=""></span>
         <span class="nm">${esc(c.nameTh)}<small>${esc(c.nameEn)}</small></span>
-        <span class="st p">${c.power}</span><span class="st h">${c.health}</span><span class="rar"></span></a>`; }).join('')
+        ${isSpell(c) ? `<span class="spmark">SPELL</span>` : `<span class="st p">${c.power}</span><span class="st h">${c.health}</span>`}<span class="rar"></span>${pills(c, 'mkw')}${ribbonText(c) ? `<span class="hmark">${ribbonText(c)}</span>` : ''}${c.levelUp ? '<span class="lvbadge" title="มีร่าง Level up">⬆</span>' : ''}<span class="nthumb" title="ภาพแบบปกติ">${face(c, col, icon)}</span></a>`; }).join('')
       || '<div class="empty">ไม่พบการ์ดที่ตรงกับตัวกรอง</div>';
     rescale();
   }
   // scale factor for full-face tiles = tile width / 630
-  function rescale() { const t = $('grid').querySelector('.mini.full'); if (t) $('grid').style.setProperty('--k', t.clientWidth / 630); }
+  function rescale() {
+    const g = $('grid'), t = g.querySelector('.mini.full'), n = g.querySelector('.nthumb');
+    if (t) g.style.setProperty('--k', t.clientWidth / 630);
+    if (n) g.style.setProperty('--k2', n.clientWidth / 630);
+  }
   new ResizeObserver(rescale).observe($('grid'));
-  fetch('../data/cards.json').then(r => r.json()).then(l => { cards = l; draw(); })
+  fetch('../data/cards.json').then(r => r.json()).then(l => { cards = l;
+      const tags = [...new Set(l.flatMap(c => c.tags || []))].sort((a, b) => a.localeCompare(b));
+      $('tagSel').innerHTML = '<option value="">ทุกแท็ก</option>' + tags.map(t => `<option>${esc(t)}</option>`).join('');
+      draw(); })
     .catch(() => { $('grid').innerHTML = '<div class="empty">โหลด data/cards.json ไม่ได้ — เปิดผ่าน python3 serve.py</div>'; });
+
+  // ===== Lightbox: click a card -> it lifts from its tile into the middle of a blurred backdrop =====
+  const lb = $('lb'), lbFrame = $('lbFrame');
+  let lbTile = null, lbOpen = false, lbReady = false, lbQueue = [], lbBusy = false, lbWantClose = false;
+  let lbWantOpen = null;
+  const lbIdle = () => { lbBusy = false; if (lbWantClose) { lbWantClose = false; closeLB(); } else if (lbWantOpen && !lbOpen) { const t = lbWantOpen; lbWantOpen = null; openLB(t); } };   // a close asked for mid-animation runs right after
+  const tileColor = t => (getComputedStyle(t).getPropertyValue('--c') || getComputedStyle(t).getPropertyValue('--a') || '').trim();
+  addEventListener('message', e => {
+    if (e.origin !== location.origin || e.source !== lbFrame.contentWindow) return;
+    const m = e.data || {};
+    if (m.type === 'ready') { lbReady = true; lbQueue.splice(0).forEach(f => f()); }
+    else if (m.type === 'shown') { const f = lbShown; lbShown = null; if (f) f(); }
+    else if (m.type === 'close') closeLB();
+    else if (m.type === 'key') onLbKey(m.key);
+  });
+  let lbShown = null;
+  const showCard = id => new Promise(res => { lbShown = res; lbFrame.contentWindow.postMessage({ type: 'show', id }, location.origin); });
+  const frameXform = tile => {            // transform that maps the full-window iframe so its card lands exactly on the tile
+    const st = lbFrame.contentDocument.getElementById('stage').getBoundingClientRect(), t = tile.getBoundingClientRect(), k = t.width / st.width;
+    return `translate(${t.left - k * st.left}px, ${t.top - k * st.top}px) scale(${k})`;
+  };
+  async function openLB(tile) {
+    if (lbBusy && !lbOpen) { lbWantOpen = tile; return; }   // clicked while the previous card is still flying back
+    if (lbOpen || lbBusy) return;
+    if (!lbReady) { lbQueue.push(() => openLB(tile)); return; }
+    lbBusy = true; lbOpen = true; lbTile = tile;
+    document.documentElement.style.overflow = 'hidden';
+    lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
+    bgTint(tileColor(tile), 1.6);
+    await showCard(tile.dataset.id);
+    const body = lbFrame.contentDocument.body;
+    body.classList.add('opening');
+    const from = frameXform(tile);
+    tile.style.visibility = 'hidden';
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const a = lbFrame.animate([{ transform: from, transformOrigin: '0 0', opacity: .7 }, { transform: 'translate(0,0) scale(1)', transformOrigin: '0 0', opacity: 1 }],
+      { duration: reduce ? 1 : 520, easing: 'cubic-bezier(.2,.9,.25,1.06)' });
+    await a.finished.catch(() => {});
+    if (fx.ready) fx.start(cardById(tile.dataset.id), stageRect(), true);
+    body.classList.remove('opening'); lbIdle();
+  }
+  async function closeLB() {
+    if (!lbOpen) return;
+    if (lbBusy) { lbWantClose = true; return; }
+    lbBusy = true;
+    const body = lbFrame.contentDocument.body, tile = lbTile;
+    body.classList.add('opening');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const to = tile.isConnected ? frameXform(tile) : 'translate(0,40px) scale(.9)';
+    lb.classList.remove('open'); bgTint(null, 1); if (fx.ready) fx.stop();
+    const a = lbFrame.animate([{ transform: 'translate(0,0) scale(1)', transformOrigin: '0 0', opacity: 1 }, { transform: to, transformOrigin: '0 0', opacity: .6 }],
+      { duration: reduce ? 1 : 380, easing: 'cubic-bezier(.5,0,.75,.4)', fill: 'forwards' });
+    await a.finished.catch(() => {});
+    tile.style.visibility = ''; a.cancel(); body.classList.remove('opening');
+    lb.setAttribute('aria-hidden', 'true'); document.documentElement.style.overflow = '';
+    lbOpen = false; lbTile = null; lbIdle();
+  }
+  async function stepLB(dir) {            // arrow keys: previous / next card among those currently shown
+    const tiles = [...$('grid').querySelectorAll('.mini')], i = tiles.indexOf(lbTile), n = tiles[i + dir];
+    if (!n || lbBusy) return;
+    lbBusy = true; lbTile.style.visibility = ''; lbTile = n; n.style.visibility = 'hidden';
+    n.scrollIntoView({ block: 'nearest' }); bgTint(tileColor(n), 1.6);
+    await lbFrame.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${-40 * dir}px)` }], { duration: 120, fill: 'forwards' }).finished.catch(() => {});
+    await showCard(n.dataset.id);
+    if (fx.ready) fx.start(cardById(n.dataset.id), stageRect(), false);
+    await lbFrame.animate([{ opacity: 0, transform: `translateX(${40 * dir}px)` }, { opacity: 1, transform: 'none' }], { duration: 200, easing: 'ease-out' }).finished.catch(() => {});
+    lbFrame.getAnimations().forEach(a => a.cancel()); lbIdle();
+  }
+  function onLbKey(k) { if (!lbOpen) return; if (k === 'Escape') closeLB(); else if (k === 'ArrowRight') stepLB(1); else if (k === 'ArrowLeft') stepLB(-1); }
+  addEventListener('keydown', e => onLbKey(e.key));
+  $('grid').addEventListener('click', e => {
+    const a = e.target.closest('a.mini');
+    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // let modified clicks open the link normally
+    e.preventDefault(); openLB(a);
+  });
+  lb.addEventListener('click', e => { if (e.target === lb) closeLB(); });
+
+  // ===== Three.js: drifting embers behind the grid; they take on the colour of the hovered / opened card =====
+  let bgTarget = new Float32Array([0.91, 0.77, 0.42]), bgBoost = 1, bgTintFn = null;
+  function bgTint(css, boost) {
+    bgBoost = boost || 1;
+    const c = css || '#e8c56a', m = document.createElement('canvas').getContext('2d'); m.fillStyle = c; m.fillRect(0, 0, 1, 1);
+    const d = m.getImageData(0, 0, 1, 1).data; bgTarget = new Float32Array([d[0] / 255, d[1] / 255, d[2] / 255]);
+  }
+  $('grid').addEventListener('pointerover', e => { if (lbOpen) return; const a = e.target.closest('a.mini'); if (a) bgTint(tileColor(a), 1.3); });
+  $('grid').addEventListener('pointerleave', () => { if (!lbOpen) bgTint(null, 1); });
+  function initBG() {
+    if (!window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cv = $('bg'), renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: false });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(60, 1, 1, 200); cam.position.z = 50;
+    const N = innerWidth < 700 ? 160 : 380, pos = new Float32Array(N * 3), seed = new Float32Array(N), geo = new THREE.BufferGeometry();
+    let W = 80, H = 50;
+    const place = i => { pos[i * 3] = (Math.random() - .5) * W; pos[i * 3 + 1] = (Math.random() - .5) * H; pos[i * 3 + 2] = (Math.random() - .5) * 40; };
+    for (let i = 0; i < N; i++) { place(i); seed[i] = Math.random() * 6.28; }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const sprite = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(255,255,255,.45)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+    const mat = new THREE.PointsMaterial({ size: 1.1, map: sprite, transparent: true, opacity: .55, depthWrite: false, blending: THREE.AdditiveBlending, color: new THREE.Color(.91, .77, .42) });
+    scene.add(new THREE.Points(geo, mat));
+    const fit = () => { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+      H = 2 * Math.tan(cam.fov * Math.PI / 360) * 50 * 1.1; W = H * cam.aspect; };
+    addEventListener('resize', fit); fit();
+    let mx = 0, my = 0, t0 = performance.now();
+    addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
+    (function loop(now) {
+      requestAnimationFrame(loop); if (document.hidden) return;
+      const dt = Math.min((now - t0) / 1000, .05); t0 = now;
+      for (let i = 0; i < N; i++) {
+        pos[i * 3 + 1] += dt * (1.2 + (i % 5) * .35) * bgBoost; pos[i * 3] += Math.sin(now / 1500 + seed[i]) * dt * .6;
+        if (pos[i * 3 + 1] > H / 2) { place(i); pos[i * 3 + 1] = -H / 2; }
+      }
+      geo.attributes.position.needsUpdate = true;
+      mat.color.r += (bgTarget[0] - mat.color.r) * .08; mat.color.g += (bgTarget[1] - mat.color.g) * .08; mat.color.b += (bgTarget[2] - mat.color.b) * .08;
+      mat.opacity += ((.45 + .25 * Math.min(bgBoost - 1, 1)) - mat.opacity) * .08;
+      cam.position.x += (mx * 6 - cam.position.x) * .04; cam.position.y += (-my * 4 - cam.position.y) * .04; cam.lookAt(0, 0, 0);
+      renderer.render(scene, cam);
+    })(performance.now());
+  }
+
+  // ===== Three.js: element effects around the card in the lightbox (embers, bubbles, snow, dust, wind, sparks, motes, smoke) =====
+  const FX = {
+    fire:      { colors: ['#ffd27a', '#ff8a3d', '#ff4d1f'], blend: 'add',  rate: 70, life: [1, 2],    size: [10, 24], spawn: 'edge',  vx: [-15, 15],  vy: [-130, -60], wob: 25 },
+    water:     { colors: ['#9fe3ff', '#4aa3df', '#d6f3ff'], blend: 'add',  rate: 35, life: [2, 3.5],  size: [8, 18],  spawn: 'edge',  vx: [-8, 8],    vy: [-50, -25],  wob: 30 },
+    ice:       { colors: ['#ffffff', '#cfefff', '#8fd3f4'], blend: 'norm', rate: 45, life: [4, 7],    size: [5, 13],  spawn: 'sky',   vx: [-15, 15],  vy: [35, 70],    wob: 35 },
+    earth:     { colors: ['#d9b77a', '#b08a4a', '#7d6038'], blend: 'norm', rate: 40, life: [1.5, 3],  size: [5, 14],  spawn: 'floor', vx: [-60, 60],  vy: [-45, -10],  wob: 5, drag: 1.2 },
+    wind:      { colors: ['#bff5d5', '#6fcf97', '#e9fff2'], blend: 'add',  rate: 55, life: [1.5, 2.5], size: [4, 9],  spawn: 'orbit', speed: [1.4, 2.4] },
+    lightning: { colors: ['#fff6c4', '#f2c230', '#9fd0ff'], blend: 'add',  rate: 90, life: [.12, .35], size: [6, 18], spawn: 'edge',  vx: [-40, 40],  vy: [-40, 40],   jitter: 18 },
+    light:     { colors: ['#fff8dc', '#f6e7a1', '#ffffff'], blend: 'add',  rate: 40, life: [2, 4],    size: [5, 12],  spawn: 'halo',  vx: [-20, 20],  vy: [-35, -5],   twinkle: 1 },
+    dark:      { colors: ['#5a3480', '#9b6bd6', '#2a1840'], blend: 'norm', rate: 22, life: [2.5, 4],  size: [40, 80], spawn: 'edge',  vx: [-10, 10],  vy: [-30, -12],  alpha: .28 },
+  };
+  const fx = { on: false, cfg: null, hero: false, rect: null, acc: 0, heroAcc: 0, ready: false };
+  function initFX() {
+    if (!window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cv = $('fx'), renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: false });
+    const pr = Math.min(devicePixelRatio, 1.5); renderer.setPixelRatio(pr);
+    const scene = new THREE.Scene(); let cam;
+    const resize = () => { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); cam = new THREE.OrthographicCamera(0, w, 0, h, -10, 10); };
+    addEventListener('resize', resize); resize();
+    const vert = 'attribute float size; attribute float alpha; attribute vec3 color; varying float vA; varying vec3 vC; uniform float uPR;' +
+      'void main(){ vA = alpha; vC = color; gl_PointSize = size * uPR; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
+    const frag = 'varying float vA; varying vec3 vC; void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d); gl_FragColor = vec4(vC, a * vA); }';
+    const mkPool = (n, blending) => {
+      const g = new THREE.BufferGeometry(), P = {
+        n, pos: new Float32Array(n * 3), col: new Float32Array(n * 3), size: new Float32Array(n), alpha: new Float32Array(n),
+        vx: new Float32Array(n), vy: new Float32Array(n), life: new Float32Array(n), max: new Float32Array(n), base: new Float32Array(n),
+        sz: new Float32Array(n), mode: new Uint8Array(n), ang: new Float32Array(n), spd: new Float32Array(n), seed: new Float32Array(n), g, next: 0 };
+      g.setAttribute('position', new THREE.BufferAttribute(P.pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(P.col, 3));
+      g.setAttribute('size', new THREE.BufferAttribute(P.size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(P.alpha, 1));
+      const m = new THREE.ShaderMaterial({ vertexShader: vert, fragmentShader: frag, uniforms: { uPR: { value: pr } }, transparent: true, depthWrite: false, blending });
+      const pts = new THREE.Points(g, m); pts.frustumCulled = false; scene.add(pts); return P;
+    };
+    const pools = { add: mkPool(innerWidth < 700 ? 260 : 520, THREE.AdditiveBlending), norm: mkPool(innerWidth < 700 ? 140 : 260, THREE.NormalBlending) };
+    const rnd = (a, b) => a + Math.random() * (b - a), tmp = new THREE.Color();
+    function emit(pool, x, y, vx, vy, life, size, color, base, mode, extra) {
+      const P = pools[pool], i = P.next; P.next = (i + 1) % P.n;
+      P.pos[i * 3] = x; P.pos[i * 3 + 1] = y; P.vx[i] = vx; P.vy[i] = vy; P.life[i] = P.max[i] = life; P.sz[i] = size; P.base[i] = base;
+      tmp.set(color); P.col[i * 3] = tmp.r; P.col[i * 3 + 1] = tmp.g; P.col[i * 3 + 2] = tmp.b; P.mode[i] = mode; P.seed[i] = Math.random() * 6.28;
+      if (extra) { P.ang[i] = extra.ang; P.spd[i] = extra.spd; }
+    }
+    const pick = a => a[(Math.random() * a.length) | 0];
+    function spawn(cfg, n, R) {
+      for (let k = 0; k < n; k++) {
+        const life = rnd(...cfg.life), size = rnd(...cfg.size), color = pick(cfg.colors), base = cfg.alpha || .9;
+        let x, y, vx = rnd(...(cfg.vx || [0, 0])), vy = rnd(...(cfg.vy || [0, 0]));
+        if (cfg.spawn === 'orbit') { emit(cfg.blend, 0, 0, 0, 0, life, size, color, base, 2, { ang: Math.random() * 6.28, spd: rnd(...cfg.speed) }); continue; }
+        if (cfg.spawn === 'sky') { x = rnd(R.left - 160, R.right + 160); y = R.top - rnd(20, 120); }
+        else if (cfg.spawn === 'floor') { x = rnd(R.left - 20, R.right + 20); y = R.bottom - rnd(0, 30); }
+        else if (cfg.spawn === 'halo') { const a = Math.random() * 6.28; x = (R.left + R.right) / 2 + Math.cos(a) * R.width * rnd(.45, .75); y = (R.top + R.bottom) / 2 + Math.sin(a) * R.height * rnd(.45, .7); }
+        else {                                   // 'edge': a point on the card outline, biased to the sides and bottom
+          const t = Math.random(), side = Math.random();
+          if (side < .35) { x = R.left + rnd(-8, 8); y = R.top + t * R.height; } else if (side < .7) { x = R.right + rnd(-8, 8); y = R.top + t * R.height; }
+          else if (side < .9) { x = R.left + t * R.width; y = R.bottom + rnd(-8, 8); } else { x = R.left + t * R.width; y = R.top + rnd(-8, 8); }
+        }
+        emit(cfg.blend, x, y, vx, vy, life, size, color, base, cfg.jitter ? 3 : cfg.twinkle ? 4 : 0);
+      }
+    }
+    function burst(cfg, R) {                   // on open: a ring of sparks flying out from the card edge
+      for (let k = 0; k < 70; k++) {
+        const a = Math.random() * 6.28, cx = (R.left + R.right) / 2, cy = (R.top + R.bottom) / 2;
+        const x = cx + Math.cos(a) * R.width * .5, y = cy + Math.sin(a) * R.height * .5, sp = rnd(160, 380);
+        emit('add', x, y, Math.cos(a) * sp, Math.sin(a) * sp, rnd(.5, .9), rnd(6, 16), pick(cfg.colors), 1, 1);
+      }
+    }
+    fx.start = (card, R, withBurst) => { fx.cfg = FX[card.element] || FX.fire; fx.hero = isHero(card); fx.rect = R; fx.on = true; if (withBurst) burst(fx.cfg, R); kick(); };
+    fx.stop = () => { fx.on = false; };
+    let running = false, t0 = 0;
+    function kick() { if (!running) { running = true; t0 = performance.now(); requestAnimationFrame(loop); } }
+    function loop(now) {
+      const dt = Math.min((now - t0) / 1000, .05); t0 = now;
+      const R = fx.rect;
+      if (fx.on && R) {
+        fx.acc += fx.cfg.rate * dt * (innerWidth < 700 ? .6 : 1); const n = fx.acc | 0; fx.acc -= n; if (n) spawn(fx.cfg, n, R);
+        if (fx.hero) { fx.heroAcc += 18 * dt; const h = fx.heroAcc | 0; fx.heroAcc -= h;
+          for (let k = 0; k < h; k++) emit('add', 0, 0, 0, 0, rnd(2, 3), rnd(5, 10), pick(['#fff3c4', '#e8c56a', '#ffd86b']), 1, 2, { ang: Math.random() * 6.28, spd: rnd(.6, 1) }); }
+      }
+      let alive = 0;
+      for (const P of Object.values(pools)) {
+        for (let i = 0; i < P.n; i++) {
+          if (P.life[i] <= 0) { P.alpha[i] = 0; P.size[i] = 0; continue; }
+          alive++; P.life[i] -= dt; const t = 1 - P.life[i] / P.max[i];
+          if (P.mode[i] === 2 && R) {          // orbit around the card
+            P.ang[i] += P.spd[i] * dt; const cx = (R.left + R.right) / 2, cy = (R.top + R.bottom) / 2, k = 1 + t * .12;
+            P.pos[i * 3] = cx + Math.cos(P.ang[i]) * R.width * .62 * k; P.pos[i * 3 + 1] = cy + Math.sin(P.ang[i]) * R.height * .56 * k;
+          } else {
+            if (P.mode[i] === 1) { P.vx[i] *= 1 - 2.5 * dt; P.vy[i] *= 1 - 2.5 * dt; }                       // burst: slow down
+            if (P.mode[i] === 3) { P.pos[i * 3] += rnd(-1, 1) * 18 * dt * 10; P.pos[i * 3 + 1] += rnd(-1, 1) * 18 * dt * 10; } // spark jitter
+            if (fx.cfg && fx.cfg.drag) { P.vx[i] *= 1 - fx.cfg.drag * dt; }
+            const wob = fx.cfg && fx.cfg.wob ? Math.sin(now / 400 + P.seed[i]) * fx.cfg.wob * dt : 0;
+            P.pos[i * 3] += P.vx[i] * dt + wob; P.pos[i * 3 + 1] += P.vy[i] * dt;
+          }
+          const fade = Math.min(1, t * 6) * Math.min(1, (1 - t) * 3);
+          P.alpha[i] = P.base[i] * fade * (P.mode[i] === 4 ? .55 + .45 * Math.sin(now / 160 + P.seed[i] * 3) : 1);
+          P.size[i] = P.sz[i] * (P.mode[i] === 1 ? 1 - t * .6 : 1);
+        }
+        P.g.attributes.position.needsUpdate = P.g.attributes.color.needsUpdate = P.g.attributes.size.needsUpdate = P.g.attributes.alpha.needsUpdate = true;
+      }
+      renderer.render(scene, cam);
+      if (fx.on || alive) requestAnimationFrame(loop); else { running = false; renderer.clear(); }
+    }
+    fx.ready = true;
+  }
+  const cardById = id => cards.find(c => c.id === id);
+  const stageRect = () => lbFrame.contentDocument.getElementById('stage').getBoundingClientRect();
+  (function waitThree(n) { if (window.THREE) { initBG(); initFX(); } else if (n > 0) setTimeout(() => waitThree(n - 1), 200); })(25);
 </script>
 </body>
 </html>
